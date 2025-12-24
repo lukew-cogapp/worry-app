@@ -38,6 +38,7 @@ export const History: React.FC = () => {
   const [filter, setFilter] = useState<FilterType>('all');
   const [searchQuery, setSearchQuery] = useState('');
   const [worryToDelete, setWorryToDelete] = useState<string | null>(null);
+  const [worryToDismiss, setWorryToDismiss] = useState<string | null>(null);
   const [isEditSheetOpen, setIsEditSheetOpen] = useState(false);
   const [worryToEdit, setWorryToEdit] = useState<Worry | null>(null);
   const [isEditingWorry, setIsEditingWorry] = useState(false);
@@ -73,20 +74,33 @@ export const History: React.FC = () => {
     }
   };
 
-  const handleDismiss = async (id: string) => {
-    setLoadingStates((prev) => ({ ...prev, [id]: { ...prev[id], dismissing: true } }));
+  const handleDismissClick = (id: string) => {
+    setWorryToDismiss(id);
+  };
+
+  const confirmDismiss = async () => {
+    if (!worryToDismiss) return;
+
+    setLoadingStates((prev) => ({
+      ...prev,
+      [worryToDismiss]: { ...prev[worryToDismiss], dismissing: true },
+    }));
     try {
-      await dismissWorry(id);
+      await dismissWorry(worryToDismiss);
       toast.success(lang.toasts.success.worryDismissed);
+      setWorryToDismiss(null);
     } catch (_error) {
       toast.error(lang.toasts.error.dismissWorry, {
         action: {
           label: 'Retry',
-          onClick: () => handleDismiss(id),
+          onClick: confirmDismiss,
         },
       });
     } finally {
-      setLoadingStates((prev) => ({ ...prev, [id]: { ...prev[id], dismissing: false } }));
+      setLoadingStates((prev) => ({
+        ...prev,
+        [worryToDismiss]: { ...prev[worryToDismiss], dismissing: false },
+      }));
     }
   };
 
@@ -256,7 +270,7 @@ export const History: React.FC = () => {
                   <WorryCard
                     worry={worry}
                     onUnlockNow={worry.status === 'locked' ? handleUnlockNow : undefined}
-                    onDismiss={worry.status === 'locked' ? handleDismiss : undefined}
+                    onDismiss={worry.status === 'locked' ? handleDismissClick : undefined}
                     onEdit={handleOpenEdit}
                     isUnlocking={loadingStates[worry.id]?.unlocking}
                     isDismissing={loadingStates[worry.id]?.dismissing}
@@ -309,6 +323,35 @@ export const History: React.FC = () => {
             >
               {isDeleting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
               {lang.history.deleteDialog.confirm}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
+      {/* Dismiss Confirmation Dialog */}
+      <AlertDialog
+        open={!!worryToDismiss}
+        onOpenChange={(open) => !open && setWorryToDismiss(null)}
+      >
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>{lang.history.dismissDialog.title}</AlertDialogTitle>
+            <AlertDialogDescription>
+              {lang.history.dismissDialog.description}
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel disabled={loadingStates[worryToDismiss || '']?.dismissing}>
+              {lang.history.dismissDialog.cancel}
+            </AlertDialogCancel>
+            <AlertDialogAction
+              onClick={confirmDismiss}
+              disabled={loadingStates[worryToDismiss || '']?.dismissing}
+            >
+              {loadingStates[worryToDismiss || '']?.dismissing && (
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              )}
+              {lang.history.dismissDialog.confirm}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>

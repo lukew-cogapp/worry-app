@@ -1,5 +1,6 @@
 import { CheckCircle2, Edit3, Loader2, Lock, Package, Sparkles } from 'lucide-react';
 import type React from 'react';
+import { SNOOZE_DURATIONS } from '../config/constants';
 import { lang } from '../config/language';
 import type { Worry } from '../types';
 import { formatDateTime, getRelativeTime } from '../utils/dates';
@@ -211,7 +212,7 @@ export const WorryCard: React.FC<WorryCardProps> = ({
                     <DropdownMenuItem
                       onClick={(e) => {
                         e.stopPropagation();
-                        onSnooze(worry.id, 30 * 60 * 1000);
+                        onSnooze(worry.id, SNOOZE_DURATIONS.THIRTY_MINUTES);
                       }}
                       className="min-h-[44px]"
                     >
@@ -220,7 +221,7 @@ export const WorryCard: React.FC<WorryCardProps> = ({
                     <DropdownMenuItem
                       onClick={(e) => {
                         e.stopPropagation();
-                        onSnooze(worry.id, 60 * 60 * 1000);
+                        onSnooze(worry.id, SNOOZE_DURATIONS.ONE_HOUR);
                       }}
                       className="min-h-[44px]"
                     >
@@ -229,7 +230,7 @@ export const WorryCard: React.FC<WorryCardProps> = ({
                     <DropdownMenuItem
                       onClick={(e) => {
                         e.stopPropagation();
-                        onSnooze(worry.id, 4 * 60 * 60 * 1000);
+                        onSnooze(worry.id, SNOOZE_DURATIONS.FOUR_HOURS);
                       }}
                       className="min-h-[44px]"
                     >
@@ -238,7 +239,7 @@ export const WorryCard: React.FC<WorryCardProps> = ({
                     <DropdownMenuItem
                       onClick={(e) => {
                         e.stopPropagation();
-                        onSnooze(worry.id, 24 * 60 * 60 * 1000);
+                        onSnooze(worry.id, SNOOZE_DURATIONS.ONE_DAY);
                       }}
                       className="min-h-[44px]"
                     >

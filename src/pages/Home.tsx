@@ -1,4 +1,4 @@
-import { Lock } from 'lucide-react';
+import { Loader2, Lock } from 'lucide-react';
 import type React from 'react';
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
@@ -8,7 +8,18 @@ import { EditWorrySheet } from '../components/EditWorrySheet';
 import { EmptyState } from '../components/EmptyState';
 import { LockAnimation } from '../components/LockAnimation';
 import { Onboarding } from '../components/Onboarding';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from '../components/ui/alert-dialog';
 import { WorryCard } from '../components/WorryCard';
+import { DATE_OFFSETS, TOAST_DURATIONS } from '../config/constants';
 import { formatDuration, lang } from '../config/language';
 import { useHaptics } from '../hooks/useHaptics';
 import { usePreferencesStore } from '../store/preferencesStore';
@@ -17,12 +28,14 @@ import type { Worry } from '../types';
 
 export const Home: React.FC = () => {
   const worries = useWorryStore((s) => s.worries);
+  const isLoadingWorries = useWorryStore((s) => s.isLoading);
   const addWorry = useWorryStore((s) => s.addWorry);
   const editWorry = useWorryStore((s) => s.editWorry);
   const resolveWorry = useWorryStore((s) => s.resolveWorry);
   const dismissWorry = useWorryStore((s) => s.dismissWorry);
   const snoozeWorry = useWorryStore((s) => s.snoozeWorry);
   const defaultUnlockTime = usePreferencesStore((s) => s.preferences.defaultUnlockTime);
+  const isLoadingPreferences = usePreferencesStore((s) => s.isLoading);
 
   const { lockWorry, resolveWorry: resolveHaptic } = useHaptics();
 
@@ -33,6 +46,8 @@ export const Home: React.FC = () => {
   const [isAddingWorry, setIsAddingWorry] = useState(false);
   const [isReleasingWorry, setIsReleasingWorry] = useState(false);
   const [isEditingWorry, setIsEditingWorry] = useState(false);
+  const [worryToDismiss, setWorryToDismiss] = useState<string | null>(null);
+  const [contentToRelease, setContentToRelease] = useState<string | null>(null);
   const [loadingStates, setLoadingStates] = useState<
     Record<string, { resolving?: boolean; snoozing?: boolean; dismissing?: boolean }>
   >({});
@@ -96,32 +111,51 @@ export const Home: React.FC = () => {
     }
   };
 
-  const handleDismiss = async (id: string) => {
-    setLoadingStates((prev) => ({ ...prev, [id]: { ...prev[id], dismissing: true } }));
+  const handleDismissClick = (id: string) => {
+    setWorryToDismiss(id);
+  };
+
+  const confirmDismiss = async () => {
+    if (!worryToDismiss) return;
+
+    setLoadingStates((prev) => ({
+      ...prev,
+      [worryToDismiss]: { ...prev[worryToDismiss], dismissing: true },
+    }));
     try {
-      await dismissWorry(id);
+      await dismissWorry(worryToDismiss);
       toast.success(lang.toasts.success.worryDismissed);
+      setWorryToDismiss(null);
     } catch (_error) {
       toast.error(lang.toasts.error.dismissWorry, {
         action: {
           label: 'Retry',
-          onClick: () => handleDismiss(id),
+          onClick: confirmDismiss,
         },
       });
     } finally {
-      setLoadingStates((prev) => ({ ...prev, [id]: { ...prev[id], dismissing: false } }));
+      setLoadingStates((prev) => ({
+        ...prev,
+        [worryToDismiss]: { ...prev[worryToDismiss], dismissing: false },
+      }));
     }
   };
 
-  const handleRelease = async (content: string) => {
+  const handleReleaseClick = (content: string) => {
+    setContentToRelease(content);
+  };
+
+  const confirmRelease = async () => {
+    if (!contentToRelease) return;
+
     setIsReleasingWorry(true);
     try {
       // Add the worry with a far-future date (it will be dismissed immediately anyway)
       const futureDate = new Date();
-      futureDate.setFullYear(futureDate.getFullYear() + 100);
+      futureDate.setFullYear(futureDate.getFullYear() + DATE_OFFSETS.RELEASE_YEARS);
 
       const worry = await addWorry({
-        content,
+        content: contentToRelease,
         unlockAt: futureDate.toISOString(),
       });
 
@@ -129,14 +163,15 @@ export const Home: React.FC = () => {
       await dismissWorry(worry.id);
 
       setIsAddSheetOpen(false);
+      setContentToRelease(null);
       toast.success(lang.toasts.success.worryReleased, {
-        duration: 4000,
+        duration: TOAST_DURATIONS.LONG,
       });
     } catch (_error) {
       toast.error(lang.toasts.error.releaseWorry, {
         action: {
           label: 'Retry',
-          onClick: () => handleRelease(content),
+          onClick: confirmRelease,
         },
       });
     } finally {
@@ -208,12 +243,18 @@ export const Home: React.FC = () => {
 
       {/* Main Content */}
       <main className="max-w-4xl mx-auto px-4 py-6 pb-24">
-        {!hasWorries && (
+        {(isLoadingWorries || isLoadingPreferences) && (
+          <div className="flex items-center justify-center py-12">
+            <Loader2 className="w-8 h-8 animate-spin text-muted-foreground" />
+          </div>
+        )}
+
+        {!isLoadingWorries && !isLoadingPreferences && !hasWorries && (
           <EmptyState title={lang.home.empty.title} message={lang.home.empty.message} />
         )}
 
         {/* Unlocked Worries */}
-        {unlockedWorries.length > 0 && (
+        {!isLoadingWorries && !isLoadingPreferences && unlockedWorries.length > 0 && (
           <section className="mb-8">
             <h2 className="text-xl font-bold text-foreground mb-4 tracking-tight">
               {lang.home.sections.ready}
@@ -225,7 +266,7 @@ export const Home: React.FC = () => {
                   worry={worry}
                   onResolve={handleResolve}
                   onSnooze={handleSnooze}
-                  onDismiss={handleDismiss}
+                  onDismiss={handleDismissClick}
                   onEdit={handleOpenEdit}
                   isResolving={loadingStates[worry.id]?.resolving}
                   isSnoozing={loadingStates[worry.id]?.snoozing}
@@ -237,7 +278,7 @@ export const Home: React.FC = () => {
         )}
 
         {/* Locked Worries Summary */}
-        {lockedWorries.length > 0 && (
+        {!isLoadingWorries && !isLoadingPreferences && lockedWorries.length > 0 && (
           <section>
             <div className="bg-secondary/20 rounded-lg p-6 border border-primary/20">
               <div className="flex items-center gap-3 mb-2">
@@ -277,7 +318,7 @@ export const Home: React.FC = () => {
         isOpen={isAddSheetOpen}
         onClose={() => setIsAddSheetOpen(false)}
         onAdd={handleAddWorry}
-        onRelease={handleRelease}
+        onRelease={handleReleaseClick}
         isSubmitting={isAddingWorry}
         isReleasing={isReleasingWorry}
       />
@@ -300,6 +341,59 @@ export const Home: React.FC = () => {
 
       {/* Onboarding */}
       <Onboarding />
+
+      {/* Dismiss Confirmation Dialog */}
+      <AlertDialog
+        open={!!worryToDismiss}
+        onOpenChange={(open) => !open && setWorryToDismiss(null)}
+      >
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>{lang.history.dismissDialog.title}</AlertDialogTitle>
+            <AlertDialogDescription>
+              {lang.history.dismissDialog.description}
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel disabled={loadingStates[worryToDismiss || '']?.dismissing}>
+              {lang.history.dismissDialog.cancel}
+            </AlertDialogCancel>
+            <AlertDialogAction
+              onClick={confirmDismiss}
+              disabled={loadingStates[worryToDismiss || '']?.dismissing}
+            >
+              {loadingStates[worryToDismiss || '']?.dismissing && (
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              )}
+              {lang.history.dismissDialog.confirm}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
+      {/* Release Confirmation Dialog */}
+      <AlertDialog
+        open={!!contentToRelease}
+        onOpenChange={(open) => !open && setContentToRelease(null)}
+      >
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>{lang.history.releaseDialog.title}</AlertDialogTitle>
+            <AlertDialogDescription>
+              {lang.history.releaseDialog.description}
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel disabled={isReleasingWorry}>
+              {lang.history.releaseDialog.cancel}
+            </AlertDialogCancel>
+            <AlertDialogAction onClick={confirmRelease} disabled={isReleasingWorry}>
+              {isReleasingWorry && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+              {lang.history.releaseDialog.confirm}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 };

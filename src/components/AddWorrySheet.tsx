@@ -1,7 +1,8 @@
 import { Loader2, Lock, Sparkles } from 'lucide-react';
 import type React from 'react';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useState } from 'react';
 import { lang } from '../config/language';
+import { useEscapeKey } from '../hooks/useEscapeKey';
 import { usePreferencesStore } from '../store/preferencesStore';
 import { getTomorrow } from '../utils/dates';
 import { DateTimePicker } from './DateTimePicker';
@@ -66,21 +67,7 @@ export const AddWorrySheet: React.FC<AddWorrySheetProps> = ({
   };
 
   // Handle Escape key
-  useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'Escape' && isOpen) {
-        handleClose();
-      }
-    };
-
-    if (isOpen) {
-      document.addEventListener('keydown', handleKeyDown);
-    }
-
-    return () => {
-      document.removeEventListener('keydown', handleKeyDown);
-    };
-  }, [isOpen, handleClose]);
+  useEscapeKey(handleClose, isOpen);
 
   if (!isOpen) return null;
 

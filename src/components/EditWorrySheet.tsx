@@ -2,6 +2,7 @@ import { Edit3, Loader2 } from 'lucide-react';
 import type React from 'react';
 import { useCallback, useEffect, useState } from 'react';
 import { lang } from '../config/language';
+import { useEscapeKey } from '../hooks/useEscapeKey';
 import type { Worry } from '../types';
 import { DateTimePicker } from './DateTimePicker';
 import { Button } from './ui/button';
@@ -54,21 +55,7 @@ export const EditWorrySheet: React.FC<EditWorrySheetProps> = ({
   }, [onClose]);
 
   // Handle Escape key
-  useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'Escape' && isOpen) {
-        handleClose();
-      }
-    };
-
-    if (isOpen) {
-      document.addEventListener('keydown', handleKeyDown);
-    }
-
-    return () => {
-      document.removeEventListener('keydown', handleKeyDown);
-    };
-  }, [isOpen, handleClose]);
+  useEscapeKey(handleClose, isOpen);
 
   if (!isOpen || !worry) return null;
 

@@ -105,6 +105,20 @@ export const lang = {
       cancel: 'Cancel',
       confirm: 'Delete',
     },
+    dismissDialog: {
+      title: 'Dismiss Worry?',
+      description:
+        'This will move the worry to your dismissed list. You can find it in your history later.',
+      cancel: 'Cancel',
+      confirm: 'Dismiss',
+    },
+    releaseDialog: {
+      title: 'Release This Worry?',
+      description:
+        "You're letting go of something you can't control. This worry will be immediately dismissed.",
+      cancel: 'Cancel',
+      confirm: 'Release',
+    },
   },
 
   // Settings page
