@@ -7,6 +7,7 @@ import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import { Toaster, toast } from 'sonner';
 import { History } from './pages/History';
 import { Home } from './pages/Home';
+import { Insights } from './pages/Insights';
 import { Settings } from './pages/Settings';
 import * as notifications from './services/notifications';
 import { usePreferencesStore } from './store/preferencesStore';
@@ -72,6 +73,7 @@ function App() {
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/history" element={<History />} />
+        <Route path="/insights" element={<Insights />} />
         <Route path="/settings" element={<Settings />} />
       </Routes>
     </BrowserRouter>

@@ -121,6 +121,45 @@ export const lang = {
     },
   },
 
+  // Insights page
+  insights: {
+    title: 'Insights',
+    empty: {
+      title: 'No data yet',
+      message: 'Add some worries to see your insights and patterns.',
+    },
+    stats: {
+      total: 'Total Worries',
+      completed: 'Completed',
+      locked: 'Locked',
+      unlocked: 'Unlocked',
+    },
+    keyInsights: {
+      title: 'Key Insights',
+      completionRate: {
+        title: 'Completion Rate',
+        description: (completed: number, total: number) =>
+          `You've completed ${completed} out of ${total} worries`,
+      },
+      resolutionRate: {
+        title: 'Action Taken',
+        description: (resolved: number, dismissed: number) =>
+          `${resolved} resolved, ${dismissed} dismissed`,
+        insight:
+          'Most of your worries resolved themselves. Consider if they needed immediate attention.',
+      },
+      avgTimeToResolve: {
+        title: 'Average Time to Resolve',
+        description: 'Time from unlock to resolution',
+      },
+    },
+    thisWeek: {
+      title: 'This Week',
+      description: (total: number, resolved: number) =>
+        `${total} worries added, ${resolved} resolved`,
+    },
+  },
+
   // Settings page
   settings: {
     title: 'Settings',
