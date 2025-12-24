@@ -1,5 +1,9 @@
 import type React from 'react';
 import { Link } from 'react-router-dom';
+import { Label } from '../components/ui/label';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../components/ui/select';
+import { Separator } from '../components/ui/separator';
+import { Switch } from '../components/ui/switch';
 import { usePreferencesStore } from '../store/preferencesStore';
 
 export const Settings: React.FC = () => {
@@ -32,16 +36,13 @@ export const Settings: React.FC = () => {
 
       {/* Main Content */}
       <main className="max-w-4xl mx-auto px-4 py-6">
-        <div className="bg-card rounded-lg border border-border divide-y divide-border">
+        <div className="bg-card rounded-lg border border-border overflow-hidden">
           {/* Default Unlock Time */}
-          <div className="p-4">
-            <label
-              htmlFor="default-unlock-time"
-              className="block text-sm font-medium text-foreground mb-1"
-            >
+          <div className="p-6">
+            <Label htmlFor="default-unlock-time" className="text-base font-medium">
               Default Unlock Time
-            </label>
-            <p className="text-sm text-muted-foreground mb-3">
+            </Label>
+            <p className="text-sm text-muted-foreground mt-1 mb-3">
               When using quick options (Tomorrow, Monday, etc.)
             </p>
             <input
@@ -53,84 +54,82 @@ export const Settings: React.FC = () => {
             />
           </div>
 
+          <Separator />
+
           {/* Haptic Feedback */}
-          <div className="p-4">
+          <div className="p-6">
             <div className="flex items-center justify-between">
-              <div>
-                <h3 className="text-sm font-medium text-foreground">
+              <div className="space-y-0.5">
+                <Label htmlFor="haptic-feedback" className="text-base font-medium">
                   Haptic Feedback
-                </h3>
+                </Label>
                 <p className="text-sm text-muted-foreground">
                   Tactile feedback when locking/unlocking worries
                 </p>
               </div>
-              <label className="relative inline-flex items-center cursor-pointer">
-                <input
-                  type="checkbox"
-                  checked={preferences.hapticFeedback}
-                  onChange={(e) => updatePreferences({ hapticFeedback: e.target.checked })}
-                  className="sr-only peer"
-                />
-                <div className="w-11 h-6 bg-input peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-ring/20 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-border after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary" />
-              </label>
+              <Switch
+                id="haptic-feedback"
+                checked={preferences.hapticFeedback}
+                onCheckedChange={(checked: boolean) => updatePreferences({ hapticFeedback: checked })}
+              />
             </div>
           </div>
 
+          <Separator />
+
           {/* Encouraging Messages */}
-          <div className="p-4">
+          <div className="p-6">
             <div className="flex items-center justify-between">
-              <div>
-                <h3 className="text-sm font-medium text-foreground">
+              <div className="space-y-0.5">
+                <Label htmlFor="encouraging-messages" className="text-base font-medium">
                   Encouraging Messages
-                </h3>
+                </Label>
                 <p className="text-sm text-muted-foreground">
                   Show supportive text in notifications
                 </p>
               </div>
-              <label className="relative inline-flex items-center cursor-pointer">
-                <input
-                  type="checkbox"
-                  checked={preferences.encouragingMessages}
-                  onChange={(e) => updatePreferences({ encouragingMessages: e.target.checked })}
-                  className="sr-only peer"
-                />
-                <div className="w-11 h-6 bg-input peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-ring/20 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-border after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary" />
-              </label>
+              <Switch
+                id="encouraging-messages"
+                checked={preferences.encouragingMessages}
+                onCheckedChange={(checked: boolean) => updatePreferences({ encouragingMessages: checked })}
+              />
             </div>
           </div>
 
+          <Separator />
+
           {/* Theme */}
-          <div className="p-4">
-            <label
-              htmlFor="theme"
-              className="block text-sm font-medium text-foreground mb-1"
-            >
+          <div className="p-6">
+            <Label htmlFor="theme" className="text-base font-medium">
               Theme
-            </label>
-            <p className="text-sm text-muted-foreground mb-3">
+            </Label>
+            <p className="text-sm text-muted-foreground mt-1 mb-3">
               Choose your app appearance
             </p>
-            <select
-              id="theme"
+            <Select
               value={preferences.theme}
-              onChange={(e) =>
-                updatePreferences({ theme: e.target.value as 'light' | 'dark' | 'system' })
+              onValueChange={(value: 'light' | 'dark' | 'system') =>
+                updatePreferences({ theme: value })
               }
-              className="px-3 py-2 border border-input rounded-md bg-background text-foreground"
             >
-              <option value="light">Light</option>
-              <option value="dark">Dark</option>
-              <option value="system">System</option>
-            </select>
+              <SelectTrigger className="w-full sm:w-[200px]">
+                <SelectValue placeholder="Select theme" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="light">Light</SelectItem>
+                <SelectItem value="dark">Dark</SelectItem>
+                <SelectItem value="system">System</SelectItem>
+              </SelectContent>
+            </Select>
           </div>
         </div>
 
         {/* About Section */}
-        <div className="mt-8 bg-card rounded-lg border border-border p-4">
+        <div className="mt-8 bg-card rounded-lg border border-border p-6">
           <h2 className="text-lg font-semibold text-foreground mb-2">
             About Worry Box
           </h2>
-          <p className="text-sm text-muted-foreground mb-1">Version 0.1.3</p>
+          <p className="text-sm text-muted-foreground mb-1">Version 0.1.4</p>
           <p className="text-sm text-muted-foreground italic">
             "You can't always control what happens, but you can control when you worry about it."
           </p>

@@ -237,7 +237,15 @@ Private - Luke & Jack Tondeur (60/40 equity split)
 
 ## Version
 
-**0.1.3** - Release & Let Go (Current)
+**0.1.4** - Testing & Quality Assurance (Current)
+- **shadcn/ui enhancements** - Added Switch, Select, Separator, Badge components
+- **Settings redesign** - Upgraded to use shadcn Switch and Select for better UX
+- **WorryCard polish** - Enhanced with shadcn Card, Badge, and Button components
+- **Vitest testing** - Comprehensive test suite for state management and utilities
+- **Lefthook integration** - Pre-commit hooks for type checking and linting
+- **GitHub Actions CI** - Automated testing and build verification
+
+0.1.3 - Release & Let Go
 - **"I Can't Control This"** quick action - Release worries you can't control directly into the box
 - Metaphorical "worry release" for accepting what's beyond your control
 - Special encouraging message when releasing worries

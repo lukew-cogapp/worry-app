@@ -1,0 +1,26 @@
+# Lefthook configuration for Worry Box
+
+pre-commit:
+  parallel: true
+  commands:
+    type-check:
+      glob: '*.{ts,tsx}'
+      run: npx tsc --noEmit
+
+    biome-check:
+      glob: '*.{ts,tsx,js,jsx,json}'
+      run: npx biome check {staged_files} --files-ignore-unknown=true
+
+    biome-format:
+      glob: '*.{ts,tsx,js,jsx,json}'
+      run: npx biome format {staged_files} --files-ignore-unknown=true
+      stage_fixed: true
+
+pre-push:
+  parallel: true
+  commands:
+    test:
+      run: npm run test -- --run
+
+    build:
+      run: npm run build

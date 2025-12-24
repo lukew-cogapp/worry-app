@@ -1,4 +1,8 @@
 import type React from 'react';
+import { Badge } from './ui/badge';
+import { Button } from './ui/button';
+import { Card, CardContent } from './ui/card';
+import { Separator } from './ui/separator';
 import type { Worry } from '../types';
 import { formatDateTime, getRelativeTime } from '../utils/dates';
 
@@ -19,141 +23,148 @@ export const WorryCard: React.FC<WorryCardProps> = ({
   onUnlockNow,
   onClick,
 }) => {
-  const getStatusIcon = () => {
+  const getStatusBadge = () => {
     switch (worry.status) {
       case 'locked':
-        return '🔒';
+        return (
+          <Badge variant="secondary" className="bg-primary/10 text-primary hover:bg-primary/20">
+            🔒 Locked
+          </Badge>
+        );
       case 'unlocked':
-        return '📦';
+        return (
+          <Badge variant="secondary" className="bg-secondary/50 text-secondary-foreground">
+            📦 Ready
+          </Badge>
+        );
       case 'resolved':
-        return '✓';
+        return (
+          <Badge variant="secondary" className="bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-300">
+            ✓ Resolved
+          </Badge>
+        );
       case 'dismissed':
-        return '✕';
+        return (
+          <Badge variant="outline" className="text-muted-foreground">
+            ✕ Released
+          </Badge>
+        );
       default:
-        return '📦';
-    }
-  };
-
-  const getStatusColor = () => {
-    switch (worry.status) {
-      case 'locked':
-        return 'bg-blue-50 dark:bg-blue-900/20 border-blue-200 dark:border-blue-800';
-      case 'unlocked':
-        return 'bg-purple-50 dark:bg-purple-900/20 border-purple-200 dark:border-purple-800';
-      case 'resolved':
-        return 'bg-green-50 dark:bg-green-900/20 border-green-200 dark:border-green-800';
-      case 'dismissed':
-        return 'bg-gray-50 dark:bg-gray-900/20 border-gray-200 dark:border-gray-800';
-      default:
-        return 'bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700';
+        return null;
     }
   };
 
   return (
-    <div
-      className={`rounded-lg border p-4 ${getStatusColor()} transition-all hover:shadow-md ${onClick ? 'cursor-pointer' : ''}`}
+    <Card
+      className="transition-all hover:shadow-md cursor-pointer"
       onClick={() => onClick?.(worry.id)}
-      onKeyDown={(e) => {
-        if ((e.key === 'Enter' || e.key === ' ') && onClick) {
-          e.preventDefault();
-          onClick(worry.id);
-        }
-      }}
-      role={onClick ? 'button' : undefined}
-      tabIndex={onClick ? 0 : undefined}
     >
-      <div className="flex items-start gap-3">
-        <span className="text-2xl" aria-hidden="true">
-          {getStatusIcon()}
-        </span>
-        <div className="flex-1 min-w-0">
-          <p className="text-gray-900 dark:text-gray-100 font-medium line-clamp-2">
-            {worry.content}
-          </p>
-          {worry.action && (
-            <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">Action: {worry.action}</p>
-          )}
-          <div className="flex items-center gap-2 mt-2 text-xs text-gray-500 dark:text-gray-400">
-            {worry.status === 'locked' && <span>Unlocks {getRelativeTime(worry.unlockAt)}</span>}
-            {worry.status === 'unlocked' && worry.unlockedAt && (
-              <span>Unlocked {formatDateTime(worry.unlockedAt)}</span>
-            )}
-            {worry.status === 'resolved' && worry.resolvedAt && (
-              <span>Resolved {formatDateTime(worry.resolvedAt)}</span>
+      <CardContent className="p-4">
+        <div className="flex items-start justify-between gap-3 mb-3">
+          <div className="flex-1 min-w-0">
+            <p className="text-foreground font-medium line-clamp-2">
+              {worry.content}
+            </p>
+            {worry.action && (
+              <p className="text-sm text-muted-foreground mt-1">
+                <span className="font-medium">Action:</span> {worry.action}
+              </p>
             )}
           </div>
+          {getStatusBadge()}
         </div>
-      </div>
 
-      {worry.status === 'locked' && (onUnlockNow || onDismiss) && (
-        <div className="flex gap-2 mt-3 pt-3 border-t border-gray-200 dark:border-gray-700">
-          {onUnlockNow && (
-            <button
-              type="button"
-              onClick={(e) => {
-                e.stopPropagation();
-                onUnlockNow(worry.id);
-              }}
-              className="text-sm px-3 py-1 rounded bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 hover:bg-blue-200 dark:hover:bg-blue-900/50 transition-colors"
-            >
-              Unlock Now
-            </button>
+        <div className="flex items-center gap-2 text-xs text-muted-foreground">
+          {worry.status === 'locked' && <span>Unlocks {getRelativeTime(worry.unlockAt)}</span>}
+          {worry.status === 'unlocked' && worry.unlockedAt && (
+            <span>Unlocked {formatDateTime(worry.unlockedAt)}</span>
           )}
-          {onDismiss && (
-            <button
-              type="button"
-              onClick={(e) => {
-                e.stopPropagation();
-                onDismiss(worry.id);
-              }}
-              className="text-sm px-3 py-1 rounded bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
-            >
-              Dismiss
-            </button>
+          {worry.status === 'resolved' && worry.resolvedAt && (
+            <span>Resolved {formatDateTime(worry.resolvedAt)}</span>
           )}
         </div>
-      )}
 
-      {worry.status === 'unlocked' && (onResolve || onSnooze || onDismiss) && (
-        <div className="flex gap-2 mt-3 pt-3 border-t border-gray-200 dark:border-gray-700">
-          {onResolve && (
-            <button
-              type="button"
-              onClick={(e) => {
-                e.stopPropagation();
-                onResolve(worry.id);
-              }}
-              className="text-sm px-3 py-1 rounded bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-300 hover:bg-green-200 dark:hover:bg-green-900/50 transition-colors"
-            >
-              Mark Done
-            </button>
-          )}
-          {onSnooze && (
-            <button
-              type="button"
-              onClick={(e) => {
-                e.stopPropagation();
-                onSnooze(worry.id);
-              }}
-              className="text-sm px-3 py-1 rounded bg-purple-100 dark:bg-purple-900/30 text-purple-700 dark:text-purple-300 hover:bg-purple-200 dark:hover:bg-purple-900/50 transition-colors"
-            >
-              Snooze 1hr
-            </button>
-          )}
-          {onDismiss && (
-            <button
-              type="button"
-              onClick={(e) => {
-                e.stopPropagation();
-                onDismiss(worry.id);
-              }}
-              className="text-sm px-3 py-1 rounded bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
-            >
-              Dismiss
-            </button>
-          )}
-        </div>
-      )}
-    </div>
+        {worry.status === 'locked' && (onUnlockNow || onDismiss) && (
+          <>
+            <Separator className="my-3" />
+            <div className="flex gap-2">
+              {onUnlockNow && (
+                <Button
+                  variant="secondary"
+                  size="sm"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    onUnlockNow(worry.id);
+                  }}
+                  className="text-xs"
+                >
+                  Unlock Now
+                </Button>
+              )}
+              {onDismiss && (
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    onDismiss(worry.id);
+                  }}
+                  className="text-xs"
+                >
+                  Dismiss
+                </Button>
+              )}
+            </div>
+          </>
+        )}
+
+        {worry.status === 'unlocked' && (onResolve || onSnooze || onDismiss) && (
+          <>
+            <Separator className="my-3" />
+            <div className="flex gap-2">
+              {onResolve && (
+                <Button
+                  variant="default"
+                  size="sm"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    onResolve(worry.id);
+                  }}
+                  className="text-xs bg-green-600 hover:bg-green-700 text-white"
+                >
+                  Mark Done
+                </Button>
+              )}
+              {onSnooze && (
+                <Button
+                  variant="secondary"
+                  size="sm"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    onSnooze(worry.id);
+                  }}
+                  className="text-xs"
+                >
+                  Snooze 1hr
+                </Button>
+              )}
+              {onDismiss && (
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    onDismiss(worry.id);
+                  }}
+                  className="text-xs"
+                >
+                  Dismiss
+                </Button>
+              )}
+            </div>
+          </>
+        )}
+      </CardContent>
+    </Card>
   );
 };
