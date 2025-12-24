@@ -130,6 +130,122 @@ describe('worryStore', () => {
     });
   });
 
+  describe('editWorry', () => {
+    it('should update worry content', async () => {
+      const store = useWorryStore.getState();
+
+      const worry = await store.addWorry({
+        content: 'Original content',
+        unlockAt: new Date().toISOString(),
+      });
+
+      await store.editWorry(worry.id, { content: 'Updated content' });
+
+      const updatedWorry = useWorryStore.getState().worries.find((w) => w.id === worry.id);
+      expect(updatedWorry?.content).toBe('Updated content');
+    });
+
+    it('should update worry action', async () => {
+      const store = useWorryStore.getState();
+
+      const worry = await store.addWorry({
+        content: 'Test worry',
+        action: 'Original action',
+        unlockAt: new Date().toISOString(),
+      });
+
+      await store.editWorry(worry.id, { action: 'Updated action' });
+
+      const updatedWorry = useWorryStore.getState().worries.find((w) => w.id === worry.id);
+      expect(updatedWorry?.action).toBe('Updated action');
+    });
+
+    it('should update unlockAt and reschedule notification', async () => {
+      const store = useWorryStore.getState();
+      const { scheduleWorryNotification, cancelNotification } = await import(
+        '../services/notifications'
+      );
+
+      const originalDate = new Date(Date.now() + 86400000).toISOString();
+      const newDate = new Date(Date.now() + 172800000).toISOString(); // 2 days
+
+      const worry = await store.addWorry({
+        content: 'Test worry',
+        unlockAt: originalDate,
+      });
+
+      vi.clearAllMocks();
+
+      await store.editWorry(worry.id, { unlockAt: newDate });
+
+      const updatedWorry = useWorryStore.getState().worries.find((w) => w.id === worry.id);
+      expect(updatedWorry?.unlockAt).toBe(newDate);
+      expect(cancelNotification).toHaveBeenCalledWith(worry.notificationId);
+      expect(scheduleWorryNotification).toHaveBeenCalled();
+    });
+
+    it('should update multiple fields at once', async () => {
+      const store = useWorryStore.getState();
+
+      const worry = await store.addWorry({
+        content: 'Original content',
+        action: 'Original action',
+        unlockAt: new Date(Date.now() + 86400000).toISOString(),
+      });
+
+      const newDate = new Date(Date.now() + 172800000).toISOString();
+
+      await store.editWorry(worry.id, {
+        content: 'New content',
+        action: 'New action',
+        unlockAt: newDate,
+      });
+
+      const updatedWorry = useWorryStore.getState().worries.find((w) => w.id === worry.id);
+      expect(updatedWorry?.content).toBe('New content');
+      expect(updatedWorry?.action).toBe('New action');
+      expect(updatedWorry?.unlockAt).toBe(newDate);
+    });
+
+    it('should not reschedule notification if unlockAt unchanged', async () => {
+      const store = useWorryStore.getState();
+      const { scheduleWorryNotification, cancelNotification } = await import(
+        '../services/notifications'
+      );
+
+      const worry = await store.addWorry({
+        content: 'Original content',
+        unlockAt: new Date().toISOString(),
+      });
+
+      vi.clearAllMocks();
+
+      await store.editWorry(worry.id, { content: 'Updated content' });
+
+      expect(cancelNotification).not.toHaveBeenCalled();
+      expect(scheduleWorryNotification).not.toHaveBeenCalled();
+    });
+
+    it('should not affect other worries when editing', async () => {
+      const store = useWorryStore.getState();
+
+      const worry1 = await store.addWorry({
+        content: 'First worry',
+        unlockAt: new Date().toISOString(),
+      });
+
+      const worry2 = await store.addWorry({
+        content: 'Second worry',
+        unlockAt: new Date().toISOString(),
+      });
+
+      await store.editWorry(worry1.id, { content: 'Updated first worry' });
+
+      const updatedWorry2 = useWorryStore.getState().worries.find((w) => w.id === worry2.id);
+      expect(updatedWorry2?.content).toBe('Second worry');
+    });
+  });
+
   describe('deleteWorry', () => {
     it('should remove a worry from the list', async () => {
       const store = useWorryStore.getState();
