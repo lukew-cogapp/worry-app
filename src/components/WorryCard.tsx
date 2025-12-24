@@ -4,13 +4,20 @@ import { formatDateTime, getRelativeTime } from '../utils/dates';
 import { Badge } from './ui/badge';
 import { Button } from './ui/button';
 import { Card, CardContent } from './ui/card';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuTrigger,
+} from './ui/dropdown-menu';
 import { Separator } from './ui/separator';
 
 interface WorryCardProps {
   worry: Worry;
   onResolve?: (id: string) => void;
   onDismiss?: (id: string) => void;
-  onSnooze?: (id: string) => void;
+  onSnooze?: (id: string, durationMs: number) => void;
   onUnlockNow?: (id: string) => void;
   onClick?: (id: string) => void;
 }
@@ -137,17 +144,57 @@ export const WorryCard: React.FC<WorryCardProps> = ({
                 </Button>
               )}
               {onSnooze && (
-                <Button
-                  variant="secondary"
-                  size="sm"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    onSnooze(worry.id);
-                  }}
-                  className="text-xs"
-                >
-                  Snooze 1hr
-                </Button>
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button
+                      variant="secondary"
+                      size="sm"
+                      onClick={(e) => e.stopPropagation()}
+                      className="text-xs min-h-[44px]"
+                    >
+                      Snooze
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="start" className="w-48">
+                    <DropdownMenuLabel>Snooze for...</DropdownMenuLabel>
+                    <DropdownMenuItem
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        onSnooze(worry.id, 30 * 60 * 1000);
+                      }}
+                      className="min-h-[44px]"
+                    >
+                      30 minutes
+                    </DropdownMenuItem>
+                    <DropdownMenuItem
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        onSnooze(worry.id, 60 * 60 * 1000);
+                      }}
+                      className="min-h-[44px]"
+                    >
+                      1 hour
+                    </DropdownMenuItem>
+                    <DropdownMenuItem
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        onSnooze(worry.id, 4 * 60 * 60 * 1000);
+                      }}
+                      className="min-h-[44px]"
+                    >
+                      4 hours
+                    </DropdownMenuItem>
+                    <DropdownMenuItem
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        onSnooze(worry.id, 24 * 60 * 60 * 1000);
+                      }}
+                      className="min-h-[44px]"
+                    >
+                      1 day
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
               )}
               {onDismiss && (
                 <Button

@@ -3,6 +3,16 @@ import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { toast } from 'sonner';
 import { EmptyState } from '../components/EmptyState';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from '../components/ui/alert-dialog';
 import { WorryCard } from '../components/WorryCard';
 import { useHaptics } from '../hooks/useHaptics';
 import { useWorryStore } from '../store/worryStore';
@@ -19,6 +29,7 @@ export const History: React.FC = () => {
 
   const [filter, setFilter] = useState<FilterType>('all');
   const [searchQuery, setSearchQuery] = useState('');
+  const [worryToDelete, setWorryToDelete] = useState<string | null>(null);
 
   const filteredWorries = worries
     .filter((w) => (filter === 'all' ? true : w.status === filter))
@@ -48,14 +59,15 @@ export const History: React.FC = () => {
     }
   };
 
-  const handleDelete = async (id: string) => {
-    if (confirm('Are you sure you want to permanently delete this worry?')) {
-      try {
-        await deleteWorry(id);
-        toast.success('Worry deleted');
-      } catch (_error) {
-        toast.error('Failed to delete worry');
-      }
+  const handleDelete = async () => {
+    if (!worryToDelete) return;
+
+    try {
+      await deleteWorry(worryToDelete);
+      toast.success('Worry deleted');
+      setWorryToDelete(null);
+    } catch (_error) {
+      toast.error('Failed to delete worry');
     }
   };
 
@@ -180,8 +192,8 @@ export const History: React.FC = () => {
                   {(worry.status === 'resolved' || worry.status === 'dismissed') && (
                     <button
                       type="button"
-                      onClick={() => handleDelete(worry.id)}
-                      className="absolute top-2 right-2 text-muted-foreground hover:text-destructive transition-colors"
+                      onClick={() => setWorryToDelete(worry.id)}
+                      className="absolute top-2 right-2 min-w-[44px] min-h-[44px] flex items-center justify-center text-muted-foreground hover:text-destructive active:scale-95 transition-all"
                       aria-label="Delete worry"
                     >
                       <svg
@@ -205,6 +217,28 @@ export const History: React.FC = () => {
           </div>
         )}
       </main>
+
+      {/* Delete Confirmation Dialog */}
+      <AlertDialog open={!!worryToDelete} onOpenChange={(open) => !open && setWorryToDelete(null)}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Delete Worry?</AlertDialogTitle>
+            <AlertDialogDescription>
+              This action cannot be undone. This will permanently delete this worry from your
+              history.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={handleDelete}
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+            >
+              Delete
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 };

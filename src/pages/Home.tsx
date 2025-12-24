@@ -46,11 +46,26 @@ export const Home: React.FC = () => {
     }
   };
 
-  const handleSnooze = async (id: string) => {
+  const handleSnooze = async (id: string, durationMs: number) => {
     try {
-      await snoozeWorry(id, 60 * 60 * 1000); // 1 hour
+      await snoozeWorry(id, durationMs);
       await lockWorry();
-      toast.success('Worry snoozed for 1 hour');
+
+      // Format duration message
+      const minutes = durationMs / (60 * 1000);
+      const hours = minutes / 60;
+      const days = hours / 24;
+
+      let message = 'Worry snoozed for ';
+      if (days >= 1) {
+        message += `${days} ${days === 1 ? 'day' : 'days'}`;
+      } else if (hours >= 1) {
+        message += `${hours} ${hours === 1 ? 'hour' : 'hours'}`;
+      } else {
+        message += `${minutes} ${minutes === 1 ? 'minute' : 'minutes'}`;
+      }
+
+      toast.success(message);
     } catch (_error) {
       toast.error('Failed to snooze worry');
     }

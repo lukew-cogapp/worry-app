@@ -19,10 +19,7 @@ export const DateTimePicker: React.FC<DateTimePickerProps> = ({
   return (
     <div className="space-y-3">
       <div>
-        <label
-          htmlFor="unlock-datetime"
-          className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
-        >
+        <label htmlFor="unlock-datetime" className="block text-sm font-medium text-foreground mb-1">
           When can you act on this?
         </label>
         <input
@@ -30,31 +27,31 @@ export const DateTimePicker: React.FC<DateTimePickerProps> = ({
           id="unlock-datetime"
           value={value ? new Date(value).toISOString().slice(0, 16) : ''}
           onChange={(e) => onChange(new Date(e.target.value).toISOString())}
-          className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+          className="w-full min-h-[44px] px-3 py-2 border border-border rounded-md bg-background text-foreground focus:ring-2 focus:ring-primary focus:border-transparent transition-shadow"
         />
       </div>
 
       <div>
-        <p className="text-sm text-gray-600 dark:text-gray-400 mb-2">Quick options:</p>
+        <p className="text-sm text-muted-foreground mb-2">Quick options:</p>
         <div className="grid grid-cols-3 gap-2">
           <button
             type="button"
             onClick={() => handleQuickSelect(getTomorrow(defaultTime))}
-            className="px-3 py-2 text-sm rounded-md bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
+            className="min-h-[44px] px-3 py-2 text-sm rounded-md bg-secondary text-secondary-foreground hover:bg-secondary/80 active:scale-95 transition-all"
           >
             Tomorrow
           </button>
           <button
             type="button"
             onClick={() => handleQuickSelect(getNextMonday(defaultTime))}
-            className="px-3 py-2 text-sm rounded-md bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
+            className="min-h-[44px] px-3 py-2 text-sm rounded-md bg-secondary text-secondary-foreground hover:bg-secondary/80 active:scale-95 transition-all"
           >
             Monday
           </button>
           <button
             type="button"
             onClick={() => handleQuickSelect(getNextWeek(defaultTime))}
-            className="px-3 py-2 text-sm rounded-md bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
+            className="min-h-[44px] px-3 py-2 text-sm rounded-md bg-secondary text-secondary-foreground hover:bg-secondary/80 active:scale-95 transition-all"
           >
             Next Week
           </button>
