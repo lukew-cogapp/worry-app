@@ -26,12 +26,15 @@ Worry Box is built with:
 - ✅ Dark mode support
 
 ### New in v1.1
+- ✅ **Insights Dashboard** - Metrics showing progress, patterns, and completion rates
+- ✅ **Complete Design Token System** - All spacing, sizing, and touch targets use semantic tokens
 - ✅ **Toast notifications** - Instant feedback for all actions (via Sonner)
 - ✅ **Lock animation** - Satisfying visual feedback when locking worries
 - ✅ **Keyboard shortcuts** - Ctrl/Cmd+Enter to submit, Escape to close modals
 - ✅ **Search in History** - Find worries by content or action text
 - ✅ **Onboarding flow** - Welcoming first-time user experience
 - ✅ **Error handling** - Graceful error messages with recovery options
+- ✅ **Production-ready code quality** - Fixed all critical issues from code review
 
 ### Technical Highlights
 - Local-first storage (no backend required)
@@ -48,19 +51,28 @@ Worry Box is built with:
 worry-app/
 ├── src/
 │   ├── components/        # Reusable UI components
+│   │   ├── ui/           # shadcn/ui base components
 │   │   ├── AddWorrySheet.tsx
 │   │   ├── DateTimePicker.tsx
+│   │   ├── EditWorrySheet.tsx
 │   │   ├── EmptyState.tsx
+│   │   ├── LockAnimation.tsx
+│   │   ├── Onboarding.tsx
 │   │   └── WorryCard.tsx
+│   ├── config/           # Configuration and constants
+│   │   ├── constants.ts  # Magic numbers, durations, sizes
+│   │   └── language.ts   # All user-facing text (i18n-ready)
 │   ├── pages/            # Route pages
-│   │   ├── Home.tsx
-│   │   ├── History.tsx
-│   │   └── Settings.tsx
+│   │   ├── Home.tsx      # Main dashboard
+│   │   ├── History.tsx   # All worries with search/filter
+│   │   ├── Insights.tsx  # Metrics and patterns (NEW)
+│   │   └── Settings.tsx  # User preferences
 │   ├── hooks/            # Custom React hooks
+│   │   ├── useEscapeKey.ts
 │   │   └── useHaptics.ts
 │   ├── services/         # External integrations
-│   │   ├── storage.ts
-│   │   └── notifications.ts
+│   │   ├── storage.ts        # Capacitor Preferences
+│   │   └── notifications.ts  # Capacitor LocalNotifications
 │   ├── store/            # Zustand stores
 │   │   ├── worryStore.ts
 │   │   └── preferencesStore.ts
@@ -71,6 +83,7 @@ worry-app/
 │       └── encouragement.ts
 ├── ios/                  # iOS native project
 ├── android/              # Android native project
+├── CLAUDE.md             # Context for AI development
 └── capacitor.config.ts   # Capacitor configuration
 ```
 

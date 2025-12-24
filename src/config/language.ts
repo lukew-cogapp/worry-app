@@ -251,6 +251,7 @@ export const lang = {
     close: 'Close',
     back: 'Back to home',
     settings: 'Settings',
+    insights: 'Insights',
     delete: 'Delete worry',
     addWorry: 'Add worry',
     editWorry: 'Edit worry',

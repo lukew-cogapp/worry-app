@@ -221,10 +221,10 @@ export const Home: React.FC = () => {
             <Link
               to="/insights"
               className="text-muted-foreground hover:text-foreground transition-colors"
-              aria-label="Insights"
+              aria-label={lang.aria.insights}
             >
               <svg className="size-icon-md" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <title>Insights</title>
+                <title>{lang.aria.insights}</title>
                 <path
                   strokeLinecap="round"
                   strokeLinejoin="round"
