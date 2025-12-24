@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">Worry Box</string>
+    <string name="title_activity_main">Worry Box</string>
+    <string name="package_name">com.worrybox.app</string>
+    <string name="custom_url_scheme">com.worrybox.app</string>
+</resources>
