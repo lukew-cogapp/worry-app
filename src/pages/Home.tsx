@@ -4,24 +4,31 @@ import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { toast } from 'sonner';
 import { AddWorrySheet } from '../components/AddWorrySheet';
+import { EditWorrySheet } from '../components/EditWorrySheet';
 import { EmptyState } from '../components/EmptyState';
 import { LockAnimation } from '../components/LockAnimation';
 import { Onboarding } from '../components/Onboarding';
 import { WorryCard } from '../components/WorryCard';
 import { formatDuration, lang } from '../config/language';
 import { useHaptics } from '../hooks/useHaptics';
+import { usePreferencesStore } from '../store/preferencesStore';
 import { useWorryStore } from '../store/worryStore';
+import type { Worry } from '../types';
 
 export const Home: React.FC = () => {
   const worries = useWorryStore((s) => s.worries);
   const addWorry = useWorryStore((s) => s.addWorry);
+  const editWorry = useWorryStore((s) => s.editWorry);
   const resolveWorry = useWorryStore((s) => s.resolveWorry);
   const dismissWorry = useWorryStore((s) => s.dismissWorry);
   const snoozeWorry = useWorryStore((s) => s.snoozeWorry);
+  const defaultUnlockTime = usePreferencesStore((s) => s.preferences.defaultUnlockTime);
 
   const { lockWorry, resolveWorry: resolveHaptic } = useHaptics();
 
   const [isAddSheetOpen, setIsAddSheetOpen] = useState(false);
+  const [isEditSheetOpen, setIsEditSheetOpen] = useState(false);
+  const [worryToEdit, setWorryToEdit] = useState<Worry | null>(null);
   const [showLockAnimation, setShowLockAnimation] = useState(false);
   const [loadingStates, setLoadingStates] = useState<
     Record<string, { resolving?: boolean; snoozing?: boolean; dismissing?: boolean }>
@@ -126,6 +133,31 @@ export const Home: React.FC = () => {
     }
   };
 
+  const handleEdit = async (
+    id: string,
+    updates: { content?: string; action?: string; unlockAt?: string }
+  ) => {
+    try {
+      await editWorry(id, updates);
+      toast.success(lang.toasts.success.worryUpdated);
+    } catch (_error) {
+      toast.error(lang.toasts.error.updateWorry, {
+        action: {
+          label: 'Retry',
+          onClick: () => handleEdit(id, updates),
+        },
+      });
+    }
+  };
+
+  const handleOpenEdit = (id: string) => {
+    const worry = worries.find((w) => w.id === id);
+    if (worry) {
+      setWorryToEdit(worry);
+      setIsEditSheetOpen(true);
+    }
+  };
+
   return (
     <div className="min-h-screen bg-background">
       {/* Header */}
@@ -179,6 +211,7 @@ export const Home: React.FC = () => {
                   onResolve={handleResolve}
                   onSnooze={handleSnooze}
                   onDismiss={handleDismiss}
+                  onEdit={handleOpenEdit}
                   isResolving={loadingStates[worry.id]?.resolving}
                   isSnoozing={loadingStates[worry.id]?.snoozing}
                   isDismissing={loadingStates[worry.id]?.dismissing}
@@ -230,6 +263,18 @@ export const Home: React.FC = () => {
         onClose={() => setIsAddSheetOpen(false)}
         onAdd={handleAddWorry}
         onRelease={handleRelease}
+      />
+
+      {/* Edit Worry Sheet */}
+      <EditWorrySheet
+        isOpen={isEditSheetOpen}
+        onClose={() => {
+          setIsEditSheetOpen(false);
+          setWorryToEdit(null);
+        }}
+        onEdit={handleEdit}
+        worry={worryToEdit}
+        defaultTime={defaultUnlockTime}
       />
 
       {/* Lock Animation */}

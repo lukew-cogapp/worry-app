@@ -172,6 +172,7 @@ export const lang = {
   toasts: {
     success: {
       worryAdded: 'Worry locked away',
+      worryUpdated: 'Worry updated',
       worryResolved: 'Worry resolved',
       worryDismissed: 'Worry dismissed',
       worryDeleted: 'Worry deleted',
@@ -182,6 +183,7 @@ export const lang = {
     },
     error: {
       saveWorry: 'Could not save worry. Please try again.',
+      updateWorry: 'Could not update worry. Please try again.',
       resolveWorry: 'Could not resolve worry. Please try again.',
       dismissWorry: 'Could not dismiss worry. Please try again.',
       deleteWorry: 'Could not delete worry. Please try again.',
@@ -198,7 +200,14 @@ export const lang = {
     settings: 'Settings',
     delete: 'Delete worry',
     addWorry: 'Add worry',
+    editWorry: 'Edit worry',
     search: 'Search',
+  },
+
+  // Edit worry
+  editWorry: {
+    title: 'Edit Worry',
+    save: 'Save Changes',
   },
 } as const;
 

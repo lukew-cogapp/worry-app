@@ -1,4 +1,4 @@
-import { CheckCircle2, Loader2, Lock, Package, Sparkles } from 'lucide-react';
+import { CheckCircle2, Edit3, Loader2, Lock, Package, Sparkles } from 'lucide-react';
 import type React from 'react';
 import { lang } from '../config/language';
 import type { Worry } from '../types';
@@ -21,6 +21,7 @@ interface WorryCardProps {
   onDismiss?: (id: string) => void;
   onSnooze?: (id: string, durationMs: number) => void;
   onUnlockNow?: (id: string) => void;
+  onEdit?: (id: string) => void;
   onClick?: (id: string) => void;
   isResolving?: boolean;
   isDismissing?: boolean;
@@ -34,6 +35,7 @@ export const WorryCard: React.FC<WorryCardProps> = ({
   onDismiss,
   onSnooze,
   onUnlockNow,
+  onEdit,
   onClick,
   isResolving = false,
   isDismissing = false,
@@ -102,7 +104,23 @@ export const WorryCard: React.FC<WorryCardProps> = ({
               </p>
             )}
           </div>
-          {getStatusBadge()}
+          <div className="flex items-center gap-2">
+            {getStatusBadge()}
+            {onEdit && (worry.status === 'locked' || worry.status === 'unlocked') && (
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onEdit(worry.id);
+                }}
+                className="h-8 w-8 text-muted-foreground hover:text-foreground"
+                aria-label={lang.aria.editWorry}
+              >
+                <Edit3 className="w-4 h-4" />
+              </Button>
+            )}
+          </div>
         </div>
 
         <div className="flex items-center gap-2 text-xs text-muted-foreground">

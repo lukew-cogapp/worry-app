@@ -12,6 +12,10 @@ interface WorryStore {
   addWorry: (
     worry: Omit<Worry, 'id' | 'createdAt' | 'status' | 'notificationId'>
   ) => Promise<Worry>;
+  editWorry: (
+    id: string,
+    updates: { content?: string; action?: string; unlockAt?: string }
+  ) => Promise<void>;
   resolveWorry: (id: string) => Promise<void>;
   dismissWorry: (id: string) => Promise<void>;
   snoozeWorry: (id: string, duration: number) => Promise<void>;
@@ -59,6 +63,32 @@ export const useWorryStore = create<WorryStore>((set, get) => ({
     await storage.saveWorries(worries);
 
     return worry;
+  },
+
+  editWorry: async (id, updates) => {
+    const worry = get().worries.find((w) => w.id === id);
+    if (!worry) return;
+
+    // Cancel existing notification if unlockAt is being changed
+    if (updates.unlockAt && updates.unlockAt !== worry.unlockAt) {
+      await notifications.cancelNotification(worry.notificationId);
+    }
+
+    const updatedWorry = {
+      ...worry,
+      content: updates.content ?? worry.content,
+      action: updates.action ?? worry.action,
+      unlockAt: updates.unlockAt ?? worry.unlockAt,
+    };
+
+    // Reschedule notification if unlockAt changed
+    if (updates.unlockAt && updates.unlockAt !== worry.unlockAt) {
+      updatedWorry.notificationId = await notifications.scheduleWorryNotification(updatedWorry);
+    }
+
+    const worries = get().worries.map((w) => (w.id === id ? updatedWorry : w));
+    set({ worries });
+    await storage.saveWorries(worries);
   },
 
   resolveWorry: async (id) => {

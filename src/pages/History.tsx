@@ -3,6 +3,7 @@ import type React from 'react';
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { toast } from 'sonner';
+import { EditWorrySheet } from '../components/EditWorrySheet';
 import { EmptyState } from '../components/EmptyState';
 import {
   AlertDialog,
@@ -18,21 +19,27 @@ import { Button } from '../components/ui/button';
 import { WorryCard } from '../components/WorryCard';
 import { lang } from '../config/language';
 import { useHaptics } from '../hooks/useHaptics';
+import { usePreferencesStore } from '../store/preferencesStore';
 import { useWorryStore } from '../store/worryStore';
+import type { Worry } from '../types';
 
 type FilterType = 'all' | 'locked' | 'unlocked' | 'resolved' | 'dismissed';
 
 export const History: React.FC = () => {
   const worries = useWorryStore((s) => s.worries);
+  const editWorry = useWorryStore((s) => s.editWorry);
   const unlockWorryNow = useWorryStore((s) => s.unlockWorryNow);
   const dismissWorry = useWorryStore((s) => s.dismissWorry);
   const deleteWorry = useWorryStore((s) => s.deleteWorry);
+  const defaultUnlockTime = usePreferencesStore((s) => s.preferences.defaultUnlockTime);
 
   const { unlockWorry: unlockHaptic } = useHaptics();
 
   const [filter, setFilter] = useState<FilterType>('all');
   const [searchQuery, setSearchQuery] = useState('');
   const [worryToDelete, setWorryToDelete] = useState<string | null>(null);
+  const [isEditSheetOpen, setIsEditSheetOpen] = useState(false);
+  const [worryToEdit, setWorryToEdit] = useState<Worry | null>(null);
   const [loadingStates, setLoadingStates] = useState<
     Record<string, { unlocking?: boolean; dismissing?: boolean }>
   >({});
@@ -99,6 +106,31 @@ export const History: React.FC = () => {
       });
     } finally {
       setIsDeleting(false);
+    }
+  };
+
+  const handleEdit = async (
+    id: string,
+    updates: { content?: string; action?: string; unlockAt?: string }
+  ) => {
+    try {
+      await editWorry(id, updates);
+      toast.success(lang.toasts.success.worryUpdated);
+    } catch (_error) {
+      toast.error(lang.toasts.error.updateWorry, {
+        action: {
+          label: 'Retry',
+          onClick: () => handleEdit(id, updates),
+        },
+      });
+    }
+  };
+
+  const handleOpenEdit = (id: string) => {
+    const worry = worries.find((w) => w.id === id);
+    if (worry) {
+      setWorryToEdit(worry);
+      setIsEditSheetOpen(true);
     }
   };
 
@@ -220,6 +252,7 @@ export const History: React.FC = () => {
                     worry={worry}
                     onUnlockNow={worry.status === 'locked' ? handleUnlockNow : undefined}
                     onDismiss={worry.status === 'locked' ? handleDismiss : undefined}
+                    onEdit={handleOpenEdit}
                     isUnlocking={loadingStates[worry.id]?.unlocking}
                     isDismissing={loadingStates[worry.id]?.dismissing}
                   />
@@ -275,6 +308,18 @@ export const History: React.FC = () => {
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
+
+      {/* Edit Worry Sheet */}
+      <EditWorrySheet
+        isOpen={isEditSheetOpen}
+        onClose={() => {
+          setIsEditSheetOpen(false);
+          setWorryToEdit(null);
+        }}
+        onEdit={handleEdit}
+        worry={worryToEdit}
+        defaultTime={defaultUnlockTime}
+      />
     </div>
   );
 };
