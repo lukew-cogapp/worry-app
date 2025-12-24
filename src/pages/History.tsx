@@ -190,7 +190,6 @@ export const History: React.FC = () => {
                 ? "You haven't added any worries yet."
                 : `You don't have any ${filter} worries.`
             }
-            icon="📦"
           />
         ) : (
           <div className="space-y-3">

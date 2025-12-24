@@ -1,4 +1,4 @@
-import { Loader2 } from 'lucide-react';
+import { CheckCircle2, Loader2, Lock, Package, Sparkles } from 'lucide-react';
 import type React from 'react';
 import type { Worry } from '../types';
 import { formatDateTime, getRelativeTime } from '../utils/dates';
@@ -44,13 +44,15 @@ export const WorryCard: React.FC<WorryCardProps> = ({
       case 'locked':
         return (
           <Badge variant="secondary" className="bg-primary/10 text-primary hover:bg-primary/20">
-            🔒 Locked
+            <Lock className="w-3 h-3 mr-1" />
+            Locked
           </Badge>
         );
       case 'unlocked':
         return (
           <Badge variant="secondary" className="bg-secondary/50 text-secondary-foreground">
-            📦 Ready
+            <Package className="w-3 h-3 mr-1" />
+            Ready
           </Badge>
         );
       case 'resolved':
@@ -59,13 +61,15 @@ export const WorryCard: React.FC<WorryCardProps> = ({
             variant="secondary"
             className="bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-300"
           >
-            ✓ Resolved
+            <CheckCircle2 className="w-3 h-3 mr-1" />
+            Resolved
           </Badge>
         );
       case 'dismissed':
         return (
           <Badge variant="outline" className="text-muted-foreground">
-            ✕ Released
+            <Sparkles className="w-3 h-3 mr-1" />
+            Released
           </Badge>
         );
       default:

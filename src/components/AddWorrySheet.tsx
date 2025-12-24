@@ -1,3 +1,4 @@
+import { Lock, Sparkles } from 'lucide-react';
 import type React from 'react';
 import { useCallback, useEffect, useState } from 'react';
 import { usePreferencesStore } from '../store/preferencesStore';
@@ -161,7 +162,8 @@ export const AddWorrySheet: React.FC<AddWorrySheetProps> = ({
                   Cancel
                 </Button>
                 <Button type="submit" disabled={!content.trim()} className="flex-1 min-h-[44px]">
-                  Lock Away Worry 🔒
+                  <Lock className="w-4 h-4 mr-2" />
+                  Lock Away Worry
                 </Button>
               </div>
 
@@ -173,7 +175,7 @@ export const AddWorrySheet: React.FC<AddWorrySheetProps> = ({
                   disabled={!content.trim()}
                   className="w-full min-h-[44px]"
                 >
-                  I Can't Control This — Release It ✨
+                  <Sparkles className="w-4 h-4 mr-2" />I Can't Control This — Release It
                 </Button>
               )}
             </div>

@@ -1,3 +1,4 @@
+import { Bell, Lock, Package, Sparkles } from 'lucide-react';
 import type React from 'react';
 import { useEffect, useState } from 'react';
 import { Button } from './ui/button';
@@ -25,7 +26,9 @@ export const Onboarding: React.FC = () => {
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4">
       <div className="bg-card rounded-2xl max-w-md w-full p-6 shadow-2xl animate-in fade-in zoom-in duration-300 border border-border">
         <div className="flex flex-col items-center text-center space-y-4">
-          <div className="text-6xl mb-2">📦</div>
+          <div className="mb-2">
+            <Package className="w-16 h-16 text-primary" />
+          </div>
 
           <h2 className="text-3xl font-bold text-foreground tracking-tight">
             Welcome to Worry Box
@@ -37,7 +40,9 @@ export const Onboarding: React.FC = () => {
 
           <div className="space-y-3 text-left w-full">
             <div className="flex gap-3">
-              <div className="flex-shrink-0 text-2xl">🔒</div>
+              <div className="flex-shrink-0">
+                <Lock className="w-6 h-6 text-primary" />
+              </div>
               <div>
                 <h3 className="font-semibold text-foreground">Lock Away Worries</h3>
                 <p className="text-sm text-muted-foreground">
@@ -47,7 +52,9 @@ export const Onboarding: React.FC = () => {
             </div>
 
             <div className="flex gap-3">
-              <div className="flex-shrink-0 text-2xl">🔔</div>
+              <div className="flex-shrink-0">
+                <Bell className="w-6 h-6 text-primary" />
+              </div>
               <div>
                 <h3 className="font-semibold text-foreground">Get Reminded</h3>
                 <p className="text-sm text-muted-foreground">
@@ -57,7 +64,9 @@ export const Onboarding: React.FC = () => {
             </div>
 
             <div className="flex gap-3">
-              <div className="flex-shrink-0 text-2xl">✨</div>
+              <div className="flex-shrink-0">
+                <Sparkles className="w-6 h-6 text-primary" />
+              </div>
               <div>
                 <h3 className="font-semibold text-foreground">Stay Calm</h3>
                 <p className="text-sm text-muted-foreground">

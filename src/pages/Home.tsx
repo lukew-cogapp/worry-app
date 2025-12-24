@@ -1,3 +1,4 @@
+import { Lock } from 'lucide-react';
 import type React from 'react';
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
@@ -154,7 +155,6 @@ export const Home: React.FC = () => {
           <EmptyState
             title="No worries yet"
             message="Add your first worry and lock it away until you can act on it."
-            icon="📦"
           />
         )}
 
@@ -184,7 +184,7 @@ export const Home: React.FC = () => {
           <section>
             <div className="bg-secondary/20 rounded-lg p-6 border border-primary/20">
               <div className="flex items-center gap-3 mb-2">
-                <span className="text-3xl">🔒</span>
+                <Lock className="w-8 h-8 text-primary" />
                 <div>
                   <h2 className="text-xl font-bold text-foreground tracking-tight">
                     {lockedWorries.length} {lockedWorries.length === 1 ? 'Worry' : 'Worries'} Safely
