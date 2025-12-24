@@ -66,19 +66,19 @@ export const Home: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
+    <div className="min-h-screen bg-background">
       {/* Header */}
-      <header className="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700">
+      <header className="bg-card border-b border-border">
         <div className="max-w-4xl mx-auto px-4 py-4 flex items-center justify-between">
           <div>
-            <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">Worry Box</h1>
-            <p className="text-sm text-gray-600 dark:text-gray-400">
+            <h1 className="text-2xl font-bold text-foreground">Worry Box</h1>
+            <p className="text-sm text-muted-foreground">
               Store your worries until you can act
             </p>
           </div>
           <Link
             to="/settings"
-            className="text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100"
+            className="text-muted-foreground hover:text-foreground transition-colors"
             aria-label="Settings"
           >
             <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -113,7 +113,7 @@ export const Home: React.FC = () => {
         {/* Unlocked Worries */}
         {unlockedWorries.length > 0 && (
           <section className="mb-8">
-            <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-3">
+            <h2 className="text-lg font-semibold text-foreground mb-3">
               Ready to Act
             </h2>
             <div className="space-y-3">
@@ -133,22 +133,22 @@ export const Home: React.FC = () => {
         {/* Locked Worries Summary */}
         {lockedWorries.length > 0 && (
           <section>
-            <div className="bg-blue-50 dark:bg-blue-900/20 rounded-lg p-6 border border-blue-200 dark:border-blue-800">
+            <div className="bg-secondary/20 rounded-lg p-6 border border-primary/20">
               <div className="flex items-center gap-3 mb-2">
                 <span className="text-3xl">🔒</span>
                 <div>
-                  <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
+                  <h2 className="text-lg font-semibold text-foreground">
                     {lockedWorries.length} {lockedWorries.length === 1 ? 'Worry' : 'Worries'} Safely
                     Stored
                   </h2>
-                  <p className="text-sm text-gray-600 dark:text-gray-400">
+                  <p className="text-sm text-muted-foreground">
                     Your worries are locked away. Rest easy.
                   </p>
                 </div>
               </div>
               <Link
                 to="/history"
-                className="text-sm text-blue-600 dark:text-blue-400 hover:underline inline-block mt-2"
+                className="text-sm text-primary hover:underline inline-block mt-2"
               >
                 View all locked worries →
               </Link>
@@ -161,7 +161,7 @@ export const Home: React.FC = () => {
       <button
         type="button"
         onClick={() => setIsAddSheetOpen(true)}
-        className="fixed bottom-6 right-6 w-14 h-14 bg-primary-600 hover:bg-primary-700 text-white rounded-full shadow-lg flex items-center justify-center text-2xl transition-transform hover:scale-110 active:scale-95"
+        className="fixed bottom-6 right-6 w-14 h-14 bg-primary hover:bg-primary/90 text-primary-foreground rounded-full shadow-lg flex items-center justify-center text-2xl transition-transform hover:scale-110 active:scale-95"
         aria-label="Add worry"
       >
         +

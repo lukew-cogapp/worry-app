@@ -68,13 +68,13 @@ export const History: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
+    <div className="min-h-screen bg-background">
       {/* Header */}
-      <header className="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700">
+      <header className="bg-card border-b border-border">
         <div className="max-w-4xl mx-auto px-4 py-4 flex items-center gap-4">
           <Link
             to="/"
-            className="text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100"
+            className="text-muted-foreground hover:text-foreground transition-colors"
             aria-label="Back to home"
           >
             <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -88,14 +88,14 @@ export const History: React.FC = () => {
             </svg>
           </Link>
           <div>
-            <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">Worry History</h1>
-            <p className="text-sm text-gray-600 dark:text-gray-400">View all your worries</p>
+            <h1 className="text-2xl font-bold text-foreground">Worry History</h1>
+            <p className="text-sm text-muted-foreground">View all your worries</p>
           </div>
         </div>
       </header>
 
       {/* Filters */}
-      <div className="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700">
+      <div className="bg-card border-b border-border">
         <div className="max-w-4xl mx-auto px-4 py-3 overflow-x-auto">
           <div className="flex gap-2">
             {(
@@ -113,8 +113,8 @@ export const History: React.FC = () => {
                 onClick={() => setFilter(key)}
                 className={`px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-colors ${
                   filter === key
-                    ? 'bg-primary-600 text-white'
-                    : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'
+                    ? 'bg-primary text-primary-foreground'
+                    : 'bg-secondary text-secondary-foreground hover:bg-secondary/80'
                 }`}
               >
                 {label} ({counts[key]})
@@ -125,7 +125,7 @@ export const History: React.FC = () => {
       </div>
 
       {/* Search */}
-      <div className="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700">
+      <div className="bg-card border-b border-border">
         <div className="max-w-4xl mx-auto px-4 py-3">
           <div className="relative">
             <input
@@ -133,10 +133,10 @@ export const History: React.FC = () => {
               placeholder="Search worries..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full px-4 py-2 pl-10 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500 focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+              className="w-full px-4 py-2 pl-10 border border-input rounded-lg bg-background text-foreground placeholder-muted-foreground focus:ring-2 focus:ring-ring focus:border-transparent"
             />
             <svg
-              className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400"
+              className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
@@ -181,7 +181,7 @@ export const History: React.FC = () => {
                     <button
                       type="button"
                       onClick={() => handleDelete(worry.id)}
-                      className="absolute top-2 right-2 text-gray-400 hover:text-red-600 dark:hover:text-red-400"
+                      className="absolute top-2 right-2 text-muted-foreground hover:text-destructive transition-colors"
                       aria-label="Delete worry"
                     >
                       <svg

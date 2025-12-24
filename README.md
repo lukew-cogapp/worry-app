@@ -10,6 +10,7 @@ Worry Box is built with:
 - **Vite** + **React 19** + **TypeScript** for a modern development experience
 - **Capacitor 8** for native iOS and Android functionality
 - **Tailwind CSS v4** for styling (CSS-first configuration)
+- **shadcn/ui** for accessible, polished UI components
 - **Zustand** for state management
 - **Biome** for linting and formatting
 
@@ -236,7 +237,13 @@ Private - Luke & Jack Tondeur (60/40 equity split)
 
 ## Version
 
-**0.1.1** - Enhanced UX Release (Current)
+**0.1.2** - Calming Design Update (Current)
+- shadcn/ui component library integration
+- Calming color palette with soft blues and lavenders
+- Semantic color tokens for consistent theming
+- Enhanced accessibility and visual polish
+
+0.1.1 - Enhanced UX Release
 - Toast notifications for instant feedback
 - Lock animation for visual delight
 - Keyboard shortcuts for power users
