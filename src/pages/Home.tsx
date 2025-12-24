@@ -8,6 +8,7 @@ import { EmptyState } from '../components/EmptyState';
 import { LockAnimation } from '../components/LockAnimation';
 import { Onboarding } from '../components/Onboarding';
 import { WorryCard } from '../components/WorryCard';
+import { formatDuration, lang } from '../config/language';
 import { useHaptics } from '../hooks/useHaptics';
 import { useWorryStore } from '../store/worryStore';
 
@@ -36,7 +37,12 @@ export const Home: React.FC = () => {
       await lockWorry();
       setShowLockAnimation(true);
     } catch (_error) {
-      toast.error('Failed to save worry');
+      toast.error(lang.toasts.error.saveWorry, {
+        action: {
+          label: 'Retry',
+          onClick: () => handleAddWorry(worry),
+        },
+      });
     }
   };
 
@@ -45,9 +51,14 @@ export const Home: React.FC = () => {
     try {
       await resolveWorry(id);
       await resolveHaptic();
-      toast.success('Worry resolved! Well done! ✓');
+      toast.success(lang.toasts.success.worryResolved);
     } catch (_error) {
-      toast.error('Failed to resolve worry');
+      toast.error(lang.toasts.error.resolveWorry, {
+        action: {
+          label: 'Retry',
+          onClick: () => handleResolve(id),
+        },
+      });
     } finally {
       setLoadingStates((prev) => ({ ...prev, [id]: { ...prev[id], resolving: false } }));
     }
@@ -58,24 +69,14 @@ export const Home: React.FC = () => {
     try {
       await snoozeWorry(id, durationMs);
       await lockWorry();
-
-      // Format duration message
-      const minutes = durationMs / (60 * 1000);
-      const hours = minutes / 60;
-      const days = hours / 24;
-
-      let message = 'Worry snoozed for ';
-      if (days >= 1) {
-        message += `${days} ${days === 1 ? 'day' : 'days'}`;
-      } else if (hours >= 1) {
-        message += `${hours} ${hours === 1 ? 'hour' : 'hours'}`;
-      } else {
-        message += `${minutes} ${minutes === 1 ? 'minute' : 'minutes'}`;
-      }
-
-      toast.success(message);
+      toast.success(lang.toasts.success.snoozed(formatDuration(durationMs)));
     } catch (_error) {
-      toast.error('Failed to snooze worry');
+      toast.error(lang.toasts.error.snoozeWorry, {
+        action: {
+          label: 'Retry',
+          onClick: () => handleSnooze(id, durationMs),
+        },
+      });
     } finally {
       setLoadingStates((prev) => ({ ...prev, [id]: { ...prev[id], snoozing: false } }));
     }
@@ -85,9 +86,14 @@ export const Home: React.FC = () => {
     setLoadingStates((prev) => ({ ...prev, [id]: { ...prev[id], dismissing: true } }));
     try {
       await dismissWorry(id);
-      toast.success('Worry dismissed');
+      toast.success(lang.toasts.success.worryDismissed);
     } catch (_error) {
-      toast.error('Failed to dismiss worry');
+      toast.error(lang.toasts.error.dismissWorry, {
+        action: {
+          label: 'Retry',
+          onClick: () => handleDismiss(id),
+        },
+      });
     } finally {
       setLoadingStates((prev) => ({ ...prev, [id]: { ...prev[id], dismissing: false } }));
     }
@@ -107,12 +113,16 @@ export const Home: React.FC = () => {
       // Immediately dismiss it
       await dismissWorry(worry.id);
 
-      // Show special message
-      toast.success("Worry released. You've let go of what you can't control. ✨", {
+      toast.success(lang.toasts.success.worryReleased, {
         duration: 4000,
       });
     } catch (_error) {
-      toast.error('Failed to release worry');
+      toast.error(lang.toasts.error.releaseWorry, {
+        action: {
+          label: 'Retry',
+          onClick: () => handleRelease(content),
+        },
+      });
     }
   };
 
@@ -122,13 +132,13 @@ export const Home: React.FC = () => {
       <header className="bg-card border-b border-border">
         <div className="max-w-4xl mx-auto px-4 py-4 flex items-center justify-between">
           <div>
-            <h1 className="text-3xl font-bold text-foreground tracking-tight">Worry Box</h1>
-            <p className="text-sm text-muted-foreground">Store your worries until you can act</p>
+            <h1 className="text-3xl font-bold text-foreground tracking-tight">{lang.app.name}</h1>
+            <p className="text-sm text-muted-foreground">{lang.app.tagline}</p>
           </div>
           <Link
             to="/settings"
             className="text-muted-foreground hover:text-foreground transition-colors"
-            aria-label="Settings"
+            aria-label={lang.aria.settings}
           >
             <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <title>Settings</title>
@@ -152,16 +162,15 @@ export const Home: React.FC = () => {
       {/* Main Content */}
       <main className="max-w-4xl mx-auto px-4 py-6 pb-24">
         {!hasWorries && (
-          <EmptyState
-            title="No worries yet"
-            message="Add your first worry and lock it away until you can act on it."
-          />
+          <EmptyState title={lang.home.empty.title} message={lang.home.empty.message} />
         )}
 
         {/* Unlocked Worries */}
         {unlockedWorries.length > 0 && (
           <section className="mb-8">
-            <h2 className="text-xl font-bold text-foreground mb-4 tracking-tight">Ready to Act</h2>
+            <h2 className="text-xl font-bold text-foreground mb-4 tracking-tight">
+              {lang.home.sections.ready}
+            </h2>
             <div className="space-y-3">
               {unlockedWorries.map((worry) => (
                 <WorryCard
@@ -187,11 +196,10 @@ export const Home: React.FC = () => {
                 <Lock className="w-8 h-8 text-primary" />
                 <div>
                   <h2 className="text-xl font-bold text-foreground tracking-tight">
-                    {lockedWorries.length} {lockedWorries.length === 1 ? 'Worry' : 'Worries'} Safely
-                    Stored
+                    {lang.home.sections.locked.title(lockedWorries.length)}
                   </h2>
                   <p className="text-sm text-muted-foreground">
-                    Your worries are locked away. Rest easy.
+                    {lang.home.sections.locked.subtitle}
                   </p>
                 </div>
               </div>
@@ -199,7 +207,7 @@ export const Home: React.FC = () => {
                 to="/history"
                 className="text-sm text-primary hover:underline inline-block mt-2"
               >
-                View all locked worries →
+                {lang.home.sections.locked.viewAll}
               </Link>
             </div>
           </section>
@@ -211,7 +219,7 @@ export const Home: React.FC = () => {
         type="button"
         onClick={() => setIsAddSheetOpen(true)}
         className="fixed bottom-6 right-6 w-14 h-14 bg-primary hover:bg-primary/90 text-primary-foreground rounded-full shadow-lg flex items-center justify-center text-2xl transition-transform hover:scale-110 active:scale-95"
-        aria-label="Add worry"
+        aria-label={lang.aria.addWorry}
       >
         +
       </button>
