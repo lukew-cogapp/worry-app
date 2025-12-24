@@ -21,6 +21,9 @@ export const Home: React.FC = () => {
 
   const [isAddSheetOpen, setIsAddSheetOpen] = useState(false);
   const [showLockAnimation, setShowLockAnimation] = useState(false);
+  const [loadingStates, setLoadingStates] = useState<
+    Record<string, { resolving?: boolean; snoozing?: boolean; dismissing?: boolean }>
+  >({});
 
   const unlockedWorries = worries.filter((w) => w.status === 'unlocked');
   const lockedWorries = worries.filter((w) => w.status === 'locked');
@@ -37,16 +40,20 @@ export const Home: React.FC = () => {
   };
 
   const handleResolve = async (id: string) => {
+    setLoadingStates((prev) => ({ ...prev, [id]: { ...prev[id], resolving: true } }));
     try {
       await resolveWorry(id);
       await resolveHaptic();
       toast.success('Worry resolved! Well done! ✓');
     } catch (_error) {
       toast.error('Failed to resolve worry');
+    } finally {
+      setLoadingStates((prev) => ({ ...prev, [id]: { ...prev[id], resolving: false } }));
     }
   };
 
   const handleSnooze = async (id: string, durationMs: number) => {
+    setLoadingStates((prev) => ({ ...prev, [id]: { ...prev[id], snoozing: true } }));
     try {
       await snoozeWorry(id, durationMs);
       await lockWorry();
@@ -68,15 +75,20 @@ export const Home: React.FC = () => {
       toast.success(message);
     } catch (_error) {
       toast.error('Failed to snooze worry');
+    } finally {
+      setLoadingStates((prev) => ({ ...prev, [id]: { ...prev[id], snoozing: false } }));
     }
   };
 
   const handleDismiss = async (id: string) => {
+    setLoadingStates((prev) => ({ ...prev, [id]: { ...prev[id], dismissing: true } }));
     try {
       await dismissWorry(id);
       toast.success('Worry dismissed');
     } catch (_error) {
       toast.error('Failed to dismiss worry');
+    } finally {
+      setLoadingStates((prev) => ({ ...prev, [id]: { ...prev[id], dismissing: false } }));
     }
   };
 
@@ -158,6 +170,9 @@ export const Home: React.FC = () => {
                   onResolve={handleResolve}
                   onSnooze={handleSnooze}
                   onDismiss={handleDismiss}
+                  isResolving={loadingStates[worry.id]?.resolving}
+                  isSnoozing={loadingStates[worry.id]?.snoozing}
+                  isDismissing={loadingStates[worry.id]?.dismissing}
                 />
               ))}
             </div>

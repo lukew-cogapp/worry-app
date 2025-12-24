@@ -1,3 +1,4 @@
+import { Loader2 } from 'lucide-react';
 import type React from 'react';
 import type { Worry } from '../types';
 import { formatDateTime, getRelativeTime } from '../utils/dates';
@@ -20,6 +21,10 @@ interface WorryCardProps {
   onSnooze?: (id: string, durationMs: number) => void;
   onUnlockNow?: (id: string) => void;
   onClick?: (id: string) => void;
+  isResolving?: boolean;
+  isDismissing?: boolean;
+  isSnoozing?: boolean;
+  isUnlocking?: boolean;
 }
 
 export const WorryCard: React.FC<WorryCardProps> = ({
@@ -29,6 +34,10 @@ export const WorryCard: React.FC<WorryCardProps> = ({
   onSnooze,
   onUnlockNow,
   onClick,
+  isResolving = false,
+  isDismissing = false,
+  isSnoozing = false,
+  isUnlocking = false,
 }) => {
   const getStatusBadge = () => {
     switch (worry.status) {
@@ -104,8 +113,10 @@ export const WorryCard: React.FC<WorryCardProps> = ({
                     e.stopPropagation();
                     onUnlockNow(worry.id);
                   }}
+                  disabled={isUnlocking || isDismissing}
                   className="text-xs"
                 >
+                  {isUnlocking && <Loader2 className="mr-1 h-3 w-3 animate-spin" />}
                   Unlock Now
                 </Button>
               )}
@@ -117,8 +128,10 @@ export const WorryCard: React.FC<WorryCardProps> = ({
                     e.stopPropagation();
                     onDismiss(worry.id);
                   }}
+                  disabled={isUnlocking || isDismissing}
                   className="text-xs"
                 >
+                  {isDismissing && <Loader2 className="mr-1 h-3 w-3 animate-spin" />}
                   Dismiss
                 </Button>
               )}
@@ -138,8 +151,10 @@ export const WorryCard: React.FC<WorryCardProps> = ({
                     e.stopPropagation();
                     onResolve(worry.id);
                   }}
+                  disabled={isResolving || isSnoozing || isDismissing}
                   className="text-xs bg-green-600 hover:bg-green-700 text-white"
                 >
+                  {isResolving && <Loader2 className="mr-1 h-3 w-3 animate-spin" />}
                   Mark Done
                 </Button>
               )}
@@ -150,8 +165,10 @@ export const WorryCard: React.FC<WorryCardProps> = ({
                       variant="secondary"
                       size="sm"
                       onClick={(e) => e.stopPropagation()}
+                      disabled={isResolving || isSnoozing || isDismissing}
                       className="text-xs min-h-[44px]"
                     >
+                      {isSnoozing && <Loader2 className="mr-1 h-3 w-3 animate-spin" />}
                       Snooze
                     </Button>
                   </DropdownMenuTrigger>
@@ -204,8 +221,10 @@ export const WorryCard: React.FC<WorryCardProps> = ({
                     e.stopPropagation();
                     onDismiss(worry.id);
                   }}
+                  disabled={isResolving || isSnoozing || isDismissing}
                   className="text-xs"
                 >
+                  {isDismissing && <Loader2 className="mr-1 h-3 w-3 animate-spin" />}
                   Dismiss
                 </Button>
               )}

@@ -1,3 +1,4 @@
+import { Loader2 } from 'lucide-react';
 import type React from 'react';
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
@@ -31,6 +32,10 @@ export const History: React.FC = () => {
   const [filter, setFilter] = useState<FilterType>('all');
   const [searchQuery, setSearchQuery] = useState('');
   const [worryToDelete, setWorryToDelete] = useState<string | null>(null);
+  const [loadingStates, setLoadingStates] = useState<
+    Record<string, { unlocking?: boolean; dismissing?: boolean }>
+  >({});
+  const [isDeleting, setIsDeleting] = useState(false);
 
   const filteredWorries = worries
     .filter((w) => (filter === 'all' ? true : w.status === filter))
@@ -42,33 +47,42 @@ export const History: React.FC = () => {
     );
 
   const handleUnlockNow = async (id: string) => {
+    setLoadingStates((prev) => ({ ...prev, [id]: { ...prev[id], unlocking: true } }));
     try {
       await unlockWorryNow(id);
       await unlockHaptic();
       toast.success('Worry unlocked now!');
     } catch (_error) {
       toast.error('Failed to unlock worry');
+    } finally {
+      setLoadingStates((prev) => ({ ...prev, [id]: { ...prev[id], unlocking: false } }));
     }
   };
 
   const handleDismiss = async (id: string) => {
+    setLoadingStates((prev) => ({ ...prev, [id]: { ...prev[id], dismissing: true } }));
     try {
       await dismissWorry(id);
       toast.success('Worry dismissed');
     } catch (_error) {
       toast.error('Failed to dismiss worry');
+    } finally {
+      setLoadingStates((prev) => ({ ...prev, [id]: { ...prev[id], dismissing: false } }));
     }
   };
 
   const handleDelete = async () => {
     if (!worryToDelete) return;
 
+    setIsDeleting(true);
     try {
       await deleteWorry(worryToDelete);
       toast.success('Worry deleted');
       setWorryToDelete(null);
     } catch (_error) {
       toast.error('Failed to delete worry');
+    } finally {
+      setIsDeleting(false);
     }
   };
 
@@ -189,6 +203,8 @@ export const History: React.FC = () => {
                     worry={worry}
                     onUnlockNow={worry.status === 'locked' ? handleUnlockNow : undefined}
                     onDismiss={worry.status === 'locked' ? handleDismiss : undefined}
+                    isUnlocking={loadingStates[worry.id]?.unlocking}
+                    isDismissing={loadingStates[worry.id]?.dismissing}
                   />
                   {(worry.status === 'resolved' || worry.status === 'dismissed') && (
                     <Button
@@ -231,11 +247,13 @@ export const History: React.FC = () => {
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogCancel disabled={isDeleting}>Cancel</AlertDialogCancel>
             <AlertDialogAction
               onClick={handleDelete}
+              disabled={isDeleting}
               className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
             >
+              {isDeleting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
               Delete
             </AlertDialogAction>
           </AlertDialogFooter>
