@@ -3,6 +3,7 @@ import { LocalNotifications } from '@capacitor/local-notifications';
 import { SplashScreen } from '@capacitor/splash-screen';
 import { useEffect } from 'react';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
+import { Toaster } from 'sonner';
 import { History } from './pages/History';
 import { Home } from './pages/Home';
 import { Settings } from './pages/Settings';
@@ -64,6 +65,7 @@ function App() {
 
   return (
     <BrowserRouter>
+      <Toaster position="top-center" richColors />
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/history" element={<History />} />

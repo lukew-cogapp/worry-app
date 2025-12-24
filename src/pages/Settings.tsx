@@ -130,7 +130,7 @@ export const Settings: React.FC = () => {
           <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-2">
             About Worry Box
           </h2>
-          <p className="text-sm text-gray-600 dark:text-gray-400 mb-1">Version 0.1.0</p>
+          <p className="text-sm text-gray-600 dark:text-gray-400 mb-1">Version 0.1.1</p>
           <p className="text-sm text-gray-600 dark:text-gray-400 italic">
             "You can't always control what happens, but you can control when you worry about it."
           </p>

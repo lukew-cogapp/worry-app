@@ -1,5 +1,5 @@
 import type React from 'react';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { usePreferencesStore } from '../store/preferencesStore';
 import { getTomorrow } from '../utils/dates';
 import { DateTimePicker } from './DateTimePicker';
@@ -39,6 +39,23 @@ export const AddWorrySheet: React.FC<AddWorrySheetProps> = ({ isOpen, onClose, o
     setUnlockAt(getTomorrow(defaultUnlockTime).toISOString());
     onClose();
   };
+
+  // Handle Escape key
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape' && isOpen) {
+        handleClose();
+      }
+    };
+
+    if (isOpen) {
+      document.addEventListener('keydown', handleKeyDown);
+    }
+
+    return () => {
+      document.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [isOpen]);
 
   if (!isOpen) return null;
 
@@ -83,6 +100,11 @@ export const AddWorrySheet: React.FC<AddWorrySheetProps> = ({ isOpen, onClose, o
                 id="worry-content"
                 value={content}
                 onChange={(e) => setContent(e.target.value)}
+                onKeyDown={(e) => {
+                  if ((e.metaKey || e.ctrlKey) && e.key === 'Enter' && content.trim()) {
+                    handleSubmit(e);
+                  }
+                }}
                 placeholder="I'm worried about..."
                 rows={3}
                 className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500 focus:ring-2 focus:ring-primary-500 focus:border-transparent resize-none"
@@ -101,6 +123,11 @@ export const AddWorrySheet: React.FC<AddWorrySheetProps> = ({ isOpen, onClose, o
                 id="worry-action"
                 value={action}
                 onChange={(e) => setAction(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' && content.trim()) {
+                    handleSubmit(e);
+                  }
+                }}
                 placeholder="I will..."
                 className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500 focus:ring-2 focus:ring-primary-500 focus:border-transparent"
               />

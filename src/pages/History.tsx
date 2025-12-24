@@ -1,6 +1,7 @@
 import type React from 'react';
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
+import { toast } from 'sonner';
 import { EmptyState } from '../components/EmptyState';
 import { WorryCard } from '../components/WorryCard';
 import { useHaptics } from '../hooks/useHaptics';
@@ -17,12 +18,45 @@ export const History: React.FC = () => {
   const { unlockWorry: unlockHaptic } = useHaptics();
 
   const [filter, setFilter] = useState<FilterType>('all');
+  const [searchQuery, setSearchQuery] = useState('');
 
-  const filteredWorries = filter === 'all' ? worries : worries.filter((w) => w.status === filter);
+  const filteredWorries = worries
+    .filter((w) => (filter === 'all' ? true : w.status === filter))
+    .filter((w) =>
+      searchQuery
+        ? w.content.toLowerCase().includes(searchQuery.toLowerCase()) ||
+          w.action?.toLowerCase().includes(searchQuery.toLowerCase())
+        : true
+    );
 
   const handleUnlockNow = async (id: string) => {
-    await unlockWorryNow(id);
-    await unlockHaptic();
+    try {
+      await unlockWorryNow(id);
+      await unlockHaptic();
+      toast.success('Worry unlocked now!');
+    } catch (error) {
+      toast.error('Failed to unlock worry');
+    }
+  };
+
+  const handleDismiss = async (id: string) => {
+    try {
+      await dismissWorry(id);
+      toast.success('Worry dismissed');
+    } catch (error) {
+      toast.error('Failed to dismiss worry');
+    }
+  };
+
+  const handleDelete = async (id: string) => {
+    if (confirm('Are you sure you want to permanently delete this worry?')) {
+      try {
+        await deleteWorry(id);
+        toast.success('Worry deleted');
+      } catch (error) {
+        toast.error('Failed to delete worry');
+      }
+    }
   };
 
   const counts = {
@@ -90,6 +124,35 @@ export const History: React.FC = () => {
         </div>
       </div>
 
+      {/* Search */}
+      <div className="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700">
+        <div className="max-w-4xl mx-auto px-4 py-3">
+          <div className="relative">
+            <input
+              type="text"
+              placeholder="Search worries..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="w-full px-4 py-2 pl-10 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500 focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+            />
+            <svg
+              className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <title>Search</title>
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+              />
+            </svg>
+          </div>
+        </div>
+      </div>
+
       {/* Main Content */}
       <main className="max-w-4xl mx-auto px-4 py-6">
         {filteredWorries.length === 0 ? (
@@ -112,16 +175,12 @@ export const History: React.FC = () => {
                   <WorryCard
                     worry={worry}
                     onUnlockNow={worry.status === 'locked' ? handleUnlockNow : undefined}
-                    onDismiss={worry.status === 'locked' ? dismissWorry : undefined}
+                    onDismiss={worry.status === 'locked' ? handleDismiss : undefined}
                   />
                   {(worry.status === 'resolved' || worry.status === 'dismissed') && (
                     <button
                       type="button"
-                      onClick={() => {
-                        if (confirm('Are you sure you want to permanently delete this worry?')) {
-                          deleteWorry(worry.id);
-                        }
-                      }}
+                      onClick={() => handleDelete(worry.id)}
                       className="absolute top-2 right-2 text-gray-400 hover:text-red-600 dark:hover:text-red-400"
                       aria-label="Delete worry"
                     >

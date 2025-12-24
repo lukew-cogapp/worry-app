@@ -15,7 +15,7 @@ Worry Box is built with:
 
 ## Features
 
-### Core Functionality
+### Core Functionality (v1.0)
 - ✅ Add worries with custom unlock dates/times
 - ✅ Quick date selection (Tomorrow, Monday, Next Week)
 - ✅ Local notifications when worries unlock
@@ -24,12 +24,22 @@ Worry Box is built with:
 - ✅ Complete history view with filtering
 - ✅ Dark mode support
 
+### New in v1.1
+- ✅ **Toast notifications** - Instant feedback for all actions (via Sonner)
+- ✅ **Lock animation** - Satisfying visual feedback when locking worries
+- ✅ **Keyboard shortcuts** - Ctrl/Cmd+Enter to submit, Escape to close modals
+- ✅ **Search in History** - Find worries by content or action text
+- ✅ **Onboarding flow** - Welcoming first-time user experience
+- ✅ **Error handling** - Graceful error messages with recovery options
+
 ### Technical Highlights
 - Local-first storage (no backend required)
 - Full offline functionality
 - Type-safe with TypeScript
 - Accessible UI components
 - Clean separation of concerns (services, stores, components, utils)
+- Toast notifications via Sonner
+- Optimistic updates with error handling
 
 ## Project Structure
 
@@ -225,6 +235,14 @@ This is an MVP built according to the technical specification v0.1.0.
 Private - Luke & Jack Tondeur (60/40 equity split)
 
 ## Version
+
+**0.1.1** - Enhanced UX Release (Current)
+- Toast notifications for instant feedback
+- Lock animation for visual delight
+- Keyboard shortcuts for power users
+- Search functionality in History
+- Onboarding for new users
+- Better error handling
 
 0.1.0 - Initial MVP Release
 

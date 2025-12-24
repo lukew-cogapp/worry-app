@@ -1,8 +1,11 @@
 import type React from 'react';
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
+import { toast } from 'sonner';
 import { AddWorrySheet } from '../components/AddWorrySheet';
 import { EmptyState } from '../components/EmptyState';
+import { LockAnimation } from '../components/LockAnimation';
+import { Onboarding } from '../components/Onboarding';
 import { WorryCard } from '../components/WorryCard';
 import { useHaptics } from '../hooks/useHaptics';
 import { useWorryStore } from '../store/worryStore';
@@ -17,24 +20,49 @@ export const Home: React.FC = () => {
   const { lockWorry, resolveWorry: resolveHaptic } = useHaptics();
 
   const [isAddSheetOpen, setIsAddSheetOpen] = useState(false);
+  const [showLockAnimation, setShowLockAnimation] = useState(false);
 
   const unlockedWorries = worries.filter((w) => w.status === 'unlocked');
   const lockedWorries = worries.filter((w) => w.status === 'locked');
   const hasWorries = worries.length > 0;
 
   const handleAddWorry = async (worry: { content: string; action?: string; unlockAt: string }) => {
-    await addWorry(worry);
-    await lockWorry();
+    try {
+      await addWorry(worry);
+      await lockWorry();
+      setShowLockAnimation(true);
+    } catch (error) {
+      toast.error('Failed to save worry');
+    }
   };
 
   const handleResolve = async (id: string) => {
-    await resolveWorry(id);
-    await resolveHaptic();
+    try {
+      await resolveWorry(id);
+      await resolveHaptic();
+      toast.success('Worry resolved! Well done! ✓');
+    } catch (error) {
+      toast.error('Failed to resolve worry');
+    }
   };
 
   const handleSnooze = async (id: string) => {
-    await snoozeWorry(id, 60 * 60 * 1000); // 1 hour
-    await lockWorry();
+    try {
+      await snoozeWorry(id, 60 * 60 * 1000); // 1 hour
+      await lockWorry();
+      toast.success('Worry snoozed for 1 hour');
+    } catch (error) {
+      toast.error('Failed to snooze worry');
+    }
+  };
+
+  const handleDismiss = async (id: string) => {
+    try {
+      await dismissWorry(id);
+      toast.success('Worry dismissed');
+    } catch (error) {
+      toast.error('Failed to dismiss worry');
+    }
   };
 
   return (
@@ -95,7 +123,7 @@ export const Home: React.FC = () => {
                   worry={worry}
                   onResolve={handleResolve}
                   onSnooze={handleSnooze}
-                  onDismiss={dismissWorry}
+                  onDismiss={handleDismiss}
                 />
               ))}
             </div>
@@ -145,6 +173,12 @@ export const Home: React.FC = () => {
         onClose={() => setIsAddSheetOpen(false)}
         onAdd={handleAddWorry}
       />
+
+      {/* Lock Animation */}
+      <LockAnimation show={showLockAnimation} onComplete={() => setShowLockAnimation(false)} />
+
+      {/* Onboarding */}
+      <Onboarding />
     </div>
   );
 };
