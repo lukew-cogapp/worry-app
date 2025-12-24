@@ -77,7 +77,7 @@ export const AddWorrySheet: React.FC<AddWorrySheetProps> = ({
       <div className="fixed inset-0 bg-black/50 z-40 transition-opacity" />
 
       {/* Modal */}
-      <div className="fixed inset-x-0 bottom-0 z-50 bg-card rounded-t-2xl shadow-2xl max-h-[90vh] overflow-y-auto animate-slide-up">
+      <div className="fixed inset-x-0 bottom-0 z-50 bg-card rounded-t-2xl shadow-dialog max-h-[90vh] overflow-y-auto animate-slide-up">
         <div className="p-6">
           <div className="flex items-center justify-between mb-6">
             <h2 className="text-2xl font-bold text-foreground">{lang.addWorry.title}</h2>

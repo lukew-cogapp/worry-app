@@ -1,5 +1,35 @@
 @import "tailwindcss";
 
+@theme {
+  /* Spacing tokens */
+  --spacing-section: 2rem;
+  --spacing-card: 1rem;
+  --spacing-fab-offset: 1.5rem;
+
+  /* Size tokens */
+  --size-fab: 3.5rem;
+  --size-icon: 1.25rem;
+  --size-icon-sm: 1rem;
+  --size-touch-target: 2.75rem;
+
+  /* Shadow tokens */
+  --shadow-card: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
+  --shadow-dialog: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+
+  /* Animation tokens */
+  --animate-slide-up: slide-up 0.3s ease-out;
+  @keyframes slide-up {
+    from {
+      transform: translateY(100%);
+      opacity: 0;
+    }
+    to {
+      transform: translateY(0);
+      opacity: 1;
+    }
+  }
+}
+
 @layer base {
   :root {
     /* Calming color palette - Soft blues and lavenders */
