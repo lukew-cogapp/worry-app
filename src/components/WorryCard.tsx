@@ -43,14 +43,20 @@ export const WorryCard: React.FC<WorryCardProps> = ({
     switch (worry.status) {
       case 'locked':
         return (
-          <Badge variant="secondary" className="bg-primary/10 text-primary hover:bg-primary/20">
+          <Badge
+            variant="secondary"
+            className="bg-blue-100 dark:bg-blue-950 text-blue-700 dark:text-blue-300 border-blue-200 dark:border-blue-900"
+          >
             <Lock className="w-3 h-3 mr-1" />
             Locked
           </Badge>
         );
       case 'unlocked':
         return (
-          <Badge variant="secondary" className="bg-secondary/50 text-secondary-foreground">
+          <Badge
+            variant="secondary"
+            className="bg-amber-100 dark:bg-amber-950 text-amber-700 dark:text-amber-300 border-amber-200 dark:border-amber-900"
+          >
             <Package className="w-3 h-3 mr-1" />
             Ready
           </Badge>
@@ -59,7 +65,7 @@ export const WorryCard: React.FC<WorryCardProps> = ({
         return (
           <Badge
             variant="secondary"
-            className="bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-300"
+            className="bg-green-100 dark:bg-green-950 text-green-700 dark:text-green-300 border-green-200 dark:border-green-900"
           >
             <CheckCircle2 className="w-3 h-3 mr-1" />
             Resolved
@@ -67,7 +73,10 @@ export const WorryCard: React.FC<WorryCardProps> = ({
         );
       case 'dismissed':
         return (
-          <Badge variant="outline" className="text-muted-foreground">
+          <Badge
+            variant="secondary"
+            className="bg-purple-100 dark:bg-purple-950 text-purple-700 dark:text-purple-300 border-purple-200 dark:border-purple-900"
+          >
             <Sparkles className="w-3 h-3 mr-1" />
             Released
           </Badge>
