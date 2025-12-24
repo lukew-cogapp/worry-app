@@ -1,5 +1,6 @@
 import { CheckCircle2, Loader2, Lock, Package, Sparkles } from 'lucide-react';
 import type React from 'react';
+import { lang } from '../config/language';
 import type { Worry } from '../types';
 import { formatDateTime, getRelativeTime } from '../utils/dates';
 import { Badge } from './ui/badge';
@@ -48,7 +49,7 @@ export const WorryCard: React.FC<WorryCardProps> = ({
             className="bg-blue-100 dark:bg-blue-950 text-blue-700 dark:text-blue-300 border-blue-200 dark:border-blue-900"
           >
             <Lock className="w-3 h-3 mr-1" />
-            Locked
+            {lang.worryCard.status.locked}
           </Badge>
         );
       case 'unlocked':
@@ -58,7 +59,7 @@ export const WorryCard: React.FC<WorryCardProps> = ({
             className="bg-amber-100 dark:bg-amber-950 text-amber-700 dark:text-amber-300 border-amber-200 dark:border-amber-900"
           >
             <Package className="w-3 h-3 mr-1" />
-            Ready
+            {lang.worryCard.status.ready}
           </Badge>
         );
       case 'resolved':
@@ -68,7 +69,7 @@ export const WorryCard: React.FC<WorryCardProps> = ({
             className="bg-green-100 dark:bg-green-950 text-green-700 dark:text-green-300 border-green-200 dark:border-green-900"
           >
             <CheckCircle2 className="w-3 h-3 mr-1" />
-            Resolved
+            {lang.worryCard.status.resolved}
           </Badge>
         );
       case 'dismissed':
@@ -78,7 +79,7 @@ export const WorryCard: React.FC<WorryCardProps> = ({
             className="bg-purple-100 dark:bg-purple-950 text-purple-700 dark:text-purple-300 border-purple-200 dark:border-purple-900"
           >
             <Sparkles className="w-3 h-3 mr-1" />
-            Released
+            {lang.worryCard.status.released}
           </Badge>
         );
       default:
@@ -97,7 +98,7 @@ export const WorryCard: React.FC<WorryCardProps> = ({
             <p className="text-foreground font-medium line-clamp-2">{worry.content}</p>
             {worry.action && (
               <p className="text-sm text-muted-foreground mt-1">
-                <span className="font-medium">Action:</span> {worry.action}
+                <span className="font-medium">{lang.worryCard.labels.action}</span> {worry.action}
               </p>
             )}
           </div>
@@ -105,12 +106,14 @@ export const WorryCard: React.FC<WorryCardProps> = ({
         </div>
 
         <div className="flex items-center gap-2 text-xs text-muted-foreground">
-          {worry.status === 'locked' && <span>Unlocks {getRelativeTime(worry.unlockAt)}</span>}
+          {worry.status === 'locked' && (
+            <span>{lang.worryCard.labels.unlocks(getRelativeTime(worry.unlockAt))}</span>
+          )}
           {worry.status === 'unlocked' && worry.unlockedAt && (
-            <span>Unlocked {formatDateTime(worry.unlockedAt)}</span>
+            <span>{lang.worryCard.labels.unlocked(formatDateTime(worry.unlockedAt))}</span>
           )}
           {worry.status === 'resolved' && worry.resolvedAt && (
-            <span>Resolved {formatDateTime(worry.resolvedAt)}</span>
+            <span>{lang.worryCard.labels.resolved(formatDateTime(worry.resolvedAt))}</span>
           )}
         </div>
 
@@ -130,7 +133,7 @@ export const WorryCard: React.FC<WorryCardProps> = ({
                   className="text-xs"
                 >
                   {isUnlocking && <Loader2 className="mr-1 h-3 w-3 animate-spin" />}
-                  Unlock Now
+                  {lang.worryCard.buttons.unlockNow}
                 </Button>
               )}
               {onDismiss && (
@@ -145,7 +148,7 @@ export const WorryCard: React.FC<WorryCardProps> = ({
                   className="text-xs"
                 >
                   {isDismissing && <Loader2 className="mr-1 h-3 w-3 animate-spin" />}
-                  Dismiss
+                  {lang.worryCard.buttons.dismiss}
                 </Button>
               )}
             </div>
@@ -168,7 +171,7 @@ export const WorryCard: React.FC<WorryCardProps> = ({
                   className="text-xs bg-green-600 hover:bg-green-700 text-white"
                 >
                   {isResolving && <Loader2 className="mr-1 h-3 w-3 animate-spin" />}
-                  Mark Done
+                  {lang.worryCard.buttons.markDone}
                 </Button>
               )}
               {onSnooze && (
@@ -182,11 +185,11 @@ export const WorryCard: React.FC<WorryCardProps> = ({
                       className="text-xs min-h-[44px]"
                     >
                       {isSnoozing && <Loader2 className="mr-1 h-3 w-3 animate-spin" />}
-                      Snooze
+                      {lang.worryCard.buttons.snooze}
                     </Button>
                   </DropdownMenuTrigger>
                   <DropdownMenuContent align="start" className="w-48">
-                    <DropdownMenuLabel>Snooze for...</DropdownMenuLabel>
+                    <DropdownMenuLabel>{lang.worryCard.buttons.snoozeOptions}</DropdownMenuLabel>
                     <DropdownMenuItem
                       onClick={(e) => {
                         e.stopPropagation();
@@ -194,7 +197,7 @@ export const WorryCard: React.FC<WorryCardProps> = ({
                       }}
                       className="min-h-[44px]"
                     >
-                      30 minutes
+                      {lang.worryCard.snooze.thirtyMin}
                     </DropdownMenuItem>
                     <DropdownMenuItem
                       onClick={(e) => {
@@ -203,7 +206,7 @@ export const WorryCard: React.FC<WorryCardProps> = ({
                       }}
                       className="min-h-[44px]"
                     >
-                      1 hour
+                      {lang.worryCard.snooze.oneHour}
                     </DropdownMenuItem>
                     <DropdownMenuItem
                       onClick={(e) => {
@@ -212,7 +215,7 @@ export const WorryCard: React.FC<WorryCardProps> = ({
                       }}
                       className="min-h-[44px]"
                     >
-                      4 hours
+                      {lang.worryCard.snooze.fourHours}
                     </DropdownMenuItem>
                     <DropdownMenuItem
                       onClick={(e) => {
@@ -221,7 +224,7 @@ export const WorryCard: React.FC<WorryCardProps> = ({
                       }}
                       className="min-h-[44px]"
                     >
-                      1 day
+                      {lang.worryCard.snooze.oneDay}
                     </DropdownMenuItem>
                   </DropdownMenuContent>
                 </DropdownMenu>
@@ -238,7 +241,7 @@ export const WorryCard: React.FC<WorryCardProps> = ({
                   className="text-xs"
                 >
                   {isDismissing && <Loader2 className="mr-1 h-3 w-3 animate-spin" />}
-                  Dismiss
+                  {lang.worryCard.buttons.dismiss}
                 </Button>
               )}
             </div>

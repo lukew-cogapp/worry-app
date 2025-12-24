@@ -10,6 +10,7 @@ import {
 } from '../components/ui/select';
 import { Separator } from '../components/ui/separator';
 import { Switch } from '../components/ui/switch';
+import { lang } from '../config/language';
 import { usePreferencesStore } from '../store/preferencesStore';
 
 export const Settings: React.FC = () => {
@@ -24,7 +25,7 @@ export const Settings: React.FC = () => {
           <Link
             to="/"
             className="text-muted-foreground hover:text-foreground transition-colors"
-            aria-label="Back to home"
+            aria-label={lang.aria.back}
           >
             <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <title>Back</title>
@@ -36,7 +37,9 @@ export const Settings: React.FC = () => {
               />
             </svg>
           </Link>
-          <h1 className="text-3xl font-bold text-foreground tracking-tight">Settings</h1>
+          <h1 className="text-3xl font-bold text-foreground tracking-tight">
+            {lang.settings.title}
+          </h1>
         </div>
       </header>
 
@@ -46,10 +49,10 @@ export const Settings: React.FC = () => {
           {/* Default Unlock Time */}
           <div className="p-6">
             <Label htmlFor="default-unlock-time" className="text-base font-medium">
-              Default Unlock Time
+              {lang.settings.sections.defaultTime.title}
             </Label>
             <p className="text-sm text-muted-foreground mt-1 mb-3">
-              When using quick options (Tomorrow, Monday, etc.)
+              {lang.settings.sections.defaultTime.description}
             </p>
             <input
               type="time"
@@ -67,10 +70,10 @@ export const Settings: React.FC = () => {
             <div className="flex items-center justify-between">
               <div className="space-y-0.5">
                 <Label htmlFor="haptic-feedback" className="text-base font-medium">
-                  Haptic Feedback
+                  {lang.settings.sections.hapticFeedback.title}
                 </Label>
                 <p className="text-sm text-muted-foreground">
-                  Tactile feedback when locking/unlocking worries
+                  {lang.settings.sections.hapticFeedback.description}
                 </p>
               </div>
               <Switch
@@ -90,10 +93,10 @@ export const Settings: React.FC = () => {
             <div className="flex items-center justify-between">
               <div className="space-y-0.5">
                 <Label htmlFor="encouraging-messages" className="text-base font-medium">
-                  Encouraging Messages
+                  {lang.settings.sections.encouragingMessages.title}
                 </Label>
                 <p className="text-sm text-muted-foreground">
-                  Show supportive text in notifications
+                  {lang.settings.sections.encouragingMessages.description}
                 </p>
               </div>
               <Switch
@@ -111,9 +114,11 @@ export const Settings: React.FC = () => {
           {/* Theme */}
           <div className="p-6">
             <Label htmlFor="theme" className="text-base font-medium">
-              Theme
+              {lang.settings.sections.theme.title}
             </Label>
-            <p className="text-sm text-muted-foreground mt-1 mb-3">Choose your app appearance</p>
+            <p className="text-sm text-muted-foreground mt-1 mb-3">
+              {lang.settings.sections.theme.description}
+            </p>
             <Select
               value={preferences.theme}
               onValueChange={(value: 'light' | 'dark' | 'system') =>
@@ -124,9 +129,11 @@ export const Settings: React.FC = () => {
                 <SelectValue placeholder="Select theme" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="light">Light</SelectItem>
-                <SelectItem value="dark">Dark</SelectItem>
-                <SelectItem value="system">System</SelectItem>
+                <SelectItem value="light">{lang.settings.sections.theme.options.light}</SelectItem>
+                <SelectItem value="dark">{lang.settings.sections.theme.options.dark}</SelectItem>
+                <SelectItem value="system">
+                  {lang.settings.sections.theme.options.system}
+                </SelectItem>
               </SelectContent>
             </Select>
           </div>
@@ -134,11 +141,13 @@ export const Settings: React.FC = () => {
 
         {/* About Section */}
         <div className="mt-8 bg-card rounded-lg border border-border p-6">
-          <h2 className="text-lg font-semibold text-foreground mb-2">About Worry Box</h2>
-          <p className="text-sm text-muted-foreground mb-1">Version 0.1.4</p>
-          <p className="text-sm text-muted-foreground italic">
-            "You can't always control what happens, but you can control when you worry about it."
+          <h2 className="text-lg font-semibold text-foreground mb-2">
+            {lang.settings.about.title}
+          </h2>
+          <p className="text-sm text-muted-foreground mb-1">
+            {lang.settings.about.version('0.1.4')}
           </p>
+          <p className="text-sm text-muted-foreground italic">{lang.onboarding.quote}</p>
         </div>
       </main>
     </div>

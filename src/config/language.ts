@@ -115,17 +115,27 @@ export const lang = {
         title: 'Default Unlock Time',
         description: 'When using quick options (Tomorrow, Monday, etc.)',
       },
-      notifications: {
-        title: 'Notifications',
-        description: 'Get notified when worries unlock',
+      hapticFeedback: {
+        title: 'Haptic Feedback',
+        description: 'Tactile feedback when locking/unlocking worries',
       },
-      quietHours: {
-        title: 'Quiet Hours',
-        description: 'Pause notifications during these times',
-        enabled: 'Enable quiet hours',
-        start: 'Start time',
-        end: 'End time',
+      encouragingMessages: {
+        title: 'Encouraging Messages',
+        description: 'Show supportive text in notifications',
       },
+      theme: {
+        title: 'Theme',
+        description: 'Choose your app appearance',
+        options: {
+          light: 'Light',
+          dark: 'Dark',
+          system: 'System',
+        },
+      },
+    },
+    about: {
+      title: 'About Worry Box',
+      version: (version: string) => `Version ${version}`,
     },
   },
 

@@ -16,6 +16,7 @@ import {
 } from '../components/ui/alert-dialog';
 import { Button } from '../components/ui/button';
 import { WorryCard } from '../components/WorryCard';
+import { lang } from '../config/language';
 import { useHaptics } from '../hooks/useHaptics';
 import { useWorryStore } from '../store/worryStore';
 
@@ -51,9 +52,14 @@ export const History: React.FC = () => {
     try {
       await unlockWorryNow(id);
       await unlockHaptic();
-      toast.success('Worry unlocked now!');
+      toast.success(lang.toasts.success.worryUnlocked);
     } catch (_error) {
-      toast.error('Failed to unlock worry');
+      toast.error(lang.toasts.error.unlockWorry, {
+        action: {
+          label: 'Retry',
+          onClick: () => handleUnlockNow(id),
+        },
+      });
     } finally {
       setLoadingStates((prev) => ({ ...prev, [id]: { ...prev[id], unlocking: false } }));
     }
@@ -63,9 +69,14 @@ export const History: React.FC = () => {
     setLoadingStates((prev) => ({ ...prev, [id]: { ...prev[id], dismissing: true } }));
     try {
       await dismissWorry(id);
-      toast.success('Worry dismissed');
+      toast.success(lang.toasts.success.worryDismissed);
     } catch (_error) {
-      toast.error('Failed to dismiss worry');
+      toast.error(lang.toasts.error.dismissWorry, {
+        action: {
+          label: 'Retry',
+          onClick: () => handleDismiss(id),
+        },
+      });
     } finally {
       setLoadingStates((prev) => ({ ...prev, [id]: { ...prev[id], dismissing: false } }));
     }
@@ -77,10 +88,15 @@ export const History: React.FC = () => {
     setIsDeleting(true);
     try {
       await deleteWorry(worryToDelete);
-      toast.success('Worry deleted');
+      toast.success(lang.toasts.success.worryDeleted);
       setWorryToDelete(null);
     } catch (_error) {
-      toast.error('Failed to delete worry');
+      toast.error(lang.toasts.error.deleteWorry, {
+        action: {
+          label: 'Retry',
+          onClick: handleDelete,
+        },
+      });
     } finally {
       setIsDeleting(false);
     }
@@ -102,7 +118,7 @@ export const History: React.FC = () => {
           <Link
             to="/"
             className="text-muted-foreground hover:text-foreground transition-colors"
-            aria-label="Back to home"
+            aria-label={lang.aria.back}
           >
             <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <title>Back</title>
@@ -115,8 +131,10 @@ export const History: React.FC = () => {
             </svg>
           </Link>
           <div>
-            <h1 className="text-3xl font-bold text-foreground tracking-tight">Worry History</h1>
-            <p className="text-sm text-muted-foreground">View all your worries</p>
+            <h1 className="text-3xl font-bold text-foreground tracking-tight">
+              {lang.history.title}
+            </h1>
+            <p className="text-sm text-muted-foreground">{lang.history.subtitle}</p>
           </div>
         </div>
       </header>
@@ -127,11 +145,11 @@ export const History: React.FC = () => {
           <div className="flex gap-2">
             {(
               [
-                { key: 'all', label: 'All' },
-                { key: 'locked', label: 'Locked' },
-                { key: 'unlocked', label: 'Unlocked' },
-                { key: 'resolved', label: 'Resolved' },
-                { key: 'dismissed', label: 'Dismissed' },
+                { key: 'all', label: lang.history.filters.all },
+                { key: 'locked', label: lang.history.filters.locked },
+                { key: 'unlocked', label: lang.history.filters.unlocked },
+                { key: 'resolved', label: lang.history.filters.resolved },
+                { key: 'dismissed', label: lang.history.filters.dismissed },
               ] as const
             ).map(({ key, label }) => (
               <button
@@ -157,7 +175,7 @@ export const History: React.FC = () => {
           <div className="relative">
             <input
               type="text"
-              placeholder="Search worries..."
+              placeholder={lang.history.search.placeholder}
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               className="w-full px-4 py-2 pl-10 border border-input rounded-lg bg-background text-foreground placeholder-muted-foreground focus:ring-2 focus:ring-ring focus:border-transparent"
@@ -168,7 +186,7 @@ export const History: React.FC = () => {
               stroke="currentColor"
               viewBox="0 0 24 24"
             >
-              <title>Search</title>
+              <title>{lang.aria.search}</title>
               <path
                 strokeLinecap="round"
                 strokeLinejoin="round"
@@ -184,11 +202,11 @@ export const History: React.FC = () => {
       <main className="max-w-4xl mx-auto px-4 py-6">
         {filteredWorries.length === 0 ? (
           <EmptyState
-            title={`No ${filter === 'all' ? '' : filter} worries`}
+            title={lang.history.empty.title(filter)}
             message={
               filter === 'all'
-                ? "You haven't added any worries yet."
-                : `You don't have any ${filter} worries.`
+                ? lang.history.empty.messageAll
+                : lang.history.empty.messageFiltered(filter)
             }
           />
         ) : (
@@ -211,7 +229,7 @@ export const History: React.FC = () => {
                       size="icon"
                       onClick={() => setWorryToDelete(worry.id)}
                       className="absolute top-2 right-2 text-muted-foreground hover:text-destructive active:scale-95"
-                      aria-label="Delete worry"
+                      aria-label={lang.aria.delete}
                     >
                       <svg
                         className="w-5 h-5"
@@ -239,21 +257,20 @@ export const History: React.FC = () => {
       <AlertDialog open={!!worryToDelete} onOpenChange={(open) => !open && setWorryToDelete(null)}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Delete Worry?</AlertDialogTitle>
-            <AlertDialogDescription>
-              This action cannot be undone. This will permanently delete this worry from your
-              history.
-            </AlertDialogDescription>
+            <AlertDialogTitle>{lang.history.deleteDialog.title}</AlertDialogTitle>
+            <AlertDialogDescription>{lang.history.deleteDialog.description}</AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel disabled={isDeleting}>Cancel</AlertDialogCancel>
+            <AlertDialogCancel disabled={isDeleting}>
+              {lang.history.deleteDialog.cancel}
+            </AlertDialogCancel>
             <AlertDialogAction
               onClick={handleDelete}
               disabled={isDeleting}
               className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
             >
               {isDeleting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-              Delete
+              {lang.history.deleteDialog.confirm}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>

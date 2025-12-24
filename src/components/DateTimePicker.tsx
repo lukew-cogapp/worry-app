@@ -1,4 +1,5 @@
 import type React from 'react';
+import { lang } from '../config/language';
 import { getNextMonday, getNextWeek, getTomorrow } from '../utils/dates';
 import { Button } from './ui/button';
 
@@ -21,7 +22,7 @@ export const DateTimePicker: React.FC<DateTimePickerProps> = ({
     <div className="space-y-3">
       <div>
         <label htmlFor="unlock-datetime" className="block text-sm font-medium text-foreground mb-1">
-          When can you act on this?
+          {lang.addWorry.fields.unlockAt.label}
         </label>
         <input
           type="datetime-local"
@@ -33,7 +34,9 @@ export const DateTimePicker: React.FC<DateTimePickerProps> = ({
       </div>
 
       <div>
-        <p className="text-sm text-muted-foreground mb-2">Quick options:</p>
+        <p className="text-sm text-muted-foreground mb-2">
+          {lang.addWorry.fields.unlockAt.quickOptions}
+        </p>
         <div className="grid grid-cols-3 gap-2">
           <Button
             type="button"
@@ -42,7 +45,7 @@ export const DateTimePicker: React.FC<DateTimePickerProps> = ({
             onClick={() => handleQuickSelect(getTomorrow(defaultTime))}
             className="min-h-[44px] active:scale-95"
           >
-            Tomorrow
+            {lang.dateOptions.tomorrow}
           </Button>
           <Button
             type="button"
@@ -51,7 +54,7 @@ export const DateTimePicker: React.FC<DateTimePickerProps> = ({
             onClick={() => handleQuickSelect(getNextMonday(defaultTime))}
             className="min-h-[44px] active:scale-95"
           >
-            Monday
+            {lang.dateOptions.monday}
           </Button>
           <Button
             type="button"
@@ -60,7 +63,7 @@ export const DateTimePicker: React.FC<DateTimePickerProps> = ({
             onClick={() => handleQuickSelect(getNextWeek(defaultTime))}
             className="min-h-[44px] active:scale-95"
           >
-            Next Week
+            {lang.dateOptions.nextWeek}
           </Button>
         </div>
       </div>

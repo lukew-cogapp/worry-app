@@ -1,6 +1,7 @@
 import { Bell, Lock, Package, Sparkles } from 'lucide-react';
 import type React from 'react';
 import { useEffect, useState } from 'react';
+import { lang } from '../config/language';
 import { Button } from './ui/button';
 
 const ONBOARDING_KEY = 'worry_box_onboarding_complete';
@@ -31,12 +32,10 @@ export const Onboarding: React.FC = () => {
           </div>
 
           <h2 className="text-3xl font-bold text-foreground tracking-tight">
-            Welcome to Worry Box
+            {lang.onboarding.title}
           </h2>
 
-          <p className="text-muted-foreground italic text-sm">
-            "You can't always control what happens, but you can control when you worry about it."
-          </p>
+          <p className="text-muted-foreground italic text-sm">{lang.onboarding.quote}</p>
 
           <div className="space-y-3 text-left w-full">
             <div className="flex gap-3">
@@ -44,9 +43,11 @@ export const Onboarding: React.FC = () => {
                 <Lock className="w-6 h-6 text-primary" />
               </div>
               <div>
-                <h3 className="font-semibold text-foreground">Lock Away Worries</h3>
+                <h3 className="font-semibold text-foreground">
+                  {lang.onboarding.features.lock.title}
+                </h3>
                 <p className="text-sm text-muted-foreground">
-                  Add worries with a future unlock date when you can actually act on them
+                  {lang.onboarding.features.lock.description}
                 </p>
               </div>
             </div>
@@ -56,9 +57,11 @@ export const Onboarding: React.FC = () => {
                 <Bell className="w-6 h-6 text-primary" />
               </div>
               <div>
-                <h3 className="font-semibold text-foreground">Get Reminded</h3>
+                <h3 className="font-semibold text-foreground">
+                  {lang.onboarding.features.remind.title}
+                </h3>
                 <p className="text-sm text-muted-foreground">
-                  Receive notifications when your worries unlock and you can take action
+                  {lang.onboarding.features.remind.description}
                 </p>
               </div>
             </div>
@@ -68,16 +71,18 @@ export const Onboarding: React.FC = () => {
                 <Sparkles className="w-6 h-6 text-primary" />
               </div>
               <div>
-                <h3 className="font-semibold text-foreground">Stay Calm</h3>
+                <h3 className="font-semibold text-foreground">
+                  {lang.onboarding.features.calm.title}
+                </h3>
                 <p className="text-sm text-muted-foreground">
-                  Stop dwelling on things you can't fix right now and find peace
+                  {lang.onboarding.features.calm.description}
                 </p>
               </div>
             </div>
           </div>
 
           <Button onClick={handleComplete} className="w-full mt-4 min-h-[44px]">
-            Get Started
+            {lang.onboarding.cta}
           </Button>
         </div>
       </div>
