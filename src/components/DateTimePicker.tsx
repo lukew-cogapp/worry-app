@@ -1,5 +1,6 @@
 import type React from 'react';
 import { getNextMonday, getNextWeek, getTomorrow } from '../utils/dates';
+import { Button } from './ui/button';
 
 interface DateTimePickerProps {
   value: string;
@@ -34,27 +35,33 @@ export const DateTimePicker: React.FC<DateTimePickerProps> = ({
       <div>
         <p className="text-sm text-muted-foreground mb-2">Quick options:</p>
         <div className="grid grid-cols-3 gap-2">
-          <button
+          <Button
             type="button"
+            variant="secondary"
+            size="sm"
             onClick={() => handleQuickSelect(getTomorrow(defaultTime))}
-            className="min-h-[44px] px-3 py-2 text-sm rounded-md bg-secondary text-secondary-foreground hover:bg-secondary/80 active:scale-95 transition-all"
+            className="min-h-[44px] active:scale-95"
           >
             Tomorrow
-          </button>
-          <button
+          </Button>
+          <Button
             type="button"
+            variant="secondary"
+            size="sm"
             onClick={() => handleQuickSelect(getNextMonday(defaultTime))}
-            className="min-h-[44px] px-3 py-2 text-sm rounded-md bg-secondary text-secondary-foreground hover:bg-secondary/80 active:scale-95 transition-all"
+            className="min-h-[44px] active:scale-95"
           >
             Monday
-          </button>
-          <button
+          </Button>
+          <Button
             type="button"
+            variant="secondary"
+            size="sm"
             onClick={() => handleQuickSelect(getNextWeek(defaultTime))}
-            className="min-h-[44px] px-3 py-2 text-sm rounded-md bg-secondary text-secondary-foreground hover:bg-secondary/80 active:scale-95 transition-all"
+            className="min-h-[44px] active:scale-95"
           >
             Next Week
-          </button>
+          </Button>
         </div>
       </div>
     </div>

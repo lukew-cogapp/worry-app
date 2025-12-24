@@ -3,6 +3,7 @@ import { useCallback, useEffect, useState } from 'react';
 import { usePreferencesStore } from '../store/preferencesStore';
 import { getTomorrow } from '../utils/dates';
 import { DateTimePicker } from './DateTimePicker';
+import { Button } from './ui/button';
 
 interface AddWorrySheetProps {
   isOpen: boolean;
@@ -87,14 +88,15 @@ export const AddWorrySheet: React.FC<AddWorrySheetProps> = ({
         <div className="p-6">
           <div className="flex items-center justify-between mb-6">
             <h2 className="text-2xl font-bold text-foreground">Add Worry</h2>
-            <button
-              type="button"
+            <Button
+              variant="ghost"
+              size="icon"
               onClick={handleClose}
-              className="text-muted-foreground hover:text-foreground text-2xl"
+              className="text-muted-foreground hover:text-foreground text-2xl h-10 w-10"
               aria-label="Close"
             >
               ×
-            </button>
+            </Button>
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-4">
@@ -150,31 +152,29 @@ export const AddWorrySheet: React.FC<AddWorrySheetProps> = ({
 
             <div className="space-y-3 pt-4">
               <div className="flex gap-3">
-                <button
+                <Button
                   type="button"
+                  variant="secondary"
                   onClick={handleClose}
-                  className="flex-1 px-4 py-3 rounded-lg bg-secondary text-secondary-foreground font-medium hover:bg-secondary/80 transition-colors"
+                  className="flex-1 min-h-[44px]"
                 >
                   Cancel
-                </button>
-                <button
-                  type="submit"
-                  disabled={!content.trim()}
-                  className="flex-1 px-4 py-3 rounded-lg bg-primary text-primary-foreground font-medium hover:bg-primary/90 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-                >
+                </Button>
+                <Button type="submit" disabled={!content.trim()} className="flex-1 min-h-[44px]">
                   Lock Away Worry 🔒
-                </button>
+                </Button>
               </div>
 
               {onRelease && (
-                <button
+                <Button
                   type="button"
+                  variant="outline"
                   onClick={handleRelease}
                   disabled={!content.trim()}
-                  className="w-full px-4 py-3 rounded-lg border-2 border-muted-foreground/20 text-muted-foreground font-medium hover:bg-muted hover:border-muted-foreground/30 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                  className="w-full min-h-[44px]"
                 >
                   I Can't Control This — Release It ✨
-                </button>
+                </Button>
               )}
             </div>
           </form>
