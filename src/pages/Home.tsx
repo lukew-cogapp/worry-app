@@ -212,7 +212,7 @@ export const Home: React.FC = () => {
     <div className="min-h-screen bg-background">
       {/* Header */}
       <header className="bg-card border-b border-border">
-        <div className="max-w-4xl mx-auto px-4 py-4 flex items-center justify-between">
+        <div className="max-w-4xl mx-auto px-md py-md flex items-center justify-between">
           <div>
             <h1 className="text-3xl font-bold text-foreground tracking-tight">{lang.app.name}</h1>
             <p className="text-sm text-muted-foreground">{lang.app.tagline}</p>
@@ -222,7 +222,7 @@ export const Home: React.FC = () => {
             className="text-muted-foreground hover:text-foreground transition-colors"
             aria-label={lang.aria.settings}
           >
-            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg className="size-icon-md" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <title>Settings</title>
               <path
                 strokeLinecap="round"
@@ -242,10 +242,10 @@ export const Home: React.FC = () => {
       </header>
 
       {/* Main Content */}
-      <main className="max-w-4xl mx-auto px-4 py-6 pb-24">
+      <main className="max-w-4xl mx-auto px-md py-lg pb-24">
         {(isLoadingWorries || isLoadingPreferences) && (
           <div className="flex items-center justify-center py-12">
-            <Loader2 className="w-8 h-8 animate-spin text-muted-foreground" />
+            <Loader2 className="size-icon-lg animate-spin text-muted-foreground" />
           </div>
         )}
 
@@ -255,11 +255,11 @@ export const Home: React.FC = () => {
 
         {/* Unlocked Worries */}
         {!isLoadingWorries && !isLoadingPreferences && unlockedWorries.length > 0 && (
-          <section className="mb-8">
-            <h2 className="text-xl font-bold text-foreground mb-4 tracking-tight">
+          <section className="mb-xl">
+            <h2 className="text-xl font-bold text-foreground mb-md tracking-tight">
               {lang.home.sections.ready}
             </h2>
-            <div className="space-y-3">
+            <div className="space-y-sm">
               {unlockedWorries.map((worry) => (
                 <WorryCard
                   key={worry.id}
@@ -280,9 +280,9 @@ export const Home: React.FC = () => {
         {/* Locked Worries Summary */}
         {!isLoadingWorries && !isLoadingPreferences && lockedWorries.length > 0 && (
           <section>
-            <div className="bg-secondary/20 rounded-lg p-6 border border-primary/20">
-              <div className="flex items-center gap-3 mb-2">
-                <Lock className="w-8 h-8 text-primary" />
+            <div className="bg-secondary/20 rounded-lg p-lg border border-primary/20">
+              <div className="flex items-center gap-sm mb-xs">
+                <Lock className="size-icon-lg text-primary" />
                 <div>
                   <h2 className="text-xl font-bold text-foreground tracking-tight">
                     {lang.home.sections.locked.title(lockedWorries.length)}
@@ -294,7 +294,7 @@ export const Home: React.FC = () => {
               </div>
               <Link
                 to="/history"
-                className="text-sm text-primary hover:underline inline-block mt-2"
+                className="text-sm text-primary hover:underline inline-block mt-xs"
               >
                 {lang.home.sections.locked.viewAll}
               </Link>
@@ -307,7 +307,7 @@ export const Home: React.FC = () => {
       <button
         type="button"
         onClick={() => setIsAddSheetOpen(true)}
-        className="fixed bottom-6 right-6 w-14 h-14 bg-primary hover:bg-primary/90 text-primary-foreground rounded-full shadow-lg flex items-center justify-center text-2xl transition-transform hover:scale-110 active:scale-95"
+        className="fixed bottom-fab-offset right-fab-offset size-fab bg-primary hover:bg-primary/90 text-primary-foreground rounded-full shadow-lg flex items-center justify-center text-2xl transition-transform hover:scale-110 active:scale-95"
         aria-label={lang.aria.addWorry}
       >
         +
@@ -363,7 +363,7 @@ export const Home: React.FC = () => {
               disabled={loadingStates[worryToDismiss || '']?.dismissing}
             >
               {loadingStates[worryToDismiss || '']?.dismissing && (
-                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                <Loader2 className="mr-xs size-icon-sm animate-spin" />
               )}
               {lang.history.dismissDialog.confirm}
             </AlertDialogAction>
@@ -388,7 +388,7 @@ export const Home: React.FC = () => {
               {lang.history.releaseDialog.cancel}
             </AlertDialogCancel>
             <AlertDialogAction onClick={confirmRelease} disabled={isReleasingWorry}>
-              {isReleasingWorry && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+              {isReleasingWorry && <Loader2 className="mr-xs size-icon-sm animate-spin" />}
               {lang.history.releaseDialog.confirm}
             </AlertDialogAction>
           </AlertDialogFooter>

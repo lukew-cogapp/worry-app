@@ -2,19 +2,30 @@
 
 @theme {
   /* Spacing tokens */
+  --spacing-xs: 0.5rem; /* 2 in Tailwind (8px) */
+  --spacing-sm: 0.75rem; /* 3 in Tailwind (12px) */
+  --spacing-md: 1rem; /* 4 in Tailwind (16px) */
+  --spacing-lg: 1.5rem; /* 6 in Tailwind (24px) */
+  --spacing-xl: 2rem; /* 8 in Tailwind (32px) */
   --spacing-section: 2rem;
   --spacing-card: 1rem;
   --spacing-fab-offset: 1.5rem;
 
   /* Size tokens */
-  --size-fab: 3.5rem;
-  --size-icon: 1.25rem;
-  --size-icon-sm: 1rem;
-  --size-touch-target: 2.75rem;
+  --size-icon-xs: 0.75rem; /* 3 in Tailwind (12px) - for small icons */
+  --size-icon-sm: 1rem; /* 4 in Tailwind (16px) - default small icon */
+  --size-icon: 1.25rem; /* 5 in Tailwind (20px) - default icon */
+  --size-icon-md: 1.5rem; /* 6 in Tailwind (24px) - medium icon */
+  --size-icon-lg: 2rem; /* 8 in Tailwind (32px) - large icon */
+  --size-fab: 3.5rem; /* 14 in Tailwind (56px) */
+  --size-touch-target: 2.75rem; /* 44px - minimum touch target */
+  --size-button-icon: 2.5rem; /* 10 in Tailwind (40px) */
 
   /* Shadow tokens */
+  --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
   --shadow-card: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
   --shadow-dialog: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+  --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
 
   /* Animation tokens */
   --animate-slide-up: slide-up 0.3s ease-out;
