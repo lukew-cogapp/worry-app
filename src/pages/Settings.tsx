@@ -15,6 +15,7 @@ import { usePreferencesStore } from '../store/preferencesStore';
 
 export const Settings: React.FC = () => {
   const preferences = usePreferencesStore((s) => s.preferences);
+  const isSaving = usePreferencesStore((s) => s.isSaving);
   const updatePreferences = usePreferencesStore((s) => s.updatePreferences);
 
   return (
@@ -59,7 +60,8 @@ export const Settings: React.FC = () => {
               id="default-unlock-time"
               value={preferences.defaultUnlockTime}
               onChange={(e) => updatePreferences({ defaultUnlockTime: e.target.value })}
-              className="px-3 py-2 border border-input rounded-md bg-background text-foreground"
+              disabled={isSaving}
+              className="min-h-[44px] px-3 py-2 border border-input rounded-md bg-background text-foreground disabled:opacity-50 disabled:cursor-not-allowed"
             />
           </div>
 
@@ -82,6 +84,7 @@ export const Settings: React.FC = () => {
                 onCheckedChange={(checked: boolean) =>
                   updatePreferences({ hapticFeedback: checked })
                 }
+                disabled={isSaving}
               />
             </div>
           </div>
@@ -105,6 +108,7 @@ export const Settings: React.FC = () => {
                 onCheckedChange={(checked: boolean) =>
                   updatePreferences({ encouragingMessages: checked })
                 }
+                disabled={isSaving}
               />
             </div>
           </div>
@@ -124,6 +128,7 @@ export const Settings: React.FC = () => {
               onValueChange={(value: 'light' | 'dark' | 'system') =>
                 updatePreferences({ theme: value })
               }
+              disabled={isSaving}
             >
               <SelectTrigger className="w-full sm:w-[200px]">
                 <SelectValue placeholder="Select theme" />

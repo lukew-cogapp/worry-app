@@ -40,6 +40,7 @@ export const History: React.FC = () => {
   const [worryToDelete, setWorryToDelete] = useState<string | null>(null);
   const [isEditSheetOpen, setIsEditSheetOpen] = useState(false);
   const [worryToEdit, setWorryToEdit] = useState<Worry | null>(null);
+  const [isEditingWorry, setIsEditingWorry] = useState(false);
   const [loadingStates, setLoadingStates] = useState<
     Record<string, { unlocking?: boolean; dismissing?: boolean }>
   >({});
@@ -113,9 +114,11 @@ export const History: React.FC = () => {
     id: string,
     updates: { content?: string; action?: string; unlockAt?: string }
   ) => {
+    setIsEditingWorry(true);
     try {
       await editWorry(id, updates);
       toast.success(lang.toasts.success.worryUpdated);
+      setIsEditSheetOpen(false);
     } catch (_error) {
       toast.error(lang.toasts.error.updateWorry, {
         action: {
@@ -123,6 +126,8 @@ export const History: React.FC = () => {
           onClick: () => handleEdit(id, updates),
         },
       });
+    } finally {
+      setIsEditingWorry(false);
     }
   };
 
@@ -188,7 +193,7 @@ export const History: React.FC = () => {
                 key={key}
                 type="button"
                 onClick={() => setFilter(key)}
-                className={`px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-colors ${
+                className={`min-h-[44px] px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-colors ${
                   filter === key
                     ? 'bg-primary text-primary-foreground'
                     : 'bg-secondary text-secondary-foreground hover:bg-secondary/80'
@@ -261,7 +266,7 @@ export const History: React.FC = () => {
                       variant="ghost"
                       size="icon"
                       onClick={() => setWorryToDelete(worry.id)}
-                      className="absolute top-2 right-2 text-muted-foreground hover:text-destructive active:scale-95"
+                      className="absolute top-2 right-2 min-h-[44px] min-w-[44px] text-muted-foreground hover:text-destructive active:scale-95"
                       aria-label={lang.aria.delete}
                     >
                       <svg
@@ -319,6 +324,7 @@ export const History: React.FC = () => {
         onEdit={handleEdit}
         worry={worryToEdit}
         defaultTime={defaultUnlockTime}
+        isSubmitting={isEditingWorry}
       />
     </div>
   );

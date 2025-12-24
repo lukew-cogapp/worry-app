@@ -30,6 +30,9 @@ export const Home: React.FC = () => {
   const [isEditSheetOpen, setIsEditSheetOpen] = useState(false);
   const [worryToEdit, setWorryToEdit] = useState<Worry | null>(null);
   const [showLockAnimation, setShowLockAnimation] = useState(false);
+  const [isAddingWorry, setIsAddingWorry] = useState(false);
+  const [isReleasingWorry, setIsReleasingWorry] = useState(false);
+  const [isEditingWorry, setIsEditingWorry] = useState(false);
   const [loadingStates, setLoadingStates] = useState<
     Record<string, { resolving?: boolean; snoozing?: boolean; dismissing?: boolean }>
   >({});
@@ -39,10 +42,12 @@ export const Home: React.FC = () => {
   const hasWorries = worries.length > 0;
 
   const handleAddWorry = async (worry: { content: string; action?: string; unlockAt: string }) => {
+    setIsAddingWorry(true);
     try {
       await addWorry(worry);
       await lockWorry();
       setShowLockAnimation(true);
+      setIsAddSheetOpen(false);
     } catch (_error) {
       toast.error(lang.toasts.error.saveWorry, {
         action: {
@@ -50,6 +55,8 @@ export const Home: React.FC = () => {
           onClick: () => handleAddWorry(worry),
         },
       });
+    } finally {
+      setIsAddingWorry(false);
     }
   };
 
@@ -107,6 +114,7 @@ export const Home: React.FC = () => {
   };
 
   const handleRelease = async (content: string) => {
+    setIsReleasingWorry(true);
     try {
       // Add the worry with a far-future date (it will be dismissed immediately anyway)
       const futureDate = new Date();
@@ -120,6 +128,7 @@ export const Home: React.FC = () => {
       // Immediately dismiss it
       await dismissWorry(worry.id);
 
+      setIsAddSheetOpen(false);
       toast.success(lang.toasts.success.worryReleased, {
         duration: 4000,
       });
@@ -130,6 +139,8 @@ export const Home: React.FC = () => {
           onClick: () => handleRelease(content),
         },
       });
+    } finally {
+      setIsReleasingWorry(false);
     }
   };
 
@@ -137,9 +148,11 @@ export const Home: React.FC = () => {
     id: string,
     updates: { content?: string; action?: string; unlockAt?: string }
   ) => {
+    setIsEditingWorry(true);
     try {
       await editWorry(id, updates);
       toast.success(lang.toasts.success.worryUpdated);
+      setIsEditSheetOpen(false);
     } catch (_error) {
       toast.error(lang.toasts.error.updateWorry, {
         action: {
@@ -147,6 +160,8 @@ export const Home: React.FC = () => {
           onClick: () => handleEdit(id, updates),
         },
       });
+    } finally {
+      setIsEditingWorry(false);
     }
   };
 
@@ -263,6 +278,8 @@ export const Home: React.FC = () => {
         onClose={() => setIsAddSheetOpen(false)}
         onAdd={handleAddWorry}
         onRelease={handleRelease}
+        isSubmitting={isAddingWorry}
+        isReleasing={isReleasingWorry}
       />
 
       {/* Edit Worry Sheet */}
@@ -275,6 +292,7 @@ export const Home: React.FC = () => {
         onEdit={handleEdit}
         worry={worryToEdit}
         defaultTime={defaultUnlockTime}
+        isSubmitting={isEditingWorry}
       />
 
       {/* Lock Animation */}

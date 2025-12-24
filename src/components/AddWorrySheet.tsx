@@ -1,4 +1,4 @@
-import { Lock, Sparkles } from 'lucide-react';
+import { Loader2, Lock, Sparkles } from 'lucide-react';
 import type React from 'react';
 import { useCallback, useEffect, useState } from 'react';
 import { lang } from '../config/language';
@@ -12,6 +12,8 @@ interface AddWorrySheetProps {
   onClose: () => void;
   onAdd: (worry: { content: string; action?: string; unlockAt: string }) => void;
   onRelease?: (content: string) => void;
+  isSubmitting?: boolean;
+  isReleasing?: boolean;
 }
 
 export const AddWorrySheet: React.FC<AddWorrySheetProps> = ({
@@ -19,6 +21,8 @@ export const AddWorrySheet: React.FC<AddWorrySheetProps> = ({
   onClose,
   onAdd,
   onRelease,
+  isSubmitting = false,
+  isReleasing = false,
 }) => {
   const defaultUnlockTime = usePreferencesStore((s) => s.preferences.defaultUnlockTime);
   const [content, setContent] = useState('');
@@ -120,7 +124,8 @@ export const AddWorrySheet: React.FC<AddWorrySheetProps> = ({
                 }}
                 placeholder={lang.addWorry.fields.content.placeholder}
                 rows={3}
-                className="w-full px-3 py-2 border border-input rounded-md bg-background text-foreground placeholder-muted-foreground focus:ring-2 focus:ring-ring focus:border-transparent resize-none"
+                disabled={isSubmitting || isReleasing}
+                className="w-full px-3 py-2 border border-input rounded-md bg-background text-foreground placeholder-muted-foreground focus:ring-2 focus:ring-ring focus:border-transparent resize-none disabled:opacity-50 disabled:cursor-not-allowed"
               />
             </div>
 
@@ -145,7 +150,8 @@ export const AddWorrySheet: React.FC<AddWorrySheetProps> = ({
                   }
                 }}
                 placeholder={lang.addWorry.fields.action.placeholder}
-                className="w-full px-3 py-2 border border-input rounded-md bg-background text-foreground placeholder-muted-foreground focus:ring-2 focus:ring-ring focus:border-transparent"
+                disabled={isSubmitting || isReleasing}
+                className="w-full px-3 py-2 border border-input rounded-md bg-background text-foreground placeholder-muted-foreground focus:ring-2 focus:ring-ring focus:border-transparent disabled:opacity-50 disabled:cursor-not-allowed"
               />
             </div>
 
@@ -161,12 +167,18 @@ export const AddWorrySheet: React.FC<AddWorrySheetProps> = ({
                   type="button"
                   variant="secondary"
                   onClick={handleClose}
+                  disabled={isSubmitting || isReleasing}
                   className="flex-1 min-h-[44px]"
                 >
                   {lang.addWorry.buttons.cancel}
                 </Button>
-                <Button type="submit" disabled={!content.trim()} className="flex-1 min-h-[44px]">
-                  <Lock className="w-4 h-4 mr-2" />
+                <Button
+                  type="submit"
+                  disabled={!content.trim() || isSubmitting || isReleasing}
+                  className="flex-1 min-h-[44px]"
+                >
+                  {isSubmitting && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
+                  {!isSubmitting && <Lock className="w-4 h-4 mr-2" />}
                   {lang.addWorry.buttons.submit}
                 </Button>
               </div>
@@ -176,10 +188,11 @@ export const AddWorrySheet: React.FC<AddWorrySheetProps> = ({
                   type="button"
                   variant="outline"
                   onClick={handleRelease}
-                  disabled={!content.trim()}
+                  disabled={!content.trim() || isSubmitting || isReleasing}
                   className="w-full min-h-[44px]"
                 >
-                  <Sparkles className="w-4 h-4 mr-2" />
+                  {isReleasing && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
+                  {!isReleasing && <Sparkles className="w-4 h-4 mr-2" />}
                   {lang.addWorry.buttons.release}
                 </Button>
               )}

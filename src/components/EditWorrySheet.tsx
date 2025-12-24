@@ -1,4 +1,4 @@
-import { Edit3 } from 'lucide-react';
+import { Edit3, Loader2 } from 'lucide-react';
 import type React from 'react';
 import { useCallback, useEffect, useState } from 'react';
 import { lang } from '../config/language';
@@ -12,6 +12,7 @@ interface EditWorrySheetProps {
   onEdit: (id: string, updates: { content?: string; action?: string; unlockAt?: string }) => void;
   worry: Worry | null;
   defaultTime?: string;
+  isSubmitting?: boolean;
 }
 
 export const EditWorrySheet: React.FC<EditWorrySheetProps> = ({
@@ -20,6 +21,7 @@ export const EditWorrySheet: React.FC<EditWorrySheetProps> = ({
   onEdit,
   worry,
   defaultTime = '09:00',
+  isSubmitting = false,
 }) => {
   const [content, setContent] = useState('');
   const [action, setAction] = useState('');
@@ -110,7 +112,8 @@ export const EditWorrySheet: React.FC<EditWorrySheetProps> = ({
                 }}
                 placeholder={lang.addWorry.fields.content.placeholder}
                 rows={3}
-                className="w-full px-3 py-2 border border-input rounded-md bg-background text-foreground placeholder-muted-foreground focus:ring-2 focus:ring-ring focus:border-transparent resize-none"
+                disabled={isSubmitting}
+                className="w-full px-3 py-2 border border-input rounded-md bg-background text-foreground placeholder-muted-foreground focus:ring-2 focus:ring-ring focus:border-transparent resize-none disabled:opacity-50 disabled:cursor-not-allowed"
               />
             </div>
 
@@ -135,7 +138,8 @@ export const EditWorrySheet: React.FC<EditWorrySheetProps> = ({
                   }
                 }}
                 placeholder={lang.addWorry.fields.action.placeholder}
-                className="w-full px-3 py-2 border border-input rounded-md bg-background text-foreground placeholder-muted-foreground focus:ring-2 focus:ring-ring focus:border-transparent"
+                disabled={isSubmitting}
+                className="w-full px-3 py-2 border border-input rounded-md bg-background text-foreground placeholder-muted-foreground focus:ring-2 focus:ring-ring focus:border-transparent disabled:opacity-50 disabled:cursor-not-allowed"
               />
             </div>
 
@@ -148,12 +152,18 @@ export const EditWorrySheet: React.FC<EditWorrySheetProps> = ({
                 type="button"
                 variant="secondary"
                 onClick={handleClose}
+                disabled={isSubmitting}
                 className="flex-1 min-h-[44px]"
               >
                 {lang.addWorry.buttons.cancel}
               </Button>
-              <Button type="submit" disabled={!content.trim()} className="flex-1 min-h-[44px]">
-                <Edit3 className="w-4 h-4 mr-2" />
+              <Button
+                type="submit"
+                disabled={!content.trim() || isSubmitting}
+                className="flex-1 min-h-[44px]"
+              >
+                {isSubmitting && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
+                {!isSubmitting && <Edit3 className="w-4 h-4 mr-2" />}
                 {lang.editWorry.save}
               </Button>
             </div>

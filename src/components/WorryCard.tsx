@@ -114,7 +114,7 @@ export const WorryCard: React.FC<WorryCardProps> = ({
                   e.stopPropagation();
                   onEdit(worry.id);
                 }}
-                className="h-8 w-8 text-muted-foreground hover:text-foreground"
+                className="min-h-[44px] min-w-[44px] text-muted-foreground hover:text-foreground"
                 aria-label={lang.aria.editWorry}
               >
                 <Edit3 className="w-4 h-4" />
