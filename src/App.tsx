@@ -45,9 +45,8 @@ function App() {
       );
 
       // Handle deep links from notification tap
-      urlListenerHandle = await CapApp.addListener('appUrlOpen', (event) => {
-        // Handle worry://open/{worryId} URLs if needed
-        console.log('App opened with URL:', event.url);
+      urlListenerHandle = await CapApp.addListener('appUrlOpen', (_event) => {
+        // Handle worry://open/{worryId} URLs if needed in future
       });
 
       // Hide splash screen

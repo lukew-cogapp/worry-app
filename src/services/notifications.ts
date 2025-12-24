@@ -50,6 +50,5 @@ export async function registerNotificationActions(): Promise<void> {
 }
 
 export async function checkPendingNotifications(): Promise<void> {
-  const pending = await LocalNotifications.getPending();
-  console.log('Pending notifications:', pending);
+  await LocalNotifications.getPending();
 }
