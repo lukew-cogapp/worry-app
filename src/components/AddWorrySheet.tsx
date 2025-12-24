@@ -8,9 +8,10 @@ interface AddWorrySheetProps {
   isOpen: boolean;
   onClose: () => void;
   onAdd: (worry: { content: string; action?: string; unlockAt: string }) => void;
+  onRelease?: (content: string) => void;
 }
 
-export const AddWorrySheet: React.FC<AddWorrySheetProps> = ({ isOpen, onClose, onAdd }) => {
+export const AddWorrySheet: React.FC<AddWorrySheetProps> = ({ isOpen, onClose, onAdd, onRelease }) => {
   const defaultUnlockTime = usePreferencesStore((s) => s.preferences.defaultUnlockTime);
   const [content, setContent] = useState('');
   const [action, setAction] = useState('');
@@ -34,6 +35,18 @@ export const AddWorrySheet: React.FC<AddWorrySheetProps> = ({ isOpen, onClose, o
   };
 
   const handleClose = () => {
+    setContent('');
+    setAction('');
+    setUnlockAt(getTomorrow(defaultUnlockTime).toISOString());
+    onClose();
+  };
+
+  const handleRelease = () => {
+    if (!content.trim()) return;
+
+    onRelease?.(content.trim());
+
+    // Reset form
     setContent('');
     setAction('');
     setUnlockAt(getTomorrow(defaultUnlockTime).toISOString());
@@ -74,14 +87,14 @@ export const AddWorrySheet: React.FC<AddWorrySheetProps> = ({ isOpen, onClose, o
       />
 
       {/* Modal */}
-      <div className="fixed inset-x-0 bottom-0 z-50 bg-white dark:bg-gray-900 rounded-t-2xl shadow-2xl max-h-[90vh] overflow-y-auto animate-slide-up">
+      <div className="fixed inset-x-0 bottom-0 z-50 bg-card rounded-t-2xl shadow-2xl max-h-[90vh] overflow-y-auto animate-slide-up">
         <div className="p-6">
           <div className="flex items-center justify-between mb-6">
-            <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100">Add Worry</h2>
+            <h2 className="text-2xl font-bold text-foreground">Add Worry</h2>
             <button
               type="button"
               onClick={handleClose}
-              className="text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 text-2xl"
+              className="text-muted-foreground hover:text-foreground text-2xl"
               aria-label="Close"
             >
               ×
@@ -92,7 +105,7 @@ export const AddWorrySheet: React.FC<AddWorrySheetProps> = ({ isOpen, onClose, o
             <div>
               <label
                 htmlFor="worry-content"
-                className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
+                className="block text-sm font-medium text-foreground mb-1"
               >
                 What's worrying you?
               </label>
@@ -107,16 +120,16 @@ export const AddWorrySheet: React.FC<AddWorrySheetProps> = ({ isOpen, onClose, o
                 }}
                 placeholder="I'm worried about..."
                 rows={3}
-                className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500 focus:ring-2 focus:ring-primary-500 focus:border-transparent resize-none"
+                className="w-full px-3 py-2 border border-input rounded-md bg-background text-foreground placeholder-muted-foreground focus:ring-2 focus:ring-ring focus:border-transparent resize-none"
               />
             </div>
 
             <div>
               <label
                 htmlFor="worry-action"
-                className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
+                className="block text-sm font-medium text-foreground mb-1"
               >
-                What will you do about it? <span className="text-gray-500">(optional)</span>
+                What will you do about it? <span className="text-muted-foreground">(optional)</span>
               </label>
               <input
                 type="text"
@@ -129,7 +142,7 @@ export const AddWorrySheet: React.FC<AddWorrySheetProps> = ({ isOpen, onClose, o
                   }
                 }}
                 placeholder="I will..."
-                className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500 focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+                className="w-full px-3 py-2 border border-input rounded-md bg-background text-foreground placeholder-muted-foreground focus:ring-2 focus:ring-ring focus:border-transparent"
               />
             </div>
 
@@ -139,21 +152,34 @@ export const AddWorrySheet: React.FC<AddWorrySheetProps> = ({ isOpen, onClose, o
               defaultTime={defaultUnlockTime}
             />
 
-            <div className="flex gap-3 pt-4">
-              <button
-                type="button"
-                onClick={handleClose}
-                className="flex-1 px-4 py-3 rounded-lg bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 font-medium hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
-              >
-                Cancel
-              </button>
-              <button
-                type="submit"
-                disabled={!content.trim()}
-                className="flex-1 px-4 py-3 rounded-lg bg-primary-600 text-white font-medium hover:bg-primary-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-              >
-                Lock Away Worry 🔒
-              </button>
+            <div className="space-y-3 pt-4">
+              <div className="flex gap-3">
+                <button
+                  type="button"
+                  onClick={handleClose}
+                  className="flex-1 px-4 py-3 rounded-lg bg-secondary text-secondary-foreground font-medium hover:bg-secondary/80 transition-colors"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  disabled={!content.trim()}
+                  className="flex-1 px-4 py-3 rounded-lg bg-primary text-primary-foreground font-medium hover:bg-primary/90 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                >
+                  Lock Away Worry 🔒
+                </button>
+              </div>
+
+              {onRelease && (
+                <button
+                  type="button"
+                  onClick={handleRelease}
+                  disabled={!content.trim()}
+                  className="w-full px-4 py-3 rounded-lg border-2 border-muted-foreground/20 text-muted-foreground font-medium hover:bg-muted hover:border-muted-foreground/30 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                >
+                  I Can't Control This — Release It ✨
+                </button>
+              )}
             </div>
           </form>
         </div>

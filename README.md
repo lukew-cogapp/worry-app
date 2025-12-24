@@ -237,7 +237,13 @@ Private - Luke & Jack Tondeur (60/40 equity split)
 
 ## Version
 
-**0.1.2** - Calming Design Update (Current)
+**0.1.3** - Release & Let Go (Current)
+- **"I Can't Control This"** quick action - Release worries you can't control directly into the box
+- Metaphorical "worry release" for accepting what's beyond your control
+- Special encouraging message when releasing worries
+- Updated addWorry to return the created worry for better composability
+
+0.1.2 - Calming Design Update
 - shadcn/ui component library integration
 - Calming color palette with soft blues and lavenders
 - Semantic color tokens for consistent theming

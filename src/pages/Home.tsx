@@ -65,6 +65,29 @@ export const Home: React.FC = () => {
     }
   };
 
+  const handleRelease = async (content: string) => {
+    try {
+      // Add the worry with a far-future date (it will be dismissed immediately anyway)
+      const futureDate = new Date();
+      futureDate.setFullYear(futureDate.getFullYear() + 100);
+
+      const worry = await addWorry({
+        content,
+        unlockAt: futureDate.toISOString(),
+      });
+
+      // Immediately dismiss it
+      await dismissWorry(worry.id);
+
+      // Show special message
+      toast.success('Worry released. You\'ve let go of what you can\'t control. ✨', {
+        duration: 4000,
+      });
+    } catch (error) {
+      toast.error('Failed to release worry');
+    }
+  };
+
   return (
     <div className="min-h-screen bg-background">
       {/* Header */}
@@ -172,6 +195,7 @@ export const Home: React.FC = () => {
         isOpen={isAddSheetOpen}
         onClose={() => setIsAddSheetOpen(false)}
         onAdd={handleAddWorry}
+        onRelease={handleRelease}
       />
 
       {/* Lock Animation */}

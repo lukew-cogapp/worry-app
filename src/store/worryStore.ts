@@ -9,7 +9,7 @@ interface WorryStore {
 
   // Actions
   loadWorries: () => Promise<void>;
-  addWorry: (worry: Omit<Worry, 'id' | 'createdAt' | 'status' | 'notificationId'>) => Promise<void>;
+  addWorry: (worry: Omit<Worry, 'id' | 'createdAt' | 'status' | 'notificationId'>) => Promise<Worry>;
   resolveWorry: (id: string) => Promise<void>;
   dismissWorry: (id: string) => Promise<void>;
   snoozeWorry: (id: string, duration: number) => Promise<void>;
@@ -55,6 +55,8 @@ export const useWorryStore = create<WorryStore>((set, get) => ({
     const worries = [...get().worries, worry];
     set({ worries });
     await storage.saveWorries(worries);
+
+    return worry;
   },
 
   resolveWorry: async (id) => {
