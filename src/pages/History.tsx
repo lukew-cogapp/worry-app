@@ -115,7 +115,7 @@ export const History: React.FC = () => {
             </svg>
           </Link>
           <div>
-            <h1 className="text-2xl font-bold text-foreground">Worry History</h1>
+            <h1 className="text-3xl font-bold text-foreground tracking-tight">Worry History</h1>
             <p className="text-sm text-muted-foreground">View all your worries</p>
           </div>
         </div>

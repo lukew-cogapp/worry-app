@@ -27,7 +27,9 @@ export const Onboarding: React.FC = () => {
         <div className="flex flex-col items-center text-center space-y-4">
           <div className="text-6xl mb-2">📦</div>
 
-          <h2 className="text-2xl font-bold text-foreground">Welcome to Worry Box</h2>
+          <h2 className="text-3xl font-bold text-foreground tracking-tight">
+            Welcome to Worry Box
+          </h2>
 
           <p className="text-muted-foreground italic text-sm">
             "You can't always control what happens, but you can control when you worry about it."

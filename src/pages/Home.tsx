@@ -121,7 +121,7 @@ export const Home: React.FC = () => {
       <header className="bg-card border-b border-border">
         <div className="max-w-4xl mx-auto px-4 py-4 flex items-center justify-between">
           <div>
-            <h1 className="text-2xl font-bold text-foreground">Worry Box</h1>
+            <h1 className="text-3xl font-bold text-foreground tracking-tight">Worry Box</h1>
             <p className="text-sm text-muted-foreground">Store your worries until you can act</p>
           </div>
           <Link
@@ -161,7 +161,7 @@ export const Home: React.FC = () => {
         {/* Unlocked Worries */}
         {unlockedWorries.length > 0 && (
           <section className="mb-8">
-            <h2 className="text-lg font-semibold text-foreground mb-3">Ready to Act</h2>
+            <h2 className="text-xl font-bold text-foreground mb-4 tracking-tight">Ready to Act</h2>
             <div className="space-y-3">
               {unlockedWorries.map((worry) => (
                 <WorryCard
@@ -186,7 +186,7 @@ export const Home: React.FC = () => {
               <div className="flex items-center gap-3 mb-2">
                 <span className="text-3xl">🔒</span>
                 <div>
-                  <h2 className="text-lg font-semibold text-foreground">
+                  <h2 className="text-xl font-bold text-foreground tracking-tight">
                     {lockedWorries.length} {lockedWorries.length === 1 ? 'Worry' : 'Worries'} Safely
                     Stored
                   </h2>
