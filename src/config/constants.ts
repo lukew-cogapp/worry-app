@@ -41,3 +41,17 @@ export const TOUCH_TARGET_SIZE = {
   MIN_HEIGHT: 44,
   MIN_WIDTH: 44,
 } as const;
+
+/**
+ * Animation durations in milliseconds
+ */
+export const ANIMATION_DURATIONS = {
+  /** Lock away animation display duration */
+  LOCK_ANIMATION: 2000,
+  /** Fade in animation */
+  FADE_IN: 200,
+  /** Zoom in animation */
+  ZOOM_IN: 500,
+  /** Slide in animation */
+  SLIDE_IN: 700,
+} as const;

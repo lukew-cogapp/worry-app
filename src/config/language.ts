@@ -223,6 +223,11 @@ export const lang = {
     title: 'Edit Worry',
     save: 'Save Changes',
   },
+
+  // Animations
+  animations: {
+    lockAway: 'Worry locked away safely',
+  },
 } as const;
 
 // Helper to format duration

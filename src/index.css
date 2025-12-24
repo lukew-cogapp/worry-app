@@ -17,6 +17,7 @@
   --size-icon: 1.25rem; /* 5 in Tailwind (20px) - default icon */
   --size-icon-md: 1.5rem; /* 6 in Tailwind (24px) - medium icon */
   --size-icon-lg: 2rem; /* 8 in Tailwind (32px) - large icon */
+  --size-icon-xl: 4rem; /* 16 in Tailwind (64px) - extra large icon */
   --size-fab: 3.5rem; /* 14 in Tailwind (56px) */
   --size-touch-target: 2.75rem; /* 44px - minimum touch target */
   --size-button-icon: 2.5rem; /* 10 in Tailwind (40px) */

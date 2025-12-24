@@ -27,11 +27,11 @@ export const Onboarding: React.FC = () => {
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4">
-      <div className="bg-card rounded-2xl max-w-md w-full p-6 shadow-2xl animate-in fade-in zoom-in duration-300 border border-border">
-        <div className="flex flex-col items-center text-center space-y-4">
-          <div className="mb-2">
-            <Package className="w-16 h-16 text-primary" />
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-md">
+      <div className="bg-card rounded-2xl max-w-md w-full p-lg shadow-2xl animate-in fade-in zoom-in duration-300 border border-border">
+        <div className="flex flex-col items-center text-center space-y-md">
+          <div className="mb-xs">
+            <Package className="size-icon-xl text-primary" />
           </div>
 
           <h2 className="text-3xl font-bold text-foreground tracking-tight">
@@ -40,10 +40,10 @@ export const Onboarding: React.FC = () => {
 
           <p className="text-muted-foreground italic text-sm">{lang.onboarding.quote}</p>
 
-          <div className="space-y-3 text-left w-full">
-            <div className="flex gap-3">
+          <div className="space-y-sm text-left w-full">
+            <div className="flex gap-sm">
               <div className="flex-shrink-0">
-                <Lock className="w-6 h-6 text-primary" />
+                <Lock className="size-icon-md text-primary" />
               </div>
               <div>
                 <h3 className="font-semibold text-foreground">
@@ -55,9 +55,9 @@ export const Onboarding: React.FC = () => {
               </div>
             </div>
 
-            <div className="flex gap-3">
+            <div className="flex gap-sm">
               <div className="flex-shrink-0">
-                <Bell className="w-6 h-6 text-primary" />
+                <Bell className="size-icon-md text-primary" />
               </div>
               <div>
                 <h3 className="font-semibold text-foreground">
@@ -69,9 +69,9 @@ export const Onboarding: React.FC = () => {
               </div>
             </div>
 
-            <div className="flex gap-3">
+            <div className="flex gap-sm">
               <div className="flex-shrink-0">
-                <Sparkles className="w-6 h-6 text-primary" />
+                <Sparkles className="size-icon-md text-primary" />
               </div>
               <div>
                 <h3 className="font-semibold text-foreground">
@@ -84,7 +84,7 @@ export const Onboarding: React.FC = () => {
             </div>
           </div>
 
-          <Button onClick={handleComplete} className="w-full mt-4 min-h-[44px]">
+          <Button onClick={handleComplete} className="w-full mt-md min-h-touch-target">
             {lang.onboarding.cta}
           </Button>
         </div>

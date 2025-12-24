@@ -1,5 +1,7 @@
 import type React from 'react';
 import { useEffect, useState } from 'react';
+import { ANIMATION_DURATIONS } from '../config/constants';
+import { lang } from '../config/language';
 
 interface LockAnimationProps {
   show: boolean;
@@ -15,7 +17,7 @@ export const LockAnimation: React.FC<LockAnimationProps> = ({ show, onComplete }
       const timer = setTimeout(() => {
         setIsVisible(false);
         onComplete?.();
-      }, 2000); // Animation lasts 2 seconds
+      }, ANIMATION_DURATIONS.LOCK_ANIMATION);
 
       return () => clearTimeout(timer);
     }
@@ -25,7 +27,7 @@ export const LockAnimation: React.FC<LockAnimationProps> = ({ show, onComplete }
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 animate-in fade-in duration-200">
-      <div className="flex flex-col items-center gap-4 animate-in zoom-in duration-500">
+      <div className="flex flex-col items-center gap-md animate-in zoom-in duration-500">
         <div className="relative">
           {/* Lock Icon with animation */}
           <div className="text-8xl animate-bounce">🔒</div>
@@ -39,7 +41,7 @@ export const LockAnimation: React.FC<LockAnimationProps> = ({ show, onComplete }
         </div>
 
         <div className="text-white text-xl font-medium animate-in fade-in slide-in-from-bottom duration-700">
-          Worry locked away safely
+          {lang.animations.lockAway}
         </div>
       </div>
     </div>
