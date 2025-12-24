@@ -8,12 +8,12 @@ pre-commit:
       run: npx tsc --noEmit
 
     biome-check:
-      glob: '*.{ts,tsx,js,jsx,json}'
-      run: npx biome check {staged_files} --files-ignore-unknown=true
+      glob: '*.{ts,tsx,js,jsx,json,css}'
+      run: npx biome check {staged_files}
 
     biome-format:
-      glob: '*.{ts,tsx,js,jsx,json}'
-      run: npx biome format {staged_files} --files-ignore-unknown=true
+      glob: '*.{ts,tsx,js,jsx,json,css}'
+      run: npx biome format {staged_files}
       stage_fixed: true
 
 pre-push:

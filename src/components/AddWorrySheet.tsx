@@ -1,5 +1,5 @@
 import type React from 'react';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { usePreferencesStore } from '../store/preferencesStore';
 import { getTomorrow } from '../utils/dates';
 import { DateTimePicker } from './DateTimePicker';
@@ -11,7 +11,12 @@ interface AddWorrySheetProps {
   onRelease?: (content: string) => void;
 }
 
-export const AddWorrySheet: React.FC<AddWorrySheetProps> = ({ isOpen, onClose, onAdd, onRelease }) => {
+export const AddWorrySheet: React.FC<AddWorrySheetProps> = ({
+  isOpen,
+  onClose,
+  onAdd,
+  onRelease,
+}) => {
   const defaultUnlockTime = usePreferencesStore((s) => s.preferences.defaultUnlockTime);
   const [content, setContent] = useState('');
   const [action, setAction] = useState('');
@@ -34,12 +39,12 @@ export const AddWorrySheet: React.FC<AddWorrySheetProps> = ({ isOpen, onClose, o
     onClose();
   };
 
-  const handleClose = () => {
+  const handleClose = useCallback(() => {
     setContent('');
     setAction('');
     setUnlockAt(getTomorrow(defaultUnlockTime).toISOString());
     onClose();
-  };
+  }, [defaultUnlockTime, onClose]);
 
   const handleRelease = () => {
     if (!content.trim()) return;
@@ -68,23 +73,14 @@ export const AddWorrySheet: React.FC<AddWorrySheetProps> = ({ isOpen, onClose, o
     return () => {
       document.removeEventListener('keydown', handleKeyDown);
     };
-  }, [isOpen]);
+  }, [isOpen, handleClose]);
 
   if (!isOpen) return null;
 
   return (
     <>
       {/* Backdrop */}
-      <div
-        className="fixed inset-0 bg-black/50 z-40 transition-opacity"
-        onClick={handleClose}
-        onKeyDown={(e) => {
-          if (e.key === 'Escape') handleClose();
-        }}
-        role="button"
-        tabIndex={0}
-        aria-label="Close modal"
-      />
+      <div className="fixed inset-0 bg-black/50 z-40 transition-opacity" />
 
       {/* Modal */}
       <div className="fixed inset-x-0 bottom-0 z-50 bg-card rounded-t-2xl shadow-2xl max-h-[90vh] overflow-y-auto animate-slide-up">

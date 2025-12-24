@@ -1,10 +1,10 @@
 import type React from 'react';
+import type { Worry } from '../types';
+import { formatDateTime, getRelativeTime } from '../utils/dates';
 import { Badge } from './ui/badge';
 import { Button } from './ui/button';
 import { Card, CardContent } from './ui/card';
 import { Separator } from './ui/separator';
-import type { Worry } from '../types';
-import { formatDateTime, getRelativeTime } from '../utils/dates';
 
 interface WorryCardProps {
   worry: Worry;
@@ -39,7 +39,10 @@ export const WorryCard: React.FC<WorryCardProps> = ({
         );
       case 'resolved':
         return (
-          <Badge variant="secondary" className="bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-300">
+          <Badge
+            variant="secondary"
+            className="bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-300"
+          >
             ✓ Resolved
           </Badge>
         );
@@ -62,9 +65,7 @@ export const WorryCard: React.FC<WorryCardProps> = ({
       <CardContent className="p-4">
         <div className="flex items-start justify-between gap-3 mb-3">
           <div className="flex-1 min-w-0">
-            <p className="text-foreground font-medium line-clamp-2">
-              {worry.content}
-            </p>
+            <p className="text-foreground font-medium line-clamp-2">{worry.content}</p>
             {worry.action && (
               <p className="text-sm text-muted-foreground mt-1">
                 <span className="font-medium">Action:</span> {worry.action}

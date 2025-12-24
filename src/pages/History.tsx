@@ -34,7 +34,7 @@ export const History: React.FC = () => {
       await unlockWorryNow(id);
       await unlockHaptic();
       toast.success('Worry unlocked now!');
-    } catch (error) {
+    } catch (_error) {
       toast.error('Failed to unlock worry');
     }
   };
@@ -43,7 +43,7 @@ export const History: React.FC = () => {
     try {
       await dismissWorry(id);
       toast.success('Worry dismissed');
-    } catch (error) {
+    } catch (_error) {
       toast.error('Failed to dismiss worry');
     }
   };
@@ -53,7 +53,7 @@ export const History: React.FC = () => {
       try {
         await deleteWorry(id);
         toast.success('Worry deleted');
-      } catch (error) {
+      } catch (_error) {
         toast.error('Failed to delete worry');
       }
     }

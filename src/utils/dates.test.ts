@@ -100,7 +100,7 @@ describe('dates utility functions', () => {
   });
 
   describe('isToday', () => {
-    it('should return true for today\'s date', () => {
+    it("should return true for today's date", () => {
       const today = new Date().toISOString();
       expect(isToday(today)).toBe(true);
     });
@@ -119,7 +119,7 @@ describe('dates utility functions', () => {
   });
 
   describe('isTomorrow', () => {
-    it('should return true for tomorrow\'s date', () => {
+    it("should return true for tomorrow's date", () => {
       const tomorrow = new Date();
       tomorrow.setDate(tomorrow.getDate() + 1);
       expect(isTomorrow(tomorrow.toISOString())).toBe(true);

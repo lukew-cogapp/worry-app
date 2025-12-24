@@ -31,7 +31,7 @@ export const Home: React.FC = () => {
       await addWorry(worry);
       await lockWorry();
       setShowLockAnimation(true);
-    } catch (error) {
+    } catch (_error) {
       toast.error('Failed to save worry');
     }
   };
@@ -41,7 +41,7 @@ export const Home: React.FC = () => {
       await resolveWorry(id);
       await resolveHaptic();
       toast.success('Worry resolved! Well done! ✓');
-    } catch (error) {
+    } catch (_error) {
       toast.error('Failed to resolve worry');
     }
   };
@@ -51,7 +51,7 @@ export const Home: React.FC = () => {
       await snoozeWorry(id, 60 * 60 * 1000); // 1 hour
       await lockWorry();
       toast.success('Worry snoozed for 1 hour');
-    } catch (error) {
+    } catch (_error) {
       toast.error('Failed to snooze worry');
     }
   };
@@ -60,7 +60,7 @@ export const Home: React.FC = () => {
     try {
       await dismissWorry(id);
       toast.success('Worry dismissed');
-    } catch (error) {
+    } catch (_error) {
       toast.error('Failed to dismiss worry');
     }
   };
@@ -80,10 +80,10 @@ export const Home: React.FC = () => {
       await dismissWorry(worry.id);
 
       // Show special message
-      toast.success('Worry released. You\'ve let go of what you can\'t control. ✨', {
+      toast.success("Worry released. You've let go of what you can't control. ✨", {
         duration: 4000,
       });
-    } catch (error) {
+    } catch (_error) {
       toast.error('Failed to release worry');
     }
   };
@@ -95,9 +95,7 @@ export const Home: React.FC = () => {
         <div className="max-w-4xl mx-auto px-4 py-4 flex items-center justify-between">
           <div>
             <h1 className="text-2xl font-bold text-foreground">Worry Box</h1>
-            <p className="text-sm text-muted-foreground">
-              Store your worries until you can act
-            </p>
+            <p className="text-sm text-muted-foreground">Store your worries until you can act</p>
           </div>
           <Link
             to="/settings"
@@ -136,9 +134,7 @@ export const Home: React.FC = () => {
         {/* Unlocked Worries */}
         {unlockedWorries.length > 0 && (
           <section className="mb-8">
-            <h2 className="text-lg font-semibold text-foreground mb-3">
-              Ready to Act
-            </h2>
+            <h2 className="text-lg font-semibold text-foreground mb-3">Ready to Act</h2>
             <div className="space-y-3">
               {unlockedWorries.map((worry) => (
                 <WorryCard

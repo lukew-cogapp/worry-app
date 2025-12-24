@@ -1,7 +1,13 @@
 import type React from 'react';
 import { Link } from 'react-router-dom';
 import { Label } from '../components/ui/label';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../components/ui/select';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '../components/ui/select';
 import { Separator } from '../components/ui/separator';
 import { Switch } from '../components/ui/switch';
 import { usePreferencesStore } from '../store/preferencesStore';
@@ -70,7 +76,9 @@ export const Settings: React.FC = () => {
               <Switch
                 id="haptic-feedback"
                 checked={preferences.hapticFeedback}
-                onCheckedChange={(checked: boolean) => updatePreferences({ hapticFeedback: checked })}
+                onCheckedChange={(checked: boolean) =>
+                  updatePreferences({ hapticFeedback: checked })
+                }
               />
             </div>
           </div>
@@ -91,7 +99,9 @@ export const Settings: React.FC = () => {
               <Switch
                 id="encouraging-messages"
                 checked={preferences.encouragingMessages}
-                onCheckedChange={(checked: boolean) => updatePreferences({ encouragingMessages: checked })}
+                onCheckedChange={(checked: boolean) =>
+                  updatePreferences({ encouragingMessages: checked })
+                }
               />
             </div>
           </div>
@@ -103,9 +113,7 @@ export const Settings: React.FC = () => {
             <Label htmlFor="theme" className="text-base font-medium">
               Theme
             </Label>
-            <p className="text-sm text-muted-foreground mt-1 mb-3">
-              Choose your app appearance
-            </p>
+            <p className="text-sm text-muted-foreground mt-1 mb-3">Choose your app appearance</p>
             <Select
               value={preferences.theme}
               onValueChange={(value: 'light' | 'dark' | 'system') =>
@@ -126,9 +134,7 @@ export const Settings: React.FC = () => {
 
         {/* About Section */}
         <div className="mt-8 bg-card rounded-lg border border-border p-6">
-          <h2 className="text-lg font-semibold text-foreground mb-2">
-            About Worry Box
-          </h2>
+          <h2 className="text-lg font-semibold text-foreground mb-2">About Worry Box</h2>
           <p className="text-sm text-muted-foreground mb-1">Version 0.1.4</p>
           <p className="text-sm text-muted-foreground italic">
             "You can't always control what happens, but you can control when you worry about it."

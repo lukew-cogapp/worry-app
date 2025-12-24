@@ -9,7 +9,9 @@ interface WorryStore {
 
   // Actions
   loadWorries: () => Promise<void>;
-  addWorry: (worry: Omit<Worry, 'id' | 'createdAt' | 'status' | 'notificationId'>) => Promise<Worry>;
+  addWorry: (
+    worry: Omit<Worry, 'id' | 'createdAt' | 'status' | 'notificationId'>
+  ) => Promise<Worry>;
   resolveWorry: (id: string) => Promise<void>;
   dismissWorry: (id: string) => Promise<void>;
   snoozeWorry: (id: string, duration: number) => Promise<void>;
