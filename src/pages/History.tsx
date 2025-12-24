@@ -1,6 +1,6 @@
 import { Loader2 } from 'lucide-react';
 import type React from 'react';
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { toast } from 'sonner';
 import { EditWorrySheet } from '../components/EditWorrySheet';
@@ -47,14 +47,18 @@ export const History: React.FC = () => {
   >({});
   const [isDeleting, setIsDeleting] = useState(false);
 
-  const filteredWorries = worries
-    .filter((w) => (filter === 'all' ? true : w.status === filter))
-    .filter((w) =>
-      searchQuery
-        ? w.content.toLowerCase().includes(searchQuery.toLowerCase()) ||
-          w.action?.toLowerCase().includes(searchQuery.toLowerCase())
-        : true
-    );
+  const filteredWorries = useMemo(
+    () =>
+      worries
+        .filter((w) => (filter === 'all' ? true : w.status === filter))
+        .filter((w) =>
+          searchQuery
+            ? w.content.toLowerCase().includes(searchQuery.toLowerCase()) ||
+              w.action?.toLowerCase().includes(searchQuery.toLowerCase())
+            : true
+        ),
+    [worries, filter, searchQuery]
+  );
 
   const handleUnlockNow = async (id: string) => {
     setLoadingStates((prev) => ({ ...prev, [id]: { ...prev[id], unlocking: true } }));
@@ -229,6 +233,7 @@ export const History: React.FC = () => {
               placeholder={lang.history.search.placeholder}
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
+              aria-label={lang.aria.search}
               className="w-full px-md py-xs pl-10 border border-input rounded-lg bg-background text-foreground placeholder-muted-foreground focus:ring-2 focus:ring-ring focus:border-transparent"
             />
             <svg

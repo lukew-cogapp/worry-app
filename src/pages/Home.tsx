@@ -1,6 +1,6 @@
 import { Loader2, Lock } from 'lucide-react';
 import type React from 'react';
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { toast } from 'sonner';
 import { AddWorrySheet } from '../components/AddWorrySheet';
@@ -52,8 +52,8 @@ export const Home: React.FC = () => {
     Record<string, { resolving?: boolean; snoozing?: boolean; dismissing?: boolean }>
   >({});
 
-  const unlockedWorries = worries.filter((w) => w.status === 'unlocked');
-  const lockedWorries = worries.filter((w) => w.status === 'locked');
+  const unlockedWorries = useMemo(() => worries.filter((w) => w.status === 'unlocked'), [worries]);
+  const lockedWorries = useMemo(() => worries.filter((w) => w.status === 'locked'), [worries]);
   const hasWorries = worries.length > 0;
 
   const handleAddWorry = async (worry: { content: string; action?: string; unlockAt: string }) => {

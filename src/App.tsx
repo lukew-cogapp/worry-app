@@ -1,9 +1,10 @@
 import { App as CapApp } from '@capacitor/app';
+import type { PluginListenerHandle } from '@capacitor/core';
 import { LocalNotifications } from '@capacitor/local-notifications';
 import { SplashScreen } from '@capacitor/splash-screen';
 import { useEffect } from 'react';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
-import { Toaster } from 'sonner';
+import { Toaster, toast } from 'sonner';
 import { History } from './pages/History';
 import { Home } from './pages/Home';
 import { Settings } from './pages/Settings';
@@ -18,8 +19,8 @@ function App() {
   const snoozeWorry = useWorryStore((s) => s.snoozeWorry);
 
   useEffect(() => {
-    let notificationListenerHandle: any;
-    let urlListenerHandle: any;
+    let notificationListenerHandle: PluginListenerHandle | undefined;
+    let urlListenerHandle: PluginListenerHandle | undefined;
 
     async function init() {
       // Request notification permissions
@@ -53,7 +54,10 @@ function App() {
       await SplashScreen.hide();
     }
 
-    init();
+    init().catch((error) => {
+      console.error('Failed to initialize app:', error);
+      toast.error('Failed to load app data. Please try restarting the app.');
+    });
 
     // Cleanup listeners on unmount
     return () => {

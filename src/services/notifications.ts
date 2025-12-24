@@ -7,7 +7,8 @@ export async function requestPermissions(): Promise<boolean> {
 }
 
 export async function scheduleWorryNotification(worry: Worry): Promise<number> {
-  const notificationId = Date.now(); // Simple unique ID
+  // Generate unique ID to avoid collisions
+  const notificationId = Math.floor(Math.random() * Number.MAX_SAFE_INTEGER);
 
   await LocalNotifications.schedule({
     notifications: [

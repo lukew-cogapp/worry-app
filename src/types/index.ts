@@ -39,4 +39,5 @@ export const STORAGE_KEYS = {
   WORRIES: 'worry_box_worries',
   PREFERENCES: 'worry_box_prefs',
   STATS: 'worry_box_stats',
+  ONBOARDING: 'worry_box_onboarding_complete',
 } as const;

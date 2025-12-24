@@ -18,7 +18,14 @@ const defaultStats: WorryStats = {
 // Worries
 export async function getWorries(): Promise<Worry[]> {
   const { value } = await Preferences.get({ key: STORAGE_KEYS.WORRIES });
-  return value ? JSON.parse(value) : [];
+  if (!value) return [];
+
+  try {
+    return JSON.parse(value);
+  } catch (error) {
+    console.error('Failed to parse worries from storage:', error);
+    return [];
+  }
 }
 
 export async function saveWorries(worries: Worry[]): Promise<void> {
@@ -31,7 +38,14 @@ export async function saveWorries(worries: Worry[]): Promise<void> {
 // Preferences
 export async function getPreferences(): Promise<UserPreferences> {
   const { value } = await Preferences.get({ key: STORAGE_KEYS.PREFERENCES });
-  return value ? JSON.parse(value) : defaultPreferences;
+  if (!value) return defaultPreferences;
+
+  try {
+    return JSON.parse(value);
+  } catch (error) {
+    console.error('Failed to parse preferences from storage:', error);
+    return defaultPreferences;
+  }
 }
 
 export async function savePreferences(preferences: UserPreferences): Promise<void> {
@@ -44,7 +58,14 @@ export async function savePreferences(preferences: UserPreferences): Promise<voi
 // Stats
 export async function getStats(): Promise<WorryStats> {
   const { value } = await Preferences.get({ key: STORAGE_KEYS.STATS });
-  return value ? JSON.parse(value) : defaultStats;
+  if (!value) return defaultStats;
+
+  try {
+    return JSON.parse(value);
+  } catch (error) {
+    console.error('Failed to parse stats from storage:', error);
+    return defaultStats;
+  }
 }
 
 export async function saveStats(stats: WorryStats): Promise<void> {

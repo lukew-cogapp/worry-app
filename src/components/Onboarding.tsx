@@ -1,23 +1,26 @@
+import { Preferences } from '@capacitor/preferences';
 import { Bell, Lock, Package, Sparkles } from 'lucide-react';
 import type React from 'react';
 import { useEffect, useState } from 'react';
 import { lang } from '../config/language';
+import { STORAGE_KEYS } from '../types';
 import { Button } from './ui/button';
-
-const ONBOARDING_KEY = 'worry_box_onboarding_complete';
 
 export const Onboarding: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
 
   useEffect(() => {
-    const hasSeenOnboarding = localStorage.getItem(ONBOARDING_KEY);
-    if (!hasSeenOnboarding) {
-      setIsOpen(true);
+    async function checkOnboarding() {
+      const { value } = await Preferences.get({ key: STORAGE_KEYS.ONBOARDING });
+      if (!value) {
+        setIsOpen(true);
+      }
     }
+    checkOnboarding();
   }, []);
 
-  const handleComplete = () => {
-    localStorage.setItem(ONBOARDING_KEY, 'true');
+  const handleComplete = async () => {
+    await Preferences.set({ key: STORAGE_KEYS.ONBOARDING, value: 'true' });
     setIsOpen(false);
   };
 
