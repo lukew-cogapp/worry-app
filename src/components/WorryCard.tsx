@@ -233,7 +233,7 @@ export const WorryCard: React.FC<WorryCardProps> = ({
                     onResolve(worry.id);
                   }}
                   disabled={isResolving || isSnoozing || isDismissing}
-                  className="text-xs bg-green-600 hover:bg-green-700 text-white"
+                  className="text-xs bg-green-600 hover:bg-green-700 dark:bg-green-700 dark:hover:bg-green-800 text-white"
                 >
                   {isResolving && <Loader2 className="mr-2 size-icon-xs animate-spin" />}
                   {lang.worryCard.buttons.markDone}

@@ -34,9 +34,9 @@ export const LockAnimation: React.FC<LockAnimationProps> = ({ show, onComplete }
 
           {/* Particles effect */}
           <div className="absolute inset-0 flex items-center justify-center">
-            <div className="absolute w-2 h-2 bg-blue-400 rounded-full animate-ping" />
-            <div className="absolute w-2 h-2 bg-purple-400 rounded-full animate-ping delay-75" />
-            <div className="absolute w-2 h-2 bg-indigo-400 rounded-full animate-ping delay-150" />
+            <div className="absolute w-2 h-2 bg-blue-400 dark:bg-blue-500 rounded-full animate-ping" />
+            <div className="absolute w-2 h-2 bg-purple-400 dark:bg-purple-500 rounded-full animate-ping delay-75" />
+            <div className="absolute w-2 h-2 bg-indigo-400 dark:bg-indigo-500 rounded-full animate-ping delay-150" />
           </div>
         </div>
 
