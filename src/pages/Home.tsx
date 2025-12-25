@@ -4,6 +4,7 @@ import { useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { toast } from 'sonner';
 import { AddWorrySheet } from '../components/AddWorrySheet';
+import { DebugErrorDialog } from '../components/DebugErrorDialog';
 import { EditWorrySheet } from '../components/EditWorrySheet';
 import { EmptyState } from '../components/EmptyState';
 import { LockAnimation } from '../components/LockAnimation';
@@ -18,15 +19,6 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from '../components/ui/alert-dialog';
-import { Button } from '../components/ui/button';
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from '../components/ui/dialog';
 import { WorryCard } from '../components/WorryCard';
 import { TOAST_DURATIONS } from '../config/constants';
 import { formatDuration, lang } from '../config/language';
@@ -524,46 +516,7 @@ export const Home: React.FC = () => {
         </AlertDialogContent>
       </AlertDialog>
 
-      {/* Debug Error Dialog */}
-      <Dialog open={!!debugError} onOpenChange={(open) => !open && clearError()}>
-        <DialogContent className="max-w-2xl max-h-[80vh] overflow-y-auto">
-          <DialogHeader>
-            <DialogTitle className="text-destructive">Debug: Error Occurred</DialogTitle>
-            <DialogDescription>
-              This dialog is for debugging purposes. It will be hidden in production.
-            </DialogDescription>
-          </DialogHeader>
-
-          <div className="space-y-4">
-            <div>
-              <h4 className="font-semibold text-sm mb-2">Error Message:</h4>
-              <p className="text-sm bg-muted p-3 rounded-md font-mono break-words">
-                {debugError?.message}
-              </p>
-            </div>
-
-            <div>
-              <h4 className="font-semibold text-sm mb-2">Details:</h4>
-              <pre className="text-xs bg-muted p-3 rounded-md overflow-x-auto whitespace-pre-wrap break-words">
-                {debugError?.details}
-              </pre>
-            </div>
-
-            {debugError?.stack && (
-              <div>
-                <h4 className="font-semibold text-sm mb-2">Stack Trace:</h4>
-                <pre className="text-xs bg-muted p-3 rounded-md overflow-x-auto whitespace-pre-wrap break-words">
-                  {debugError.stack}
-                </pre>
-              </div>
-            )}
-          </div>
-
-          <DialogFooter>
-            <Button onClick={clearError}>Close</Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+      <DebugErrorDialog error={debugError} onClose={clearError} />
     </div>
   );
 };

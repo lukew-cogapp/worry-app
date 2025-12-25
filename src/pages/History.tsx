@@ -3,6 +3,7 @@ import type React from 'react';
 import { useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { toast } from 'sonner';
+import { DebugErrorDialog } from '../components/DebugErrorDialog';
 import { EditWorrySheet } from '../components/EditWorrySheet';
 import { EmptyState } from '../components/EmptyState';
 import {
@@ -24,6 +25,7 @@ import {
 } from '../components/ui/select';
 import { WorryCard } from '../components/WorryCard';
 import { lang } from '../config/language';
+import { useDebugError } from '../hooks/useDebugError';
 import { useHaptics } from '../hooks/useHaptics';
 import { usePreferencesStore } from '../store/preferencesStore';
 import { useWorryStore } from '../store/worryStore';
@@ -40,6 +42,7 @@ export const History: React.FC = () => {
   const defaultUnlockTime = usePreferencesStore((s) => s.preferences.defaultUnlockTime);
 
   const { unlockWorry: unlockHaptic } = useHaptics();
+  const { debugError, handleError, clearError } = useDebugError();
 
   const [filter, setFilter] = useState<FilterType>('all');
   const [searchQuery, setSearchQuery] = useState('');
@@ -77,7 +80,12 @@ export const History: React.FC = () => {
       await unlockWorryNow(id);
       await unlockHaptic();
       toast.success(lang.toasts.success.worryUnlocked);
-    } catch (_error) {
+    } catch (error) {
+      handleError(error, {
+        operation: 'unlockWorryNow',
+        worryId: id,
+      });
+
       toast.error(lang.toasts.error.unlockWorry, {
         action: {
           label: 'Retry',
@@ -104,7 +112,12 @@ export const History: React.FC = () => {
       await dismissWorry(worryToDismiss);
       toast.success(lang.toasts.success.worryDismissed);
       setWorryToDismiss(null);
-    } catch (_error) {
+    } catch (error) {
+      handleError(error, {
+        operation: 'dismissWorry',
+        worryId: worryToDismiss,
+      });
+
       toast.error(lang.toasts.error.dismissWorry, {
         action: {
           label: 'Retry',
@@ -127,7 +140,12 @@ export const History: React.FC = () => {
       await deleteWorry(worryToDelete);
       toast.success(lang.toasts.success.worryDeleted);
       setWorryToDelete(null);
-    } catch (_error) {
+    } catch (error) {
+      handleError(error, {
+        operation: 'deleteWorry',
+        worryId: worryToDelete,
+      });
+
       toast.error(lang.toasts.error.deleteWorry, {
         action: {
           label: 'Retry',
@@ -148,7 +166,17 @@ export const History: React.FC = () => {
       await editWorry(id, updates);
       toast.success(lang.toasts.success.worryUpdated);
       setIsEditSheetOpen(false);
-    } catch (_error) {
+    } catch (error) {
+      handleError(error, {
+        operation: 'editWorry',
+        worryId: id,
+        updates: {
+          hasContent: !!updates.content,
+          hasAction: !!updates.action,
+          hasUnlockAt: !!updates.unlockAt,
+        },
+      });
+
       toast.error(lang.toasts.error.updateWorry, {
         action: {
           label: 'Retry',
@@ -367,6 +395,8 @@ export const History: React.FC = () => {
         defaultTime={defaultUnlockTime}
         isSubmitting={isEditingWorry}
       />
+
+      <DebugErrorDialog error={debugError} onClose={clearError} />
     </div>
   );
 };

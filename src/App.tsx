@@ -5,6 +5,8 @@ import { SplashScreen } from '@capacitor/splash-screen';
 import { useEffect } from 'react';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import { Toaster, toast } from 'sonner';
+import { DebugErrorDialog } from './components/DebugErrorDialog';
+import { useDebugError } from './hooks/useDebugError';
 import { History } from './pages/History';
 import { Home } from './pages/Home';
 import { Insights } from './pages/Insights';
@@ -18,6 +20,7 @@ function App() {
   const loadPreferences = usePreferencesStore((s) => s.loadPreferences);
   const resolveWorry = useWorryStore((s) => s.resolveWorry);
   const snoozeWorry = useWorryStore((s) => s.snoozeWorry);
+  const { debugError, handleError, clearError } = useDebugError();
 
   useEffect(() => {
     let notificationListenerHandle: PluginListenerHandle | undefined;
@@ -61,6 +64,10 @@ function App() {
 
     init().catch((error) => {
       console.error('Failed to initialize app:', error);
+      handleError(error, {
+        operation: 'appInitialization',
+        stage: 'loadWorries or loadPreferences',
+      });
       toast.error('Failed to load app data. Please try restarting the app.');
     });
 
@@ -69,7 +76,7 @@ function App() {
       notificationListenerHandle?.remove();
       urlListenerHandle?.remove();
     };
-  }, [loadWorries, loadPreferences, resolveWorry, snoozeWorry]);
+  }, [loadWorries, loadPreferences, resolveWorry, snoozeWorry, handleError]);
 
   return (
     <BrowserRouter>
@@ -80,6 +87,8 @@ function App() {
         <Route path="/insights" element={<Insights />} />
         <Route path="/settings" element={<Settings />} />
       </Routes>
+
+      <DebugErrorDialog error={debugError} onClose={clearError} />
     </BrowserRouter>
   );
 }
