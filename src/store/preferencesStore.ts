@@ -16,7 +16,6 @@ export const usePreferencesStore = create<PreferencesStore>((set, get) => ({
     defaultUnlockTime: '09:00',
     hapticFeedback: true,
     encouragingMessages: true,
-    theme: 'system',
   },
   isLoading: true,
   isSaving: false,

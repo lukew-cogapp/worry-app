@@ -18,9 +18,19 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from '../components/ui/alert-dialog';
+import { Button } from '../components/ui/button';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from '../components/ui/dialog';
 import { WorryCard } from '../components/WorryCard';
-import { DATE_OFFSETS, TOAST_DURATIONS } from '../config/constants';
+import { TOAST_DURATIONS } from '../config/constants';
 import { formatDuration, lang } from '../config/language';
+import { useDebugError } from '../hooks/useDebugError';
 import { useHaptics } from '../hooks/useHaptics';
 import { usePreferencesStore } from '../store/preferencesStore';
 import { useWorryStore } from '../store/worryStore';
@@ -33,11 +43,13 @@ export const Home: React.FC = () => {
   const editWorry = useWorryStore((s) => s.editWorry);
   const resolveWorry = useWorryStore((s) => s.resolveWorry);
   const dismissWorry = useWorryStore((s) => s.dismissWorry);
+  const releaseWorry = useWorryStore((s) => s.releaseWorry);
   const snoozeWorry = useWorryStore((s) => s.snoozeWorry);
   const defaultUnlockTime = usePreferencesStore((s) => s.preferences.defaultUnlockTime);
   const isLoadingPreferences = usePreferencesStore((s) => s.isLoading);
 
   const { lockWorry, resolveWorry: resolveHaptic } = useHaptics();
+  const { debugError, handleError, clearError } = useDebugError();
 
   const [isAddSheetOpen, setIsAddSheetOpen] = useState(false);
   const [isEditSheetOpen, setIsEditSheetOpen] = useState(false);
@@ -47,6 +59,8 @@ export const Home: React.FC = () => {
   const [isReleasingWorry, setIsReleasingWorry] = useState(false);
   const [isEditingWorry, setIsEditingWorry] = useState(false);
   const [worryToDismiss, setWorryToDismiss] = useState<string | null>(null);
+  const [worryToResolve, setWorryToResolve] = useState<string | null>(null);
+  const [resolutionNote, setResolutionNote] = useState('');
   const [contentToRelease, setContentToRelease] = useState<string | null>(null);
   const [loadingStates, setLoadingStates] = useState<
     Record<string, { resolving?: boolean; snoozing?: boolean; dismissing?: boolean }>
@@ -63,7 +77,16 @@ export const Home: React.FC = () => {
       await lockWorry();
       setShowLockAnimation(true);
       setIsAddSheetOpen(false);
-    } catch (_error) {
+    } catch (error) {
+      handleError(error, {
+        operation: 'addWorry',
+        worry: {
+          contentLength: worry.content.length,
+          hasAction: !!worry.action,
+          unlockAt: worry.unlockAt,
+        },
+      });
+
       toast.error(lang.toasts.error.saveWorry, {
         action: {
           label: 'Retry',
@@ -75,21 +98,42 @@ export const Home: React.FC = () => {
     }
   };
 
-  const handleResolve = async (id: string) => {
-    setLoadingStates((prev) => ({ ...prev, [id]: { ...prev[id], resolving: true } }));
+  const handleResolveClick = (id: string) => {
+    setWorryToResolve(id);
+    setResolutionNote('');
+  };
+
+  const confirmResolve = async () => {
+    if (!worryToResolve) return;
+
+    setLoadingStates((prev) => ({
+      ...prev,
+      [worryToResolve]: { ...prev[worryToResolve], resolving: true },
+    }));
     try {
-      await resolveWorry(id);
+      await resolveWorry(worryToResolve, resolutionNote.trim() || undefined);
       await resolveHaptic();
       toast.success(lang.toasts.success.worryResolved);
-    } catch (_error) {
+      setWorryToResolve(null);
+      setResolutionNote('');
+    } catch (error) {
+      handleError(error, {
+        operation: 'resolveWorry',
+        worryId: worryToResolve,
+        hasNote: !!resolutionNote.trim(),
+      });
+
       toast.error(lang.toasts.error.resolveWorry, {
         action: {
           label: 'Retry',
-          onClick: () => handleResolve(id),
+          onClick: confirmResolve,
         },
       });
     } finally {
-      setLoadingStates((prev) => ({ ...prev, [id]: { ...prev[id], resolving: false } }));
+      setLoadingStates((prev) => ({
+        ...prev,
+        [worryToResolve]: { ...prev[worryToResolve], resolving: false },
+      }));
     }
   };
 
@@ -99,7 +143,13 @@ export const Home: React.FC = () => {
       await snoozeWorry(id, durationMs);
       await lockWorry();
       toast.success(lang.toasts.success.snoozed(formatDuration(durationMs)));
-    } catch (_error) {
+    } catch (error) {
+      handleError(error, {
+        operation: 'snoozeWorry',
+        worryId: id,
+        durationMs,
+      });
+
       toast.error(lang.toasts.error.snoozeWorry, {
         action: {
           label: 'Retry',
@@ -126,7 +176,12 @@ export const Home: React.FC = () => {
       await dismissWorry(worryToDismiss);
       toast.success(lang.toasts.success.worryDismissed);
       setWorryToDismiss(null);
-    } catch (_error) {
+    } catch (error) {
+      handleError(error, {
+        operation: 'dismissWorry',
+        worryId: worryToDismiss,
+      });
+
       toast.error(lang.toasts.error.dismissWorry, {
         action: {
           label: 'Retry',
@@ -150,24 +205,19 @@ export const Home: React.FC = () => {
 
     setIsReleasingWorry(true);
     try {
-      // Add the worry with a far-future date (it will be dismissed immediately anyway)
-      const futureDate = new Date();
-      futureDate.setFullYear(futureDate.getFullYear() + DATE_OFFSETS.RELEASE_YEARS);
-
-      const worry = await addWorry({
-        content: contentToRelease,
-        unlockAt: futureDate.toISOString(),
-      });
-
-      // Immediately dismiss it
-      await dismissWorry(worry.id);
+      await releaseWorry(contentToRelease);
 
       setIsAddSheetOpen(false);
       setContentToRelease(null);
       toast.success(lang.toasts.success.worryReleased, {
         duration: TOAST_DURATIONS.LONG,
       });
-    } catch (_error) {
+    } catch (error) {
+      handleError(error, {
+        operation: 'releaseWorry',
+        contentLength: contentToRelease.length,
+      });
+
       toast.error(lang.toasts.error.releaseWorry, {
         action: {
           label: 'Retry',
@@ -188,7 +238,13 @@ export const Home: React.FC = () => {
       await editWorry(id, updates);
       toast.success(lang.toasts.success.worryUpdated);
       setIsEditSheetOpen(false);
-    } catch (_error) {
+    } catch (error) {
+      handleError(error, {
+        operation: 'editWorry',
+        worryId: id,
+        updates,
+      });
+
       toast.error(lang.toasts.error.updateWorry, {
         action: {
           label: 'Retry',
@@ -212,12 +268,12 @@ export const Home: React.FC = () => {
     <div className="min-h-screen bg-background">
       {/* Header */}
       <header className="bg-card border-b border-border">
-        <div className="max-w-4xl mx-auto px-md py-md flex items-center justify-between">
+        <div className="max-w-4xl mx-auto px-4 py-4 flex items-center justify-between">
           <div>
             <h1 className="text-3xl font-bold text-foreground tracking-tight">{lang.app.name}</h1>
             <p className="text-sm text-muted-foreground">{lang.app.tagline}</p>
           </div>
-          <div className="flex items-center gap-md">
+          <div className="flex items-center gap-4">
             <Link
               to="/insights"
               className="text-muted-foreground hover:text-foreground transition-colors"
@@ -259,7 +315,7 @@ export const Home: React.FC = () => {
       </header>
 
       {/* Main Content */}
-      <main className="max-w-4xl mx-auto px-md py-lg pb-24">
+      <main className="max-w-4xl mx-auto px-4 py-6 pb-24">
         {(isLoadingWorries || isLoadingPreferences) && (
           <div className="flex items-center justify-center py-12">
             <Loader2 className="size-icon-lg animate-spin text-muted-foreground" />
@@ -272,16 +328,16 @@ export const Home: React.FC = () => {
 
         {/* Unlocked Worries */}
         {!isLoadingWorries && !isLoadingPreferences && unlockedWorries.length > 0 && (
-          <section className="mb-xl">
-            <h2 className="text-xl font-bold text-foreground mb-md tracking-tight">
+          <section className="mb-8">
+            <h2 className="text-xl font-bold text-foreground mb-4 tracking-tight">
               {lang.home.sections.ready}
             </h2>
-            <div className="space-y-sm">
+            <div className="space-y-3">
               {unlockedWorries.map((worry) => (
                 <WorryCard
                   key={worry.id}
                   worry={worry}
-                  onResolve={handleResolve}
+                  onResolve={handleResolveClick}
                   onSnooze={handleSnooze}
                   onDismiss={handleDismissClick}
                   onEdit={handleOpenEdit}
@@ -294,11 +350,23 @@ export const Home: React.FC = () => {
           </section>
         )}
 
+        {/* View History Link - show when no unlocked worries but has history */}
+        {!isLoadingWorries &&
+          !isLoadingPreferences &&
+          unlockedWorries.length === 0 &&
+          hasWorries && (
+            <div className="text-center mb-6">
+              <Link to="/history" className="text-sm text-primary hover:underline">
+                {lang.home.sections.locked.viewAll}
+              </Link>
+            </div>
+          )}
+
         {/* Locked Worries Summary */}
         {!isLoadingWorries && !isLoadingPreferences && lockedWorries.length > 0 && (
           <section>
-            <div className="bg-secondary/20 rounded-lg p-lg border border-primary/20">
-              <div className="flex items-center gap-sm mb-xs">
+            <div className="bg-secondary/20 rounded-lg p-6 border border-primary/20">
+              <div className="flex items-center gap-3 mb-2">
                 <Lock className="size-icon-lg text-primary" />
                 <div>
                   <h2 className="text-xl font-bold text-foreground tracking-tight">
@@ -311,7 +379,7 @@ export const Home: React.FC = () => {
               </div>
               <Link
                 to="/history"
-                className="text-sm text-primary hover:underline inline-block mt-xs"
+                className="text-sm text-primary hover:underline inline-block mt-2"
               >
                 {lang.home.sections.locked.viewAll}
               </Link>
@@ -359,6 +427,50 @@ export const Home: React.FC = () => {
       {/* Onboarding */}
       <Onboarding />
 
+      {/* Resolve Dialog */}
+      <AlertDialog
+        open={!!worryToResolve}
+        onOpenChange={(open) => {
+          if (!open) {
+            setWorryToResolve(null);
+            setResolutionNote('');
+          }
+        }}
+      >
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>{lang.resolveWorry.title}</AlertDialogTitle>
+            <AlertDialogDescription>
+              <label htmlFor="resolution-note" className="block text-sm font-medium mb-2 mt-4">
+                {lang.resolveWorry.noteLabel}
+              </label>
+              <textarea
+                id="resolution-note"
+                value={resolutionNote}
+                onChange={(e) => setResolutionNote(e.target.value)}
+                placeholder={lang.resolveWorry.notePlaceholder}
+                rows={3}
+                className="w-full px-3 py-2 border border-input rounded-md bg-background text-foreground placeholder-muted-foreground focus:ring-2 focus:ring-ring focus:border-transparent resize-none"
+              />
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel disabled={loadingStates[worryToResolve || '']?.resolving}>
+              {lang.resolveWorry.cancel}
+            </AlertDialogCancel>
+            <AlertDialogAction
+              onClick={confirmResolve}
+              disabled={loadingStates[worryToResolve || '']?.resolving}
+            >
+              {loadingStates[worryToResolve || '']?.resolving && (
+                <Loader2 className="mr-2 size-icon-sm animate-spin" />
+              )}
+              {lang.resolveWorry.confirm}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
       {/* Dismiss Confirmation Dialog */}
       <AlertDialog
         open={!!worryToDismiss}
@@ -380,7 +492,7 @@ export const Home: React.FC = () => {
               disabled={loadingStates[worryToDismiss || '']?.dismissing}
             >
               {loadingStates[worryToDismiss || '']?.dismissing && (
-                <Loader2 className="mr-xs size-icon-sm animate-spin" />
+                <Loader2 className="mr-2 size-icon-sm animate-spin" />
               )}
               {lang.history.dismissDialog.confirm}
             </AlertDialogAction>
@@ -405,12 +517,53 @@ export const Home: React.FC = () => {
               {lang.history.releaseDialog.cancel}
             </AlertDialogCancel>
             <AlertDialogAction onClick={confirmRelease} disabled={isReleasingWorry}>
-              {isReleasingWorry && <Loader2 className="mr-xs size-icon-sm animate-spin" />}
+              {isReleasingWorry && <Loader2 className="mr-2 size-icon-sm animate-spin" />}
               {lang.history.releaseDialog.confirm}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
+
+      {/* Debug Error Dialog */}
+      <Dialog open={!!debugError} onOpenChange={(open) => !open && clearError()}>
+        <DialogContent className="max-w-2xl max-h-[80vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle className="text-destructive">Debug: Error Occurred</DialogTitle>
+            <DialogDescription>
+              This dialog is for debugging purposes. It will be hidden in production.
+            </DialogDescription>
+          </DialogHeader>
+
+          <div className="space-y-4">
+            <div>
+              <h4 className="font-semibold text-sm mb-2">Error Message:</h4>
+              <p className="text-sm bg-muted p-3 rounded-md font-mono break-words">
+                {debugError?.message}
+              </p>
+            </div>
+
+            <div>
+              <h4 className="font-semibold text-sm mb-2">Details:</h4>
+              <pre className="text-xs bg-muted p-3 rounded-md overflow-x-auto whitespace-pre-wrap break-words">
+                {debugError?.details}
+              </pre>
+            </div>
+
+            {debugError?.stack && (
+              <div>
+                <h4 className="font-semibold text-sm mb-2">Stack Trace:</h4>
+                <pre className="text-xs bg-muted p-3 rounded-md overflow-x-auto whitespace-pre-wrap break-words">
+                  {debugError.stack}
+                </pre>
+              </div>
+            )}
+          </div>
+
+          <DialogFooter>
+            <Button onClick={clearError}>Close</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };

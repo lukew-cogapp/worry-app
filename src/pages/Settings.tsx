@@ -1,13 +1,6 @@
 import type React from 'react';
 import { Link } from 'react-router-dom';
 import { Label } from '../components/ui/label';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '../components/ui/select';
 import { Separator } from '../components/ui/separator';
 import { Switch } from '../components/ui/switch';
 import { lang } from '../config/language';
@@ -22,7 +15,7 @@ export const Settings: React.FC = () => {
     <div className="min-h-screen bg-background">
       {/* Header */}
       <header className="bg-card border-b border-border">
-        <div className="max-w-4xl mx-auto px-md py-md flex items-center gap-md">
+        <div className="max-w-4xl mx-auto px-4 py-4 flex items-center gap-4">
           <Link
             to="/"
             className="text-muted-foreground hover:text-foreground transition-colors"
@@ -38,9 +31,12 @@ export const Settings: React.FC = () => {
               />
             </svg>
           </Link>
-          <h1 className="text-3xl font-bold text-foreground tracking-tight">
-            {lang.settings.title}
-          </h1>
+          <div>
+            <h1 className="text-3xl font-bold text-foreground tracking-tight">
+              {lang.settings.title}
+            </h1>
+            <p className="text-sm text-muted-foreground">{lang.settings.subtitle}</p>
+          </div>
         </div>
       </header>
 
@@ -61,7 +57,7 @@ export const Settings: React.FC = () => {
               value={preferences.defaultUnlockTime}
               onChange={(e) => updatePreferences({ defaultUnlockTime: e.target.value })}
               disabled={isSaving}
-              className="min-h-touch-target px-sm py-xs border border-input rounded-md bg-background text-foreground disabled:opacity-50 disabled:cursor-not-allowed"
+              className="min-h-touch-target px-3 py-2 border border-input rounded-md bg-background text-foreground disabled:opacity-50 disabled:cursor-not-allowed"
             />
           </div>
 
@@ -111,36 +107,6 @@ export const Settings: React.FC = () => {
                 disabled={isSaving}
               />
             </div>
-          </div>
-
-          <Separator />
-
-          {/* Theme */}
-          <div className="p-6">
-            <Label htmlFor="theme" className="text-base font-medium">
-              {lang.settings.sections.theme.title}
-            </Label>
-            <p className="text-sm text-muted-foreground mt-1 mb-3">
-              {lang.settings.sections.theme.description}
-            </p>
-            <Select
-              value={preferences.theme}
-              onValueChange={(value: 'light' | 'dark' | 'system') =>
-                updatePreferences({ theme: value })
-              }
-              disabled={isSaving}
-            >
-              <SelectTrigger className="w-full sm:w-[200px]">
-                <SelectValue placeholder="Select theme" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="light">{lang.settings.sections.theme.options.light}</SelectItem>
-                <SelectItem value="dark">{lang.settings.sections.theme.options.dark}</SelectItem>
-                <SelectItem value="system">
-                  {lang.settings.sections.theme.options.system}
-                </SelectItem>
-              </SelectContent>
-            </Select>
           </div>
         </div>
 

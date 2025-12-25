@@ -15,7 +15,13 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from '../components/ui/alert-dialog';
-import { Button } from '../components/ui/button';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '../components/ui/select';
 import { WorryCard } from '../components/WorryCard';
 import { lang } from '../config/language';
 import { useHaptics } from '../hooks/useHaptics';
@@ -23,7 +29,7 @@ import { usePreferencesStore } from '../store/preferencesStore';
 import { useWorryStore } from '../store/worryStore';
 import type { Worry } from '../types';
 
-type FilterType = 'all' | 'locked' | 'unlocked' | 'resolved' | 'dismissed';
+type FilterType = 'all' | 'locked' | 'unlocked' | 'resolved' | 'dismissed' | 'released';
 
 export const History: React.FC = () => {
   const worries = useWorryStore((s) => s.worries);
@@ -50,7 +56,12 @@ export const History: React.FC = () => {
   const filteredWorries = useMemo(
     () =>
       worries
-        .filter((w) => (filter === 'all' ? true : w.status === filter))
+        .filter((w) => {
+          if (filter === 'all') return true;
+          if (filter === 'released') return w.releasedAt !== undefined;
+          if (filter === 'dismissed') return w.status === 'dismissed' && !w.releasedAt;
+          return w.status === filter;
+        })
         .filter((w) =>
           searchQuery
             ? w.content.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -162,14 +173,15 @@ export const History: React.FC = () => {
     locked: worries.filter((w) => w.status === 'locked').length,
     unlocked: worries.filter((w) => w.status === 'unlocked').length,
     resolved: worries.filter((w) => w.status === 'resolved').length,
-    dismissed: worries.filter((w) => w.status === 'dismissed').length,
+    dismissed: worries.filter((w) => w.status === 'dismissed' && !w.releasedAt).length,
+    released: worries.filter((w) => w.releasedAt !== undefined).length,
   };
 
   return (
     <div className="min-h-screen bg-background">
       {/* Header */}
       <header className="bg-card border-b border-border">
-        <div className="max-w-4xl mx-auto px-md py-md flex items-center gap-md">
+        <div className="max-w-4xl mx-auto px-4 py-4 flex items-center gap-4">
           <Link
             to="/"
             className="text-muted-foreground hover:text-foreground transition-colors"
@@ -196,37 +208,38 @@ export const History: React.FC = () => {
 
       {/* Filters */}
       <div className="bg-card border-b border-border">
-        <div className="max-w-4xl mx-auto px-md py-sm overflow-x-auto">
-          <div className="flex gap-xs">
-            {(
-              [
-                { key: 'all', label: lang.history.filters.all },
-                { key: 'locked', label: lang.history.filters.locked },
-                { key: 'unlocked', label: lang.history.filters.unlocked },
-                { key: 'resolved', label: lang.history.filters.resolved },
-                { key: 'dismissed', label: lang.history.filters.dismissed },
-              ] as const
-            ).map(({ key, label }) => (
-              <button
-                key={key}
-                type="button"
-                onClick={() => setFilter(key)}
-                className={`min-h-touch-target px-md py-xs rounded-full text-sm font-medium whitespace-nowrap transition-colors ${
-                  filter === key
-                    ? 'bg-primary text-primary-foreground'
-                    : 'bg-secondary text-secondary-foreground hover:bg-secondary/80'
-                }`}
-              >
-                {label} ({counts[key]})
-              </button>
-            ))}
-          </div>
+        <div className="max-w-4xl mx-auto px-4 py-3">
+          <Select value={filter} onValueChange={(value: FilterType) => setFilter(value)}>
+            <SelectTrigger className="w-full sm:w-[200px]">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">
+                {lang.history.filters.all} ({counts.all})
+              </SelectItem>
+              <SelectItem value="locked">
+                {lang.history.filters.locked} ({counts.locked})
+              </SelectItem>
+              <SelectItem value="unlocked">
+                {lang.history.filters.unlocked} ({counts.unlocked})
+              </SelectItem>
+              <SelectItem value="resolved">
+                {lang.history.filters.resolved} ({counts.resolved})
+              </SelectItem>
+              <SelectItem value="dismissed">
+                {lang.history.filters.dismissed} ({counts.dismissed})
+              </SelectItem>
+              <SelectItem value="released">
+                {lang.history.filters.released} ({counts.released})
+              </SelectItem>
+            </SelectContent>
+          </Select>
         </div>
       </div>
 
       {/* Search */}
       <div className="bg-card border-b border-border">
-        <div className="max-w-4xl mx-auto px-md py-sm">
+        <div className="max-w-4xl mx-auto px-4 py-3">
           <div className="relative">
             <input
               type="text"
@@ -234,10 +247,10 @@ export const History: React.FC = () => {
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               aria-label={lang.aria.search}
-              className="w-full px-md py-xs pl-10 border border-input rounded-lg bg-background text-foreground placeholder-muted-foreground focus:ring-2 focus:ring-ring focus:border-transparent"
+              className="w-full px-4 py-2 pl-10 border border-input rounded-lg bg-background text-foreground placeholder-muted-foreground focus:ring-2 focus:ring-ring focus:border-transparent"
             />
             <svg
-              className="absolute left-sm top-1/2 -translate-y-1/2 size-icon text-muted-foreground"
+              className="absolute left-3 top-1/2 -translate-y-1/2 size-icon text-muted-foreground"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
@@ -255,7 +268,7 @@ export const History: React.FC = () => {
       </div>
 
       {/* Main Content */}
-      <main className="max-w-4xl mx-auto px-md py-lg">
+      <main className="max-w-4xl mx-auto px-4 py-6">
         {filteredWorries.length === 0 ? (
           <EmptyState
             title={lang.history.empty.title(filter)}
@@ -266,45 +279,25 @@ export const History: React.FC = () => {
             }
           />
         ) : (
-          <div className="space-y-sm">
+          <div className="space-y-3">
             {filteredWorries
               .slice()
               .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
               .map((worry) => (
-                <div key={worry.id} className="relative">
-                  <WorryCard
-                    worry={worry}
-                    onUnlockNow={worry.status === 'locked' ? handleUnlockNow : undefined}
-                    onDismiss={worry.status === 'locked' ? handleDismissClick : undefined}
-                    onEdit={handleOpenEdit}
-                    isUnlocking={loadingStates[worry.id]?.unlocking}
-                    isDismissing={loadingStates[worry.id]?.dismissing}
-                  />
-                  {(worry.status === 'resolved' || worry.status === 'dismissed') && (
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      onClick={() => setWorryToDelete(worry.id)}
-                      className="absolute top-xs right-xs min-h-touch-target min-w-touch-target text-muted-foreground hover:text-destructive active:scale-95"
-                      aria-label={lang.aria.delete}
-                    >
-                      <svg
-                        className="size-icon"
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                      >
-                        <title>Delete</title>
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth={2}
-                          d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
-                        />
-                      </svg>
-                    </Button>
-                  )}
-                </div>
+                <WorryCard
+                  key={worry.id}
+                  worry={worry}
+                  onUnlockNow={worry.status === 'locked' ? handleUnlockNow : undefined}
+                  onDismiss={worry.status === 'locked' ? handleDismissClick : undefined}
+                  onEdit={handleOpenEdit}
+                  onDelete={
+                    worry.status === 'resolved' || worry.status === 'dismissed'
+                      ? (id) => setWorryToDelete(id)
+                      : undefined
+                  }
+                  isUnlocking={loadingStates[worry.id]?.unlocking}
+                  isDismissing={loadingStates[worry.id]?.dismissing}
+                />
               ))}
           </div>
         )}
@@ -326,7 +319,7 @@ export const History: React.FC = () => {
               disabled={isDeleting}
               className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
             >
-              {isDeleting && <Loader2 className="mr-xs size-icon-sm animate-spin" />}
+              {isDeleting && <Loader2 className="mr-2 size-icon-sm animate-spin" />}
               {lang.history.deleteDialog.confirm}
             </AlertDialogAction>
           </AlertDialogFooter>
@@ -354,7 +347,7 @@ export const History: React.FC = () => {
               disabled={loadingStates[worryToDismiss || '']?.dismissing}
             >
               {loadingStates[worryToDismiss || '']?.dismissing && (
-                <Loader2 className="mr-xs size-icon-sm animate-spin" />
+                <Loader2 className="mr-2 size-icon-sm animate-spin" />
               )}
               {lang.history.dismissDialog.confirm}
             </AlertDialogAction>

@@ -6,7 +6,6 @@ const defaultPreferences: UserPreferences = {
   defaultUnlockTime: '09:00',
   hapticFeedback: true,
   encouragingMessages: true,
-  theme: 'system',
 };
 
 const defaultStats: WorryStats = {
@@ -29,10 +28,21 @@ export async function getWorries(): Promise<Worry[]> {
 }
 
 export async function saveWorries(worries: Worry[]): Promise<void> {
-  await Preferences.set({
-    key: STORAGE_KEYS.WORRIES,
-    value: JSON.stringify(worries),
-  });
+  try {
+    console.log('[Storage] Attempting to save worries, count:', worries.length);
+    const serialized = JSON.stringify(worries);
+    console.log('[Storage] Serialized data length:', serialized.length);
+
+    await Preferences.set({
+      key: STORAGE_KEYS.WORRIES,
+      value: serialized,
+    });
+
+    console.log('[Storage] Successfully saved worries');
+  } catch (error) {
+    console.error('[Storage] Failed to save worries:', error);
+    throw error;
+  }
 }
 
 // Preferences
@@ -49,10 +59,17 @@ export async function getPreferences(): Promise<UserPreferences> {
 }
 
 export async function savePreferences(preferences: UserPreferences): Promise<void> {
-  await Preferences.set({
-    key: STORAGE_KEYS.PREFERENCES,
-    value: JSON.stringify(preferences),
-  });
+  try {
+    console.log('[Storage] Attempting to save preferences');
+    await Preferences.set({
+      key: STORAGE_KEYS.PREFERENCES,
+      value: JSON.stringify(preferences),
+    });
+    console.log('[Storage] Successfully saved preferences');
+  } catch (error) {
+    console.error('[Storage] Failed to save preferences:', error);
+    throw error;
+  }
 }
 
 // Stats
@@ -69,10 +86,17 @@ export async function getStats(): Promise<WorryStats> {
 }
 
 export async function saveStats(stats: WorryStats): Promise<void> {
-  await Preferences.set({
-    key: STORAGE_KEYS.STATS,
-    value: JSON.stringify(stats),
-  });
+  try {
+    console.log('[Storage] Attempting to save stats');
+    await Preferences.set({
+      key: STORAGE_KEYS.STATS,
+      value: JSON.stringify(stats),
+    });
+    console.log('[Storage] Successfully saved stats');
+  } catch (error) {
+    console.error('[Storage] Failed to save stats:', error);
+    throw error;
+  }
 }
 
 // Clear all data

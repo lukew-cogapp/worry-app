@@ -1,14 +1,28 @@
 @import "tailwindcss";
 
 @theme {
-  /* Spacing tokens */
-  --spacing-xs: 0.5rem; /* 2 in Tailwind (8px) */
-  --spacing-sm: 0.75rem; /* 3 in Tailwind (12px) */
-  --spacing-md: 1rem; /* 4 in Tailwind (16px) */
-  --spacing-lg: 1.5rem; /* 6 in Tailwind (24px) */
-  --spacing-xl: 2rem; /* 8 in Tailwind (32px) */
-  --spacing-section: 2rem;
-  --spacing-card: 1rem;
+  /* Color tokens - reference CSS variables for light/dark mode support */
+  --color-background: hsl(var(--background));
+  --color-foreground: hsl(var(--foreground));
+  --color-card: hsl(var(--card));
+  --color-card-foreground: hsl(var(--card-foreground));
+  --color-popover: hsl(var(--popover));
+  --color-popover-foreground: hsl(var(--popover-foreground));
+  --color-primary: hsl(var(--primary));
+  --color-primary-foreground: hsl(var(--primary-foreground));
+  --color-secondary: hsl(var(--secondary));
+  --color-secondary-foreground: hsl(var(--secondary-foreground));
+  --color-muted: hsl(var(--muted));
+  --color-muted-foreground: hsl(var(--muted-foreground));
+  --color-accent: hsl(var(--accent));
+  --color-accent-foreground: hsl(var(--accent-foreground));
+  --color-destructive: hsl(var(--destructive));
+  --color-destructive-foreground: hsl(var(--destructive-foreground));
+  --color-border: hsl(var(--border));
+  --color-input: hsl(var(--input));
+  --color-ring: hsl(var(--ring));
+
+  /* Spacing tokens - only non-conflicting custom values */
   --spacing-fab-offset: 1.5rem;
 
   /* Size tokens */
@@ -22,11 +36,11 @@
   --size-touch-target: 2.75rem; /* 44px - minimum touch target */
   --size-button-icon: 2.5rem; /* 10 in Tailwind (40px) */
 
-  /* Shadow tokens */
-  --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
-  --shadow-card: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
-  --shadow-dialog: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
-  --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+  /* Shadow tokens - softer, calming shadows with color */
+  --shadow-sm: 0 1px 3px 0 rgb(100 120 150 / 0.08);
+  --shadow-card: 0 2px 8px -2px rgb(100 120 150 / 0.12), 0 1px 3px -1px rgb(100 120 150 / 0.08);
+  --shadow-dialog: 0 12px 28px -8px rgb(100 120 150 / 0.2), 0 4px 12px -4px rgb(100 120 150 / 0.1);
+  --shadow-lg: 0 12px 28px -8px rgb(100 120 150 / 0.15), 0 4px 12px -4px rgb(100 120 150 / 0.08);
 
   /* Animation tokens */
   --animate-slide-up: slide-up 0.3s ease-out;
@@ -44,40 +58,40 @@
 
 @layer base {
   :root {
-    /* Calming color palette - Soft blues and lavenders */
-    --background: 223 30% 98%;
-    --foreground: 222 47% 11%;
-    --card: 0 0% 100%;
-    --card-foreground: 222 47% 11%;
-    --popover: 0 0% 100%;
-    --popover-foreground: 222 47% 11%;
+    /* Calming color palette - Soft, muted, warm tones */
+    --background: 210 25% 92%;
+    --foreground: 220 25% 25%;
+    --card: 210 20% 96%;
+    --card-foreground: 220 25% 25%;
+    --popover: 210 20% 96%;
+    --popover-foreground: 220 25% 25%;
 
-    /* Soft blue primary - calming and peaceful */
-    --primary: 211 85% 63%;
+    /* Muted teal primary - gentle and peaceful */
+    --primary: 190 45% 45%;
     --primary-foreground: 0 0% 100%;
 
-    /* Lavender secondary - soothing accent */
-    --secondary: 270 60% 85%;
-    --secondary-foreground: 270 60% 20%;
+    /* Dusty lavender secondary - soft and soothing */
+    --secondary: 250 25% 88%;
+    --secondary-foreground: 250 20% 35%;
 
-    /* Muted sage green tones */
-    --muted: 142 20% 93%;
-    --muted-foreground: 215 16% 47%;
+    /* Warm sage muted tones */
+    --muted: 160 15% 90%;
+    --muted-foreground: 210 15% 50%;
 
-    /* Warm accent colors */
-    --accent: 142 20% 93%;
-    --accent-foreground: 215 20% 27%;
+    /* Soft blush accent */
+    --accent: 250 20% 90%;
+    --accent-foreground: 250 20% 30%;
 
-    /* Semantic colors */
-    --destructive: 0 72% 51%;
+    /* Semantic colors - muted coral */
+    --destructive: 5 50% 55%;
     --destructive-foreground: 0 0% 100%;
-    --border: 214 32% 91%;
-    --input: 214 32% 91%;
-    --ring: 211 85% 63%;
-    --radius: 0.75rem;
+    --border: 210 15% 85%;
+    --input: 210 15% 85%;
+    --ring: 190 45% 45%;
+    --radius: 1rem;
 
     /* Custom calming gradients */
-    --gradient-calm: linear-gradient(135deg, hsl(211 85% 63%) 0%, hsl(270 60% 75%) 100%);
+    --gradient-calm: linear-gradient(135deg, hsl(190 45% 45%) 0%, hsl(250 25% 65%) 100%);
   }
 
   .dark {
@@ -111,11 +125,12 @@
 
 @layer base {
   * {
-    @apply border-border;
+    border-color: hsl(var(--border));
   }
 
   body {
-    @apply bg-background text-foreground;
+    background-color: hsl(var(--background));
+    color: hsl(var(--foreground));
     font-family:
       system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell,
       sans-serif;
