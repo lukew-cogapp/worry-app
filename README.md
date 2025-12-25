@@ -138,6 +138,74 @@ npx cap run ios
 npx cap run android
 ```
 
+## Debugging
+
+### Chrome DevTools (Recommended)
+
+The easiest way to debug on Android:
+
+1. Run the app on an Android device/emulator
+2. Open Chrome and navigate to `chrome://inspect`
+3. Click "inspect" under your app name
+4. Access full console logs, network activity, and Application storage
+
+**What you'll see:**
+- `[Store]` and `[Storage]` debug logs (development only)
+- Full error details via debug error dialog
+- Application → Local Storage to inspect Capacitor Preferences data
+
+### Android Studio Logcat
+
+View native Android logs:
+
+```bash
+# In Android Studio: View → Tool Windows → Logcat
+
+# Or via command line:
+adb logcat
+
+# Filter for app-specific logs:
+adb logcat | grep -i capacitor
+adb logcat | grep -i chromium
+```
+
+### Inspect Android Storage Directly
+
+View SharedPreferences data (where Capacitor stores data):
+
+```bash
+# Replace YOUR.PACKAGE.NAME with your app's package (check android/app/build.gradle)
+adb shell run-as YOUR.PACKAGE.NAME ls /data/data/YOUR.PACKAGE.NAME/shared_prefs/
+
+# View Capacitor storage file:
+adb shell run-as YOUR.PACKAGE.NAME cat /data/data/YOUR.PACKAGE.NAME/shared_prefs/CapacitorStorage.xml
+```
+
+### Debug Error System
+
+The app includes a development-only debug error dialog that shows:
+- Full error messages
+- Operation context (what was being attempted)
+- Stack traces
+
+**Production behavior:**
+- Debug dialogs are automatically disabled
+- Errors still logged to console
+- Ready for integration with error tracking services (Sentry, LogRocket)
+
+### Development vs Production Logging
+
+**Development (`npm run dev`):**
+- All `[Store]` and `[Storage]` logs visible
+- Debug error dialogs enabled
+- Full stack traces
+
+**Production (`npm run build`):**
+- Debug logs stripped from bundle
+- Debug dialogs disabled
+- Only errors logged to console
+- Smaller bundle size
+
 ## Technology Stack
 
 | Layer | Technology | Version | Purpose |
