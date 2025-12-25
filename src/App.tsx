@@ -1,6 +1,7 @@
 import { App as CapApp } from '@capacitor/app';
 import type { PluginListenerHandle } from '@capacitor/core';
 import { LocalNotifications } from '@capacitor/local-notifications';
+import { PrivacyScreen } from '@capacitor/privacy-screen';
 import { SplashScreen } from '@capacitor/splash-screen';
 import { useEffect } from 'react';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
@@ -33,6 +34,10 @@ function App() {
 
       // Capacitor-specific features - may fail on web, which is fine
       try {
+        // Enable privacy screen to protect sensitive content
+        // Blurs app in task switcher and prevents screenshots
+        await PrivacyScreen.enable();
+
         await notifications.requestPermissions();
         await notifications.registerNotificationActions();
 
