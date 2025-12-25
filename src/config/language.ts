@@ -74,7 +74,7 @@ export const lang = {
       locked: {
         title: (count: number) => `${count} ${count === 1 ? 'Worry' : 'Worries'} Locked Away`,
         subtitle: 'Check back when they unlock.',
-        viewAll: 'View all locked worries →',
+        viewAll: 'View locked & previous worries →',
       },
     },
   },
@@ -89,6 +89,7 @@ export const lang = {
       unlocked: 'Unlocked',
       resolved: 'Resolved',
       dismissed: 'Dismissed',
+      released: 'Released',
     },
     search: {
       placeholder: 'Search worries...',
@@ -124,6 +125,7 @@ export const lang = {
   // Insights page
   insights: {
     title: 'Insights',
+    subtitle: 'Track your worry patterns',
     empty: {
       title: 'No data yet',
       message: 'Add some worries to see your insights and patterns.',
@@ -145,8 +147,7 @@ export const lang = {
         title: 'Action Taken',
         description: (resolved: number, dismissed: number) =>
           `${resolved} resolved, ${dismissed} dismissed`,
-        insight:
-          'Most of your worries resolved themselves. Consider if they needed immediate attention.',
+        insight: 'Most of your worries were dismissed. Consider if they needed action after all.',
       },
       avgTimeToResolve: {
         title: 'Average Time to Resolve',
@@ -163,6 +164,7 @@ export const lang = {
   // Settings page
   settings: {
     title: 'Settings',
+    subtitle: 'Customize your experience',
     sections: {
       defaultTime: {
         title: 'Default Unlock Time',
@@ -175,15 +177,6 @@ export const lang = {
       encouragingMessages: {
         title: 'Encouraging Messages',
         description: 'Show supportive text in notifications',
-      },
-      theme: {
-        title: 'Theme',
-        description: 'Choose your app appearance',
-        options: {
-          light: 'Light',
-          dark: 'Dark',
-          system: 'System',
-        },
       },
     },
     about: {
@@ -198,10 +191,12 @@ export const lang = {
       locked: 'Locked',
       ready: 'Ready',
       resolved: 'Resolved',
+      dismissed: 'Dismissed',
       released: 'Released',
     },
     labels: {
       action: 'Action:',
+      resolution: 'Resolution:',
       unlocks: (time: string) => `Unlocks ${time}`,
       unlocked: (time: string) => `Unlocked ${time}`,
       resolved: (time: string) => `Resolved ${time}`,
@@ -262,6 +257,15 @@ export const lang = {
   editWorry: {
     title: 'Edit Worry',
     save: 'Save Changes',
+  },
+
+  // Resolve worry dialog
+  resolveWorry: {
+    title: 'Mark as Done',
+    noteLabel: 'What did you do?',
+    notePlaceholder: 'How did you handle this worry? (optional)',
+    cancel: 'Cancel',
+    confirm: 'Mark Done',
   },
 
   // Animations

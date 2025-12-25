@@ -12,6 +12,8 @@ export interface Worry {
   unlockAt: string; // ISO 8601 - when notification fires
   unlockedAt?: string; // ISO 8601 - when user actually opened it
   resolvedAt?: string; // ISO 8601 - when marked as done
+  releasedAt?: string; // ISO 8601 - when released (dismissed as uncontrollable)
+  resolutionNote?: string; // What the user did to resolve it
 
   status: WorryStatus;
   notificationId: number; // Capacitor notification ID
@@ -25,7 +27,6 @@ export interface UserPreferences {
   quietHoursEnd?: string; // e.g., "08:00"
   hapticFeedback: boolean;
   encouragingMessages: boolean; // Show supportive text in notifications
-  theme: 'light' | 'dark' | 'system';
 }
 
 export interface WorryStats {

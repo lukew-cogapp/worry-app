@@ -36,11 +36,11 @@
   --size-touch-target: 2.75rem; /* 44px - minimum touch target */
   --size-button-icon: 2.5rem; /* 10 in Tailwind (40px) */
 
-  /* Shadow tokens */
-  --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
-  --shadow-card: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
-  --shadow-dialog: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
-  --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+  /* Shadow tokens - softer, calming shadows with color */
+  --shadow-sm: 0 1px 3px 0 rgb(100 120 150 / 0.08);
+  --shadow-card: 0 2px 8px -2px rgb(100 120 150 / 0.12), 0 1px 3px -1px rgb(100 120 150 / 0.08);
+  --shadow-dialog: 0 12px 28px -8px rgb(100 120 150 / 0.2), 0 4px 12px -4px rgb(100 120 150 / 0.1);
+  --shadow-lg: 0 12px 28px -8px rgb(100 120 150 / 0.15), 0 4px 12px -4px rgb(100 120 150 / 0.08);
 
   /* Animation tokens */
   --animate-slide-up: slide-up 0.3s ease-out;
@@ -58,40 +58,40 @@
 
 @layer base {
   :root {
-    /* Calming color palette - Soft blues and lavenders */
-    --background: 223 30% 98%;
-    --foreground: 222 47% 11%;
-    --card: 0 0% 100%;
-    --card-foreground: 222 47% 11%;
-    --popover: 0 0% 100%;
-    --popover-foreground: 222 47% 11%;
+    /* Calming color palette - Soft blues and lavenders with warmth */
+    --background: 220 30% 96%;
+    --foreground: 222 47% 15%;
+    --card: 220 25% 99%;
+    --card-foreground: 222 47% 15%;
+    --popover: 220 25% 99%;
+    --popover-foreground: 222 47% 15%;
 
-    /* Soft blue primary - calming and peaceful */
-    --primary: 211 85% 63%;
+    /* Soft teal-blue primary - calming and peaceful */
+    --primary: 200 80% 50%;
     --primary-foreground: 0 0% 100%;
 
     /* Lavender secondary - soothing accent */
-    --secondary: 270 60% 85%;
-    --secondary-foreground: 270 60% 20%;
+    --secondary: 260 50% 92%;
+    --secondary-foreground: 260 40% 30%;
 
-    /* Muted sage green tones */
-    --muted: 142 20% 93%;
-    --muted-foreground: 215 16% 47%;
+    /* Soft sage/mint muted tones */
+    --muted: 180 20% 94%;
+    --muted-foreground: 220 15% 45%;
 
-    /* Warm accent colors */
-    --accent: 142 20% 93%;
-    --accent-foreground: 215 20% 27%;
+    /* Warm lavender accent */
+    --accent: 260 40% 94%;
+    --accent-foreground: 260 35% 25%;
 
-    /* Semantic colors */
-    --destructive: 0 72% 51%;
+    /* Semantic colors - softer red */
+    --destructive: 0 65% 55%;
     --destructive-foreground: 0 0% 100%;
-    --border: 214 32% 91%;
-    --input: 214 32% 91%;
-    --ring: 211 85% 63%;
-    --radius: 0.75rem;
+    --border: 220 20% 88%;
+    --input: 220 20% 88%;
+    --ring: 200 80% 50%;
+    --radius: 0.875rem;
 
     /* Custom calming gradients */
-    --gradient-calm: linear-gradient(135deg, hsl(211 85% 63%) 0%, hsl(270 60% 75%) 100%);
+    --gradient-calm: linear-gradient(135deg, hsl(200 80% 50%) 0%, hsl(260 50% 70%) 100%);
   }
 
   .dark {

@@ -16,8 +16,9 @@ interface WorryStore {
     id: string,
     updates: { content?: string; action?: string; unlockAt?: string }
   ) => Promise<void>;
-  resolveWorry: (id: string) => Promise<void>;
+  resolveWorry: (id: string, note?: string) => Promise<void>;
   dismissWorry: (id: string) => Promise<void>;
+  releaseWorry: (content: string) => Promise<void>;
   snoozeWorry: (id: string, duration: number) => Promise<void>;
   unlockWorryNow: (id: string) => Promise<void>;
   deleteWorry: (id: string) => Promise<void>;
@@ -27,6 +28,7 @@ interface WorryStore {
   unlockedWorries: () => Worry[];
   resolvedWorries: () => Worry[];
   dismissedWorries: () => Worry[];
+  releasedWorries: () => Worry[];
 }
 
 export const useWorryStore = create<WorryStore>((set, get) => ({
@@ -91,9 +93,16 @@ export const useWorryStore = create<WorryStore>((set, get) => ({
     await storage.saveWorries(worries);
   },
 
-  resolveWorry: async (id) => {
+  resolveWorry: async (id, note) => {
     const worries = get().worries.map((w) =>
-      w.id === id ? { ...w, status: 'resolved' as const, resolvedAt: new Date().toISOString() } : w
+      w.id === id
+        ? {
+            ...w,
+            status: 'resolved' as const,
+            resolvedAt: new Date().toISOString(),
+            resolutionNote: note || undefined,
+          }
+        : w
     );
     set({ worries });
     await storage.saveWorries(worries);
@@ -107,6 +116,23 @@ export const useWorryStore = create<WorryStore>((set, get) => ({
     const worries = get().worries.map((w) =>
       w.id === id ? { ...w, status: 'dismissed' as const } : w
     );
+    set({ worries });
+    await storage.saveWorries(worries);
+  },
+
+  releaseWorry: async (content) => {
+    const now = new Date().toISOString();
+    const worry: Worry = {
+      id: crypto.randomUUID(),
+      content,
+      createdAt: now,
+      unlockAt: now,
+      status: 'dismissed',
+      notificationId: 0,
+      releasedAt: now,
+    };
+
+    const worries = [...get().worries, worry];
     set({ worries });
     await storage.saveWorries(worries);
   },
@@ -152,5 +178,6 @@ export const useWorryStore = create<WorryStore>((set, get) => ({
   lockedWorries: () => get().worries.filter((w) => w.status === 'locked'),
   unlockedWorries: () => get().worries.filter((w) => w.status === 'unlocked'),
   resolvedWorries: () => get().worries.filter((w) => w.status === 'resolved'),
-  dismissedWorries: () => get().worries.filter((w) => w.status === 'dismissed'),
+  dismissedWorries: () => get().worries.filter((w) => w.status === 'dismissed' && !w.releasedAt),
+  releasedWorries: () => get().worries.filter((w) => w.releasedAt !== undefined),
 }));

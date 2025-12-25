@@ -6,7 +6,6 @@ const defaultPreferences: UserPreferences = {
   defaultUnlockTime: '09:00',
   hapticFeedback: true,
   encouragingMessages: true,
-  theme: 'system',
 };
 
 const defaultStats: WorryStats = {

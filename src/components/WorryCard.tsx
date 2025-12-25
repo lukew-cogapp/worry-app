@@ -1,4 +1,13 @@
-import { CheckCircle2, Edit3, Loader2, Lock, Package, Sparkles } from 'lucide-react';
+import {
+  CheckCircle2,
+  Edit3,
+  Loader2,
+  Lock,
+  Package,
+  Sparkles,
+  Trash2,
+  XCircle,
+} from 'lucide-react';
 import type React from 'react';
 import { SNOOZE_DURATIONS } from '../config/constants';
 import { lang } from '../config/language';
@@ -23,6 +32,7 @@ interface WorryCardProps {
   onSnooze?: (id: string, durationMs: number) => void;
   onUnlockNow?: (id: string) => void;
   onEdit?: (id: string) => void;
+  onDelete?: (id: string) => void;
   onClick?: (id: string) => void;
   isResolving?: boolean;
   isDismissing?: boolean;
@@ -37,6 +47,7 @@ export const WorryCard: React.FC<WorryCardProps> = ({
   onSnooze,
   onUnlockNow,
   onEdit,
+  onDelete,
   onClick,
   isResolving = false,
   isDismissing = false,
@@ -76,13 +87,26 @@ export const WorryCard: React.FC<WorryCardProps> = ({
           </Badge>
         );
       case 'dismissed':
+        // Check if it was released (user let go of something they can't control)
+        if (worry.releasedAt) {
+          return (
+            <Badge
+              variant="secondary"
+              className="bg-purple-100 dark:bg-purple-950 text-purple-700 dark:text-purple-300 border-purple-200 dark:border-purple-900"
+            >
+              <Sparkles className="size-icon-xs mr-2" />
+              {lang.worryCard.status.released}
+            </Badge>
+          );
+        }
+        // Regular dismissal
         return (
           <Badge
             variant="secondary"
-            className="bg-purple-100 dark:bg-purple-950 text-purple-700 dark:text-purple-300 border-purple-200 dark:border-purple-900"
+            className="bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 border-gray-200 dark:border-gray-700"
           >
-            <Sparkles className="size-icon-xs mr-2" />
-            {lang.worryCard.status.released}
+            <XCircle className="size-icon-xs mr-2" />
+            {lang.worryCard.status.dismissed}
           </Badge>
         );
       default:
@@ -104,6 +128,12 @@ export const WorryCard: React.FC<WorryCardProps> = ({
                 <span className="font-medium">{lang.worryCard.labels.action}</span> {worry.action}
               </p>
             )}
+            {worry.resolutionNote && (
+              <p className="text-sm text-muted-foreground mt-2">
+                <span className="font-medium">{lang.worryCard.labels.resolution}</span>{' '}
+                {worry.resolutionNote}
+              </p>
+            )}
           </div>
           <div className="flex items-center gap-2">
             {getStatusBadge()}
@@ -119,6 +149,20 @@ export const WorryCard: React.FC<WorryCardProps> = ({
                 aria-label={lang.aria.editWorry}
               >
                 <Edit3 className="size-icon-sm" />
+              </Button>
+            )}
+            {onDelete && (
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onDelete(worry.id);
+                }}
+                className="min-h-touch-target min-w-touch-target text-muted-foreground hover:text-destructive"
+                aria-label={lang.aria.delete}
+              >
+                <Trash2 className="size-icon-sm" />
               </Button>
             )}
           </div>

@@ -72,16 +72,15 @@ export const Insights: React.FC = () => {
   return (
     <div className="flex flex-col min-h-screen bg-background">
       {/* Header */}
-      <header className="sticky top-0 z-10 bg-card border-b border-border">
-        <div className="flex items-center justify-between px-4 py-4 max-w-4xl mx-auto w-full">
-          <Link to="/" aria-label={lang.aria.back}>
-            <svg
-              className="size-icon-md text-foreground"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <title>{lang.aria.back}</title>
+      <header className="bg-card border-b border-border">
+        <div className="max-w-4xl mx-auto px-4 py-4 flex items-center gap-4">
+          <Link
+            to="/"
+            className="text-muted-foreground hover:text-foreground transition-colors"
+            aria-label={lang.aria.back}
+          >
+            <svg className="size-icon-md" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <title>Back</title>
               <path
                 strokeLinecap="round"
                 strokeLinejoin="round"
@@ -90,8 +89,12 @@ export const Insights: React.FC = () => {
               />
             </svg>
           </Link>
-          <h1 className="text-lg font-semibold text-foreground">{lang.insights.title}</h1>
-          <div className="size-icon-md" /> {/* Spacer */}
+          <div>
+            <h1 className="text-3xl font-bold text-foreground tracking-tight">
+              {lang.insights.title}
+            </h1>
+            <p className="text-sm text-muted-foreground">{lang.insights.subtitle}</p>
+          </div>
         </div>
       </header>
 
