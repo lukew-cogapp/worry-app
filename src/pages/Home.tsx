@@ -40,7 +40,7 @@ export const Home: React.FC = () => {
   const defaultUnlockTime = usePreferencesStore((s) => s.preferences.defaultUnlockTime);
   const isLoadingPreferences = usePreferencesStore((s) => s.isLoading);
 
-  const { lockWorry, resolveWorry: resolveHaptic } = useHaptics();
+  const { lockWorry, resolveWorry: resolveHaptic, buttonTap } = useHaptics();
   const { debugError, handleError, clearError } = useDebugError();
 
   const [isAddSheetOpen, setIsAddSheetOpen] = useState(false);
@@ -383,7 +383,10 @@ export const Home: React.FC = () => {
       {/* FAB */}
       <button
         type="button"
-        onClick={() => setIsAddSheetOpen(true)}
+        onClick={() => {
+          buttonTap();
+          setIsAddSheetOpen(true);
+        }}
         className="fixed bottom-fab-offset right-fab-offset size-fab bg-primary hover:bg-primary/90 text-primary-foreground rounded-full shadow-lg flex items-center justify-center text-2xl transition-transform hover:scale-110 active:scale-95"
         aria-label={lang.aria.addWorry}
       >
