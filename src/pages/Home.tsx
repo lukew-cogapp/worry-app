@@ -1,3 +1,4 @@
+import confetti from 'canvas-confetti';
 import { Loader2, Lock } from 'lucide-react';
 import type React from 'react';
 import { useMemo, useState } from 'react';
@@ -105,6 +106,15 @@ export const Home: React.FC = () => {
     try {
       await resolveWorry(worryToResolve, resolutionNote.trim() || undefined);
       await resolveHaptic();
+
+      // Celebration confetti!
+      confetti({
+        particleCount: 50,
+        spread: 60,
+        origin: { y: 0.6 },
+        colors: ['#6366f1', '#8b5cf6', '#a855f7'],
+      });
+
       toast.success(lang.toasts.success.worryResolved);
       setWorryToResolve(null);
       setResolutionNote('');
@@ -325,18 +335,23 @@ export const Home: React.FC = () => {
               {lang.home.sections.ready}
             </h2>
             <div className="space-y-3">
-              {unlockedWorries.map((worry) => (
-                <WorryCard
+              {unlockedWorries.map((worry, index) => (
+                <div
                   key={worry.id}
-                  worry={worry}
-                  onResolve={handleResolveClick}
-                  onSnooze={handleSnooze}
-                  onDismiss={handleDismissClick}
-                  onEdit={handleOpenEdit}
-                  isResolving={loadingStates[worry.id]?.resolving}
-                  isSnoozing={loadingStates[worry.id]?.snoozing}
-                  isDismissing={loadingStates[worry.id]?.dismissing}
-                />
+                  className="animate-in fade-in slide-in-from-bottom-4"
+                  style={{ animationDelay: `${index * 50}ms` }}
+                >
+                  <WorryCard
+                    worry={worry}
+                    onResolve={handleResolveClick}
+                    onSnooze={handleSnooze}
+                    onDismiss={handleDismissClick}
+                    onEdit={handleOpenEdit}
+                    isResolving={loadingStates[worry.id]?.resolving}
+                    isSnoozing={loadingStates[worry.id]?.snoozing}
+                    isDismissing={loadingStates[worry.id]?.dismissing}
+                  />
+                </div>
               ))}
             </div>
           </section>
@@ -387,7 +402,7 @@ export const Home: React.FC = () => {
           buttonTap();
           setIsAddSheetOpen(true);
         }}
-        className="fixed bottom-fab-offset right-fab-offset size-fab bg-primary hover:bg-primary/90 text-primary-foreground rounded-full shadow-lg flex items-center justify-center text-2xl transition-transform hover:scale-110 active:scale-95"
+        className="fixed bottom-fab-offset right-fab-offset size-fab bg-primary hover:bg-primary/90 text-primary-foreground rounded-full shadow-lg flex items-center justify-center text-2xl transition-all duration-300 hover:scale-110 active:scale-95 active:rotate-90"
         aria-label={lang.aria.addWorry}
       >
         +

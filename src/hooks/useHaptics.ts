@@ -22,8 +22,15 @@ export function useHaptics() {
 
   const resolveWorry = async () => {
     if (!hapticEnabled) return;
-    await Haptics.notification({ type: NotificationType.Success });
+    // Double tap pattern for celebration
+    await Haptics.impact({ style: ImpactStyle.Light });
+    setTimeout(() => Haptics.notification({ type: NotificationType.Success }), 100);
   };
 
-  return { lockWorry, unlockWorry, buttonTap, resolveWorry };
+  const dismissWorry = async () => {
+    if (!hapticEnabled) return;
+    await Haptics.impact({ style: ImpactStyle.Medium });
+  };
+
+  return { lockWorry, unlockWorry, buttonTap, resolveWorry, dismissWorry };
 }

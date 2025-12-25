@@ -1,7 +1,8 @@
-import { BarChart3, CheckCircle2, TrendingDown, XCircle } from 'lucide-react';
+import { BarChart3, TrendingDown, XCircle } from 'lucide-react';
 import type React from 'react';
 import { useMemo } from 'react';
 import { Link } from 'react-router-dom';
+import { CircularProgress } from '../components/CircularProgress';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../components/ui/card';
 import { lang } from '../config/language';
 import { useWorryStore } from '../store/worryStore';
@@ -113,6 +114,26 @@ export const Insights: React.FC = () => {
             </Card>
           ) : (
             <>
+              {/* Weekly Streak Banner */}
+              {metrics.thisWeekResolved > 0 && (
+                <Card className="bg-gradient-to-r from-primary/10 to-purple-500/10 border-primary/20 animate-in fade-in slide-in-from-top-4">
+                  <CardHeader className="p-6">
+                    <div className="flex items-center gap-4">
+                      <div className="text-5xl">🔥</div>
+                      <div className="flex-1">
+                        <CardTitle className="text-2xl mb-1">
+                          {metrics.thisWeekResolved}{' '}
+                          {metrics.thisWeekResolved === 1 ? 'worry' : 'worries'} resolved this week!
+                        </CardTitle>
+                        <CardDescription className="text-base">
+                          You're on a roll! Keep up the great work.
+                        </CardDescription>
+                      </div>
+                    </div>
+                  </CardHeader>
+                </Card>
+              )}
+
               {/* Overview Stats */}
               <div className="grid grid-cols-2 gap-4">
                 <Card>
@@ -160,16 +181,13 @@ export const Insights: React.FC = () => {
 
                 {/* Completion Rate */}
                 <Card>
-                  <CardHeader className="p-4">
-                    <div className="flex items-start gap-3">
-                      <CheckCircle2 className="size-icon-md text-primary flex-shrink-0 mt-2" />
+                  <CardHeader className="p-6">
+                    <CardTitle className="text-lg mb-4">
+                      {lang.insights.keyInsights.completionRate.title}
+                    </CardTitle>
+                    <div className="flex items-center gap-6">
+                      <CircularProgress value={metrics.completionRate} />
                       <div className="flex-1">
-                        <CardTitle className="text-lg mb-2">
-                          {lang.insights.keyInsights.completionRate.title}
-                        </CardTitle>
-                        <div className="text-3xl font-bold text-primary mb-2">
-                          {metrics.completionRate}%
-                        </div>
                         <CardDescription>
                           {lang.insights.keyInsights.completionRate.description(
                             metrics.completed,
