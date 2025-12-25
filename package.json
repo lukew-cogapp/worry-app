@@ -20,6 +20,7 @@
     "test:coverage": "vitest --coverage"
   },
   "dependencies": {
+    "@capacitor/action-sheet": "^8.0.0",
     "@capacitor/android": "^8.0.0",
     "@capacitor/app": "^8.0.0",
     "@capacitor/cli": "^8.0.0",
@@ -28,6 +29,7 @@
     "@capacitor/ios": "^8.0.0",
     "@capacitor/local-notifications": "^8.0.0",
     "@capacitor/preferences": "^8.0.0",
+    "@capacitor/privacy-screen": "^2.0.0",
     "@capacitor/splash-screen": "^8.0.0",
     "@radix-ui/react-alert-dialog": "^1.1.15",
     "@radix-ui/react-dialog": "^1.1.15",

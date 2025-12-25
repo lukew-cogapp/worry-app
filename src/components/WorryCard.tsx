@@ -1,3 +1,4 @@
+import { ActionSheetButtonStyle } from '@capacitor/action-sheet';
 import {
   CheckCircle2,
   Edit3,
@@ -12,6 +13,7 @@ import type React from 'react';
 import { SNOOZE_DURATIONS } from '../config/constants';
 import { lang } from '../config/language';
 import type { Worry } from '../types';
+import { showActionSheet } from '../utils/actionSheet';
 import { formatDateTime, getRelativeTime } from '../utils/dates';
 import { Badge } from './ui/badge';
 import { Button } from './ui/button';
@@ -243,7 +245,41 @@ export const WorryCard: React.FC<WorryCardProps> = ({
                     <Button
                       variant="secondary"
                       size="sm"
-                      onClick={(e) => e.stopPropagation()}
+                      onClick={async (e) => {
+                        e.stopPropagation();
+                        // Try native action sheet first (iOS/Android)
+                        const showedNative = await showActionSheet(
+                          [
+                            {
+                              title: lang.worryCard.snooze.thirtyMin,
+                              onClick: () => onSnooze(worry.id, SNOOZE_DURATIONS.THIRTY_MINUTES),
+                            },
+                            {
+                              title: lang.worryCard.snooze.oneHour,
+                              onClick: () => onSnooze(worry.id, SNOOZE_DURATIONS.ONE_HOUR),
+                            },
+                            {
+                              title: lang.worryCard.snooze.fourHours,
+                              onClick: () => onSnooze(worry.id, SNOOZE_DURATIONS.FOUR_HOURS),
+                            },
+                            {
+                              title: lang.worryCard.snooze.oneDay,
+                              onClick: () => onSnooze(worry.id, SNOOZE_DURATIONS.ONE_DAY),
+                            },
+                            {
+                              title: 'Cancel',
+                              onClick: () => {},
+                              style: ActionSheetButtonStyle.Cancel,
+                            },
+                          ],
+                          lang.worryCard.buttons.snoozeOptions
+                        );
+                        // If not native, dropdown will open automatically
+                        if (showedNative) {
+                          // Prevent dropdown from opening
+                          e.preventDefault();
+                        }
+                      }}
                       disabled={isResolving || isSnoozing || isDismissing}
                       className="text-xs min-h-touch-target"
                     >
