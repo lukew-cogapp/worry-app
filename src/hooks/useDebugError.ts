@@ -29,8 +29,10 @@ export function useDebugError() {
    * @param context - Additional context about what operation failed
    */
   const handleError = (error: unknown, context?: Record<string, unknown>) => {
-    // In production, don't show debug dialogs (errors still logged to console)
-    if (import.meta.env.PROD) {
+    // In production (non-debug builds), don't show debug dialogs
+    // Use __DEBUG_MODE__ which is set via vite.config.ts based on build mode
+    // Build with: npm run build:android:dev for debug dialogs
+    if (!__DEBUG_MODE__) {
       console.error('Error occurred:', error, context);
       // TODO: Send to error tracking service (Sentry, LogRocket, etc.)
       return;

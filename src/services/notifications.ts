@@ -6,9 +6,12 @@ export async function requestPermissions(): Promise<boolean> {
   return result.display === 'granted';
 }
 
+// Java int max value (2^31 - 1) - Android requires notification IDs to be 32-bit signed integers
+const JAVA_INT_MAX = 2147483647;
+
 export async function scheduleWorryNotification(worry: Worry): Promise<number> {
-  // Generate unique ID to avoid collisions
-  const notificationId = Math.floor(Math.random() * Number.MAX_SAFE_INTEGER);
+  // Generate unique ID within Java int range to avoid Android errors
+  const notificationId = Math.floor(Math.random() * JAVA_INT_MAX);
 
   await LocalNotifications.schedule({
     notifications: [
