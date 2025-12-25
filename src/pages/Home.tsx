@@ -18,9 +18,19 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from '../components/ui/alert-dialog';
+import { Button } from '../components/ui/button';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from '../components/ui/dialog';
 import { WorryCard } from '../components/WorryCard';
 import { TOAST_DURATIONS } from '../config/constants';
 import { formatDuration, lang } from '../config/language';
+import { useDebugError } from '../hooks/useDebugError';
 import { useHaptics } from '../hooks/useHaptics';
 import { usePreferencesStore } from '../store/preferencesStore';
 import { useWorryStore } from '../store/worryStore';
@@ -39,6 +49,7 @@ export const Home: React.FC = () => {
   const isLoadingPreferences = usePreferencesStore((s) => s.isLoading);
 
   const { lockWorry, resolveWorry: resolveHaptic } = useHaptics();
+  const { debugError, handleError, clearError } = useDebugError();
 
   const [isAddSheetOpen, setIsAddSheetOpen] = useState(false);
   const [isEditSheetOpen, setIsEditSheetOpen] = useState(false);
@@ -66,7 +77,16 @@ export const Home: React.FC = () => {
       await lockWorry();
       setShowLockAnimation(true);
       setIsAddSheetOpen(false);
-    } catch (_error) {
+    } catch (error) {
+      handleError(error, {
+        operation: 'addWorry',
+        worry: {
+          contentLength: worry.content.length,
+          hasAction: !!worry.action,
+          unlockAt: worry.unlockAt,
+        },
+      });
+
       toast.error(lang.toasts.error.saveWorry, {
         action: {
           label: 'Retry',
@@ -96,7 +116,13 @@ export const Home: React.FC = () => {
       toast.success(lang.toasts.success.worryResolved);
       setWorryToResolve(null);
       setResolutionNote('');
-    } catch (_error) {
+    } catch (error) {
+      handleError(error, {
+        operation: 'resolveWorry',
+        worryId: worryToResolve,
+        hasNote: !!resolutionNote.trim(),
+      });
+
       toast.error(lang.toasts.error.resolveWorry, {
         action: {
           label: 'Retry',
@@ -117,7 +143,13 @@ export const Home: React.FC = () => {
       await snoozeWorry(id, durationMs);
       await lockWorry();
       toast.success(lang.toasts.success.snoozed(formatDuration(durationMs)));
-    } catch (_error) {
+    } catch (error) {
+      handleError(error, {
+        operation: 'snoozeWorry',
+        worryId: id,
+        durationMs,
+      });
+
       toast.error(lang.toasts.error.snoozeWorry, {
         action: {
           label: 'Retry',
@@ -144,7 +176,12 @@ export const Home: React.FC = () => {
       await dismissWorry(worryToDismiss);
       toast.success(lang.toasts.success.worryDismissed);
       setWorryToDismiss(null);
-    } catch (_error) {
+    } catch (error) {
+      handleError(error, {
+        operation: 'dismissWorry',
+        worryId: worryToDismiss,
+      });
+
       toast.error(lang.toasts.error.dismissWorry, {
         action: {
           label: 'Retry',
@@ -175,7 +212,12 @@ export const Home: React.FC = () => {
       toast.success(lang.toasts.success.worryReleased, {
         duration: TOAST_DURATIONS.LONG,
       });
-    } catch (_error) {
+    } catch (error) {
+      handleError(error, {
+        operation: 'releaseWorry',
+        contentLength: contentToRelease.length,
+      });
+
       toast.error(lang.toasts.error.releaseWorry, {
         action: {
           label: 'Retry',
@@ -196,7 +238,13 @@ export const Home: React.FC = () => {
       await editWorry(id, updates);
       toast.success(lang.toasts.success.worryUpdated);
       setIsEditSheetOpen(false);
-    } catch (_error) {
+    } catch (error) {
+      handleError(error, {
+        operation: 'editWorry',
+        worryId: id,
+        updates,
+      });
+
       toast.error(lang.toasts.error.updateWorry, {
         action: {
           label: 'Retry',
@@ -475,6 +523,47 @@ export const Home: React.FC = () => {
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
+
+      {/* Debug Error Dialog */}
+      <Dialog open={!!debugError} onOpenChange={(open) => !open && clearError()}>
+        <DialogContent className="max-w-2xl max-h-[80vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle className="text-destructive">Debug: Error Occurred</DialogTitle>
+            <DialogDescription>
+              This dialog is for debugging purposes. It will be hidden in production.
+            </DialogDescription>
+          </DialogHeader>
+
+          <div className="space-y-4">
+            <div>
+              <h4 className="font-semibold text-sm mb-2">Error Message:</h4>
+              <p className="text-sm bg-muted p-3 rounded-md font-mono break-words">
+                {debugError?.message}
+              </p>
+            </div>
+
+            <div>
+              <h4 className="font-semibold text-sm mb-2">Details:</h4>
+              <pre className="text-xs bg-muted p-3 rounded-md overflow-x-auto whitespace-pre-wrap break-words">
+                {debugError?.details}
+              </pre>
+            </div>
+
+            {debugError?.stack && (
+              <div>
+                <h4 className="font-semibold text-sm mb-2">Stack Trace:</h4>
+                <pre className="text-xs bg-muted p-3 rounded-md overflow-x-auto whitespace-pre-wrap break-words">
+                  {debugError.stack}
+                </pre>
+              </div>
+            )}
+          </div>
+
+          <DialogFooter>
+            <Button onClick={clearError}>Close</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };

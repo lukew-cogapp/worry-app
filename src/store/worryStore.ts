@@ -2,6 +2,7 @@ import { create } from 'zustand';
 import * as notifications from '../services/notifications';
 import * as storage from '../services/storage';
 import type { Worry } from '../types';
+import { generateUUID } from '../utils/uuid';
 
 interface WorryStore {
   worries: Worry[];
@@ -50,21 +51,33 @@ export const useWorryStore = create<WorryStore>((set, get) => ({
   },
 
   addWorry: async (worryData) => {
-    const worry: Worry = {
-      ...worryData,
-      id: crypto.randomUUID(),
-      createdAt: new Date().toISOString(),
-      status: 'locked',
-      notificationId: 0, // Will be set after scheduling
-    };
+    try {
+      console.log('[Store] Creating worry...');
+      const worry: Worry = {
+        ...worryData,
+        id: generateUUID(),
+        createdAt: new Date().toISOString(),
+        status: 'locked',
+        notificationId: 0, // Will be set after scheduling
+      };
+      console.log('[Store] Worry created with ID:', worry.id);
 
-    worry.notificationId = await notifications.scheduleWorryNotification(worry);
+      console.log('[Store] Scheduling notification...');
+      worry.notificationId = await notifications.scheduleWorryNotification(worry);
+      console.log('[Store] Notification scheduled with ID:', worry.notificationId);
 
-    const worries = [...get().worries, worry];
-    set({ worries });
-    await storage.saveWorries(worries);
+      const worries = [...get().worries, worry];
+      set({ worries });
 
-    return worry;
+      console.log('[Store] Saving to storage...');
+      await storage.saveWorries(worries);
+      console.log('[Store] Save complete');
+
+      return worry;
+    } catch (error) {
+      console.error('[Store] Failed to add worry:', error);
+      throw error;
+    }
   },
 
   editWorry: async (id, updates) => {
@@ -123,7 +136,7 @@ export const useWorryStore = create<WorryStore>((set, get) => ({
   releaseWorry: async (content) => {
     const now = new Date().toISOString();
     const worry: Worry = {
-      id: crypto.randomUUID(),
+      id: generateUUID(),
       content,
       createdAt: now,
       unlockAt: now,
