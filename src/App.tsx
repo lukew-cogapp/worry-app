@@ -1,5 +1,6 @@
 import { App as CapApp } from '@capacitor/app';
 import type { PluginListenerHandle } from '@capacitor/core';
+import { SystemBars, SystemBarsStyle } from '@capacitor/core';
 import { LocalNotifications } from '@capacitor/local-notifications';
 import { PrivacyScreen } from '@capacitor/privacy-screen';
 import { SplashScreen } from '@capacitor/splash-screen';
@@ -40,6 +41,10 @@ function App() {
         // Enable privacy screen to protect sensitive content
         // Blurs app in task switcher and prevents screenshots
         await PrivacyScreen.enable();
+
+        // Set system bars to dark style (light content on dark background)
+        // Provides cohesive dark mode experience
+        await SystemBars.setStyle({ style: SystemBarsStyle.Dark });
 
         await notifications.requestPermissions();
         await notifications.registerNotificationActions();
