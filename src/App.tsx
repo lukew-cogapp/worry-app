@@ -18,6 +18,7 @@ import { useWorryStore } from './store/worryStore';
 
 function App() {
   const loadWorries = useWorryStore((s) => s.loadWorries);
+  const checkAndUnlockExpired = useWorryStore((s) => s.checkAndUnlockExpired);
   const loadPreferences = usePreferencesStore((s) => s.loadPreferences);
   const resolveWorry = useWorryStore((s) => s.resolveWorry);
   const snoozeWorry = useWorryStore((s) => s.snoozeWorry);
@@ -26,6 +27,8 @@ function App() {
   useEffect(() => {
     let notificationListenerHandle: PluginListenerHandle | undefined;
     let urlListenerHandle: PluginListenerHandle | undefined;
+    let appStateListenerHandle: PluginListenerHandle | undefined;
+    let unlockCheckInterval: number | undefined;
 
     async function init() {
       // Load stored data first (works on all platforms)
@@ -60,11 +63,23 @@ function App() {
           // Handle worry://open/{worryId} URLs if needed in future
         });
 
+        // Check for expired worries when app comes to foreground
+        appStateListenerHandle = await CapApp.addListener('appStateChange', (state) => {
+          if (state.isActive) {
+            checkAndUnlockExpired();
+          }
+        });
+
         // Hide splash screen
         await SplashScreen.hide();
       } catch {
         // Capacitor features not available on web - this is expected
       }
+
+      // Check for expired worries every 30 seconds (works on all platforms)
+      unlockCheckInterval = window.setInterval(() => {
+        checkAndUnlockExpired();
+      }, 30000); // 30 seconds
     }
 
     init().catch((error) => {
@@ -80,8 +95,12 @@ function App() {
     return () => {
       notificationListenerHandle?.remove();
       urlListenerHandle?.remove();
+      appStateListenerHandle?.remove();
+      if (unlockCheckInterval) {
+        clearInterval(unlockCheckInterval);
+      }
     };
-  }, [loadWorries, loadPreferences, resolveWorry, snoozeWorry, handleError]);
+  }, [loadWorries, loadPreferences, resolveWorry, snoozeWorry, checkAndUnlockExpired, handleError]);
 
   return (
     <BrowserRouter>

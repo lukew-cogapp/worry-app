@@ -11,6 +11,7 @@ interface WorryStore {
 
   // Actions
   loadWorries: () => Promise<void>;
+  checkAndUnlockExpired: () => Promise<void>;
   addWorry: (
     worry: Omit<Worry, 'id' | 'createdAt' | 'status' | 'notificationId'>
   ) => Promise<Worry>;
@@ -49,6 +50,25 @@ export const useWorryStore = create<WorryStore>((set, get) => ({
     });
     set({ worries: updated, isLoading: false });
     await storage.saveWorries(updated);
+  },
+
+  checkAndUnlockExpired: async () => {
+    const now = new Date();
+    const worries = get().worries;
+    const updated = worries.map((w) => {
+      if (w.status === 'locked' && new Date(w.unlockAt) <= now) {
+        logger.log('[Store] Auto-unlocking expired worry:', w.id);
+        return { ...w, status: 'unlocked' as const, unlockedAt: now.toISOString() };
+      }
+      return w;
+    });
+
+    // Only update if there are changes
+    const hasChanges = updated.some((w, i) => w.status !== worries[i].status);
+    if (hasChanges) {
+      set({ worries: updated });
+      await storage.saveWorries(updated);
+    }
   },
 
   addWorry: async (worryData) => {
