@@ -29,10 +29,18 @@ export const AddWorrySheet: React.FC<AddWorrySheetProps> = ({
   const [content, setContent] = useState('');
   const [action, setAction] = useState('');
   const [unlockAt, setUnlockAt] = useState(getTomorrow(defaultUnlockTime).toISOString());
+  const [contentError, setContentError] = useState('');
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!content.trim()) return;
+
+    // Validate content
+    if (!content.trim()) {
+      setContentError("Please describe what's worrying you");
+      return;
+    }
+
+    setContentError('');
 
     onAdd({
       content: content.trim(),
@@ -51,6 +59,7 @@ export const AddWorrySheet: React.FC<AddWorrySheetProps> = ({
     setContent('');
     setAction('');
     setUnlockAt(getTomorrow(defaultUnlockTime).toISOString());
+    setContentError('');
     onClose();
   }, [defaultUnlockTime, onClose]);
 
@@ -103,7 +112,10 @@ export const AddWorrySheet: React.FC<AddWorrySheetProps> = ({
               <textarea
                 id="worry-content"
                 value={content}
-                onChange={(e) => setContent(e.target.value)}
+                onChange={(e) => {
+                  setContent(e.target.value);
+                  if (contentError) setContentError('');
+                }}
                 onKeyDown={(e) => {
                   if ((e.metaKey || e.ctrlKey) && e.key === 'Enter' && content.trim()) {
                     handleSubmit(e);
@@ -112,8 +124,12 @@ export const AddWorrySheet: React.FC<AddWorrySheetProps> = ({
                 placeholder={lang.addWorry.fields.content.placeholder}
                 rows={3}
                 disabled={isSubmitting || isReleasing}
-                className="w-full px-3 py-2 border border-input rounded-md bg-background text-foreground placeholder-muted-foreground focus:ring-2 focus:ring-ring focus:border-transparent resize-none disabled:opacity-50 disabled:cursor-not-allowed"
+                aria-invalid={!!contentError}
+                className={`w-full px-3 py-2 border rounded-md bg-background text-foreground placeholder-muted-foreground focus:ring-2 focus:ring-ring focus:border-transparent resize-none disabled:opacity-50 disabled:cursor-not-allowed ${
+                  contentError ? 'border-destructive' : 'border-input'
+                }`}
               />
+              {contentError && <p className="mt-1 text-sm text-destructive">{contentError}</p>}
             </div>
 
             <div>

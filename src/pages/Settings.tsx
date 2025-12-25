@@ -44,11 +44,11 @@ export const Settings: React.FC = () => {
       <main className="max-w-4xl mx-auto px-4 py-6">
         <div className="bg-card rounded-lg border border-border overflow-hidden">
           {/* Default Unlock Time */}
-          <div className="p-6">
+          <div className="p-lg">
             <Label htmlFor="default-unlock-time" className="text-base font-medium">
               {lang.settings.sections.defaultTime.title}
             </Label>
-            <p className="text-sm text-muted-foreground mt-1 mb-3">
+            <p className="text-sm text-muted-foreground mt-1 mb-sm">
               {lang.settings.sections.defaultTime.description}
             </p>
             <input
@@ -64,9 +64,9 @@ export const Settings: React.FC = () => {
           <Separator />
 
           {/* Haptic Feedback */}
-          <div className="p-6">
+          <div className="p-lg">
             <div className="flex items-center justify-between">
-              <div className="space-y-0.5">
+              <div className="space-y-2xs">
                 <Label htmlFor="haptic-feedback" className="text-base font-medium">
                   {lang.settings.sections.hapticFeedback.title}
                 </Label>

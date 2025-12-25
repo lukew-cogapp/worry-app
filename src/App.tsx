@@ -8,6 +8,7 @@ import { useEffect } from 'react';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import { Toaster, toast } from 'sonner';
 import { DebugErrorDialog } from './components/DebugErrorDialog';
+import { ErrorBoundary } from './components/ErrorBoundary';
 import { useDebugError } from './hooks/useDebugError';
 import { History } from './pages/History';
 import { Home } from './pages/Home';
@@ -52,13 +53,25 @@ function App() {
         // Handle notification actions
         notificationListenerHandle = await LocalNotifications.addListener(
           'localNotificationActionPerformed',
-          (action) => {
+          async (action) => {
             const { worryId } = action.notification.extra;
 
-            if (action.actionId === 'done') {
-              resolveWorry(worryId);
-            } else if (action.actionId === 'snooze') {
-              snoozeWorry(worryId, 60 * 60 * 1000); // 1 hour
+            try {
+              if (action.actionId === 'done') {
+                await resolveWorry(worryId);
+                toast.success('Worry marked as resolved');
+              } else if (action.actionId === 'snooze') {
+                await snoozeWorry(worryId, 60 * 60 * 1000); // 1 hour
+                toast.success('Worry snoozed for 1 hour');
+              }
+            } catch (error) {
+              console.error('Failed to handle notification action:', error);
+              handleError(error, {
+                operation: 'notificationAction',
+                actionId: action.actionId,
+                worryId,
+              });
+              toast.error('Failed to process action. Please try again from the app.');
             }
           }
         );
@@ -108,17 +121,19 @@ function App() {
   }, [loadWorries, loadPreferences, resolveWorry, snoozeWorry, checkAndUnlockExpired, handleError]);
 
   return (
-    <BrowserRouter>
-      <Toaster position="top-center" richColors />
-      <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/history" element={<History />} />
-        <Route path="/insights" element={<Insights />} />
-        <Route path="/settings" element={<Settings />} />
-      </Routes>
+    <ErrorBoundary>
+      <BrowserRouter>
+        <Toaster position="top-center" richColors />
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/history" element={<History />} />
+          <Route path="/insights" element={<Insights />} />
+          <Route path="/settings" element={<Settings />} />
+        </Routes>
 
-      <DebugErrorDialog error={debugError} onClose={clearError} />
-    </BrowserRouter>
+        <DebugErrorDialog error={debugError} onClose={clearError} />
+      </BrowserRouter>
+    </ErrorBoundary>
   );
 }
 

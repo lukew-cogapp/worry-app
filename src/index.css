@@ -24,6 +24,12 @@
 
   /* Spacing tokens - only non-conflicting custom values */
   --spacing-fab-offset: 1.5rem;
+  --spacing-2xs: 0.125rem; /* 0.5 in Tailwind (2px) */
+  --spacing-xs: 0.5rem; /* 2 in Tailwind (8px) */
+  --spacing-sm: 0.75rem; /* 3 in Tailwind (12px) */
+  --spacing-md: 1rem; /* 4 in Tailwind (16px) */
+  --spacing-lg: 1.5rem; /* 6 in Tailwind (24px) */
+  --spacing-xl: 2rem; /* 8 in Tailwind (32px) */
 
   /* Size tokens */
   --size-icon-xs: 0.75rem; /* 3 in Tailwind (12px) - for small icons */
@@ -92,6 +98,27 @@
 
     /* Custom calming gradients */
     --gradient-calm: linear-gradient(135deg, hsl(190 45% 45%) 0%, hsl(250 25% 65%) 100%);
+
+    /* Semantic status colors */
+    --status-locked-bg: 219 95% 90%;
+    --status-locked-fg: 219 75% 35%;
+    --status-locked-border: 219 85% 85%;
+
+    --status-ready-bg: 38 92% 90%;
+    --status-ready-fg: 38 92% 35%;
+    --status-ready-border: 38 92% 85%;
+
+    --status-resolved-bg: 142 71% 90%;
+    --status-resolved-fg: 142 71% 35%;
+    --status-resolved-border: 142 71% 85%;
+
+    --status-released-bg: 271 91% 92%;
+    --status-released-fg: 271 81% 40%;
+    --status-released-border: 271 91% 87%;
+
+    --status-dismissed-bg: 0 0% 90%;
+    --status-dismissed-fg: 0 0% 40%;
+    --status-dismissed-border: 0 0% 85%;
   }
 
   .dark {
@@ -120,6 +147,27 @@
     --border: 217 33% 17%;
     --input: 217 33% 17%;
     --ring: 211 75% 55%;
+
+    /* Semantic status colors - dark mode */
+    --status-locked-bg: 219 75% 15%;
+    --status-locked-fg: 219 75% 70%;
+    --status-locked-border: 219 75% 25%;
+
+    --status-ready-bg: 38 82% 18%;
+    --status-ready-fg: 38 92% 75%;
+    --status-ready-border: 38 82% 28%;
+
+    --status-resolved-bg: 142 61% 18%;
+    --status-resolved-fg: 142 71% 75%;
+    --status-resolved-border: 142 61% 28%;
+
+    --status-released-bg: 271 81% 20%;
+    --status-released-fg: 271 91% 80%;
+    --status-released-border: 271 81% 30%;
+
+    --status-dismissed-bg: 0 0% 20%;
+    --status-dismissed-fg: 0 0% 70%;
+    --status-dismissed-border: 0 0% 30%;
   }
 }
 

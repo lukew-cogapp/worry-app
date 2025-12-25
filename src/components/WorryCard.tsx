@@ -9,7 +9,7 @@ import {
   Trash2,
   XCircle,
 } from 'lucide-react';
-import type React from 'react';
+import React from 'react';
 import { SNOOZE_DURATIONS } from '../config/constants';
 import { lang } from '../config/language';
 import type { Worry } from '../types';
@@ -42,7 +42,7 @@ interface WorryCardProps {
   isUnlocking?: boolean;
 }
 
-export const WorryCard: React.FC<WorryCardProps> = ({
+const WorryCardComponent: React.FC<WorryCardProps> = ({
   worry,
   onResolve,
   onDismiss,
@@ -62,9 +62,9 @@ export const WorryCard: React.FC<WorryCardProps> = ({
         return (
           <Badge
             variant="secondary"
-            className="bg-blue-100 dark:bg-blue-950 text-blue-700 dark:text-blue-300 border-blue-200 dark:border-blue-900"
+            className="bg-[hsl(var(--status-locked-bg))] text-[hsl(var(--status-locked-fg))] border-[hsl(var(--status-locked-border))]"
           >
-            <Lock className="size-icon-xs mr-2" />
+            <Lock className="size-icon-xs mr-xs" />
             {lang.worryCard.status.locked}
           </Badge>
         );
@@ -72,9 +72,9 @@ export const WorryCard: React.FC<WorryCardProps> = ({
         return (
           <Badge
             variant="secondary"
-            className="bg-amber-100 dark:bg-amber-950 text-amber-700 dark:text-amber-300 border-amber-200 dark:border-amber-900"
+            className="bg-[hsl(var(--status-ready-bg))] text-[hsl(var(--status-ready-fg))] border-[hsl(var(--status-ready-border))]"
           >
-            <Package className="size-icon-xs mr-2" />
+            <Package className="size-icon-xs mr-xs" />
             {lang.worryCard.status.ready}
           </Badge>
         );
@@ -82,9 +82,9 @@ export const WorryCard: React.FC<WorryCardProps> = ({
         return (
           <Badge
             variant="secondary"
-            className="bg-green-100 dark:bg-green-950 text-green-700 dark:text-green-300 border-green-200 dark:border-green-900"
+            className="bg-[hsl(var(--status-resolved-bg))] text-[hsl(var(--status-resolved-fg))] border-[hsl(var(--status-resolved-border))]"
           >
-            <CheckCircle2 className="size-icon-xs mr-2" />
+            <CheckCircle2 className="size-icon-xs mr-xs" />
             {lang.worryCard.status.resolved}
           </Badge>
         );
@@ -94,9 +94,9 @@ export const WorryCard: React.FC<WorryCardProps> = ({
           return (
             <Badge
               variant="secondary"
-              className="bg-purple-100 dark:bg-purple-950 text-purple-700 dark:text-purple-300 border-purple-200 dark:border-purple-900"
+              className="bg-[hsl(var(--status-released-bg))] text-[hsl(var(--status-released-fg))] border-[hsl(var(--status-released-border))]"
             >
-              <Sparkles className="size-icon-xs mr-2" />
+              <Sparkles className="size-icon-xs mr-xs" />
               {lang.worryCard.status.released}
             </Badge>
           );
@@ -105,9 +105,9 @@ export const WorryCard: React.FC<WorryCardProps> = ({
         return (
           <Badge
             variant="secondary"
-            className="bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 border-gray-200 dark:border-gray-700"
+            className="bg-[hsl(var(--status-dismissed-bg))] text-[hsl(var(--status-dismissed-fg))] border-[hsl(var(--status-dismissed-border))]"
           >
-            <XCircle className="size-icon-xs mr-2" />
+            <XCircle className="size-icon-xs mr-xs" />
             {lang.worryCard.status.dismissed}
           </Badge>
         );
@@ -121,23 +121,23 @@ export const WorryCard: React.FC<WorryCardProps> = ({
       className="transition-all duration-300 ease-out shadow-card hover:shadow-lg cursor-pointer active:scale-[0.98] active:shadow-sm"
       onClick={() => onClick?.(worry.id)}
     >
-      <CardContent className="p-4">
-        <div className="flex items-start justify-between gap-3 mb-3">
+      <CardContent className="p-md">
+        <div className="flex items-start justify-between gap-sm mb-sm">
           <div className="flex-1 min-w-0">
             <p className="text-foreground font-medium line-clamp-2">{worry.content}</p>
             {worry.action && (
-              <p className="text-sm text-muted-foreground mt-2">
+              <p className="text-sm text-muted-foreground mt-xs">
                 <span className="font-medium">{lang.worryCard.labels.action}</span> {worry.action}
               </p>
             )}
             {worry.resolutionNote && (
-              <p className="text-sm text-muted-foreground mt-2">
+              <p className="text-sm text-muted-foreground mt-xs">
                 <span className="font-medium">{lang.worryCard.labels.resolution}</span>{' '}
                 {worry.resolutionNote}
               </p>
             )}
           </div>
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-xs">
             {getStatusBadge()}
             {onEdit && (worry.status === 'locked' || worry.status === 'unlocked') && (
               <Button
@@ -170,7 +170,7 @@ export const WorryCard: React.FC<WorryCardProps> = ({
           </div>
         </div>
 
-        <div className="flex items-center gap-2 text-xs text-muted-foreground">
+        <div className="flex items-center gap-xs text-xs text-muted-foreground">
           {worry.status === 'locked' && (
             <span>{lang.worryCard.labels.unlocks(getRelativeTime(worry.unlockAt))}</span>
           )}
@@ -350,3 +350,6 @@ export const WorryCard: React.FC<WorryCardProps> = ({
     </Card>
   );
 };
+
+// Memoize component to prevent unnecessary re-renders in lists
+export const WorryCard = React.memo(WorryCardComponent);
