@@ -58,40 +58,40 @@
 
 @layer base {
   :root {
-    /* Calming color palette - Soft blues and lavenders with warmth */
-    --background: 220 30% 96%;
-    --foreground: 222 47% 15%;
-    --card: 220 25% 99%;
-    --card-foreground: 222 47% 15%;
-    --popover: 220 25% 99%;
-    --popover-foreground: 222 47% 15%;
+    /* Calming color palette - Soft, muted, warm tones */
+    --background: 210 25% 92%;
+    --foreground: 220 25% 25%;
+    --card: 210 20% 96%;
+    --card-foreground: 220 25% 25%;
+    --popover: 210 20% 96%;
+    --popover-foreground: 220 25% 25%;
 
-    /* Soft teal-blue primary - calming and peaceful */
-    --primary: 200 80% 50%;
+    /* Muted teal primary - gentle and peaceful */
+    --primary: 190 45% 45%;
     --primary-foreground: 0 0% 100%;
 
-    /* Lavender secondary - soothing accent */
-    --secondary: 260 50% 92%;
-    --secondary-foreground: 260 40% 30%;
+    /* Dusty lavender secondary - soft and soothing */
+    --secondary: 250 25% 88%;
+    --secondary-foreground: 250 20% 35%;
 
-    /* Soft sage/mint muted tones */
-    --muted: 180 20% 94%;
-    --muted-foreground: 220 15% 45%;
+    /* Warm sage muted tones */
+    --muted: 160 15% 90%;
+    --muted-foreground: 210 15% 50%;
 
-    /* Warm lavender accent */
-    --accent: 260 40% 94%;
-    --accent-foreground: 260 35% 25%;
+    /* Soft blush accent */
+    --accent: 250 20% 90%;
+    --accent-foreground: 250 20% 30%;
 
-    /* Semantic colors - softer red */
-    --destructive: 0 65% 55%;
+    /* Semantic colors - muted coral */
+    --destructive: 5 50% 55%;
     --destructive-foreground: 0 0% 100%;
-    --border: 220 20% 88%;
-    --input: 220 20% 88%;
-    --ring: 200 80% 50%;
-    --radius: 0.875rem;
+    --border: 210 15% 85%;
+    --input: 210 15% 85%;
+    --ring: 190 45% 45%;
+    --radius: 1rem;
 
     /* Custom calming gradients */
-    --gradient-calm: linear-gradient(135deg, hsl(200 80% 50%) 0%, hsl(260 50% 70%) 100%);
+    --gradient-calm: linear-gradient(135deg, hsl(190 45% 45%) 0%, hsl(250 25% 65%) 100%);
   }
 
   .dark {
