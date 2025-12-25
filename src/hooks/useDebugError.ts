@@ -29,8 +29,12 @@ export function useDebugError() {
    * @param context - Additional context about what operation failed
    */
   const handleError = (error: unknown, context?: Record<string, unknown>) => {
-    // TODO: In production, disable this or send to error tracking
-    // if (import.meta.env.PROD) return;
+    // In production, don't show debug dialogs (errors still logged to console)
+    if (import.meta.env.PROD) {
+      console.error('Error occurred:', error, context);
+      // TODO: Send to error tracking service (Sentry, LogRocket, etc.)
+      return;
+    }
 
     const errorInfo: DebugError = {
       message: error instanceof Error ? error.message : 'Unknown error',

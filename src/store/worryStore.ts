@@ -2,6 +2,7 @@ import { create } from 'zustand';
 import * as notifications from '../services/notifications';
 import * as storage from '../services/storage';
 import type { Worry } from '../types';
+import { logger } from '../utils/logger';
 import { generateUUID } from '../utils/uuid';
 
 interface WorryStore {
@@ -52,7 +53,7 @@ export const useWorryStore = create<WorryStore>((set, get) => ({
 
   addWorry: async (worryData) => {
     try {
-      console.log('[Store] Creating worry...');
+      logger.log('[Store] Creating worry...');
       const worry: Worry = {
         ...worryData,
         id: generateUUID(),
@@ -60,22 +61,22 @@ export const useWorryStore = create<WorryStore>((set, get) => ({
         status: 'locked',
         notificationId: 0, // Will be set after scheduling
       };
-      console.log('[Store] Worry created with ID:', worry.id);
+      logger.log('[Store] Worry created with ID:', worry.id);
 
-      console.log('[Store] Scheduling notification...');
+      logger.log('[Store] Scheduling notification...');
       worry.notificationId = await notifications.scheduleWorryNotification(worry);
-      console.log('[Store] Notification scheduled with ID:', worry.notificationId);
+      logger.log('[Store] Notification scheduled with ID:', worry.notificationId);
 
       const worries = [...get().worries, worry];
       set({ worries });
 
-      console.log('[Store] Saving to storage...');
+      logger.log('[Store] Saving to storage...');
       await storage.saveWorries(worries);
-      console.log('[Store] Save complete');
+      logger.log('[Store] Save complete');
 
       return worry;
     } catch (error) {
-      console.error('[Store] Failed to add worry:', error);
+      logger.error('[Store] Failed to add worry:', error);
       throw error;
     }
   },

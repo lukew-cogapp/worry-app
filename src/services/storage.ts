@@ -1,6 +1,7 @@
 import { Preferences } from '@capacitor/preferences';
 import type { UserPreferences, Worry, WorryStats } from '../types';
 import { STORAGE_KEYS } from '../types';
+import { logger } from '../utils/logger';
 
 const defaultPreferences: UserPreferences = {
   defaultUnlockTime: '09:00',
@@ -29,18 +30,18 @@ export async function getWorries(): Promise<Worry[]> {
 
 export async function saveWorries(worries: Worry[]): Promise<void> {
   try {
-    console.log('[Storage] Attempting to save worries, count:', worries.length);
+    logger.log('[Storage] Attempting to save worries, count:', worries.length);
     const serialized = JSON.stringify(worries);
-    console.log('[Storage] Serialized data length:', serialized.length);
+    logger.log('[Storage] Serialized data length:', serialized.length);
 
     await Preferences.set({
       key: STORAGE_KEYS.WORRIES,
       value: serialized,
     });
 
-    console.log('[Storage] Successfully saved worries');
+    logger.log('[Storage] Successfully saved worries');
   } catch (error) {
-    console.error('[Storage] Failed to save worries:', error);
+    logger.error('[Storage] Failed to save worries:', error);
     throw error;
   }
 }
@@ -60,14 +61,14 @@ export async function getPreferences(): Promise<UserPreferences> {
 
 export async function savePreferences(preferences: UserPreferences): Promise<void> {
   try {
-    console.log('[Storage] Attempting to save preferences');
+    logger.log('[Storage] Attempting to save preferences');
     await Preferences.set({
       key: STORAGE_KEYS.PREFERENCES,
       value: JSON.stringify(preferences),
     });
-    console.log('[Storage] Successfully saved preferences');
+    logger.log('[Storage] Successfully saved preferences');
   } catch (error) {
-    console.error('[Storage] Failed to save preferences:', error);
+    logger.error('[Storage] Failed to save preferences:', error);
     throw error;
   }
 }
@@ -87,14 +88,14 @@ export async function getStats(): Promise<WorryStats> {
 
 export async function saveStats(stats: WorryStats): Promise<void> {
   try {
-    console.log('[Storage] Attempting to save stats');
+    logger.log('[Storage] Attempting to save stats');
     await Preferences.set({
       key: STORAGE_KEYS.STATS,
       value: JSON.stringify(stats),
     });
-    console.log('[Storage] Successfully saved stats');
+    logger.log('[Storage] Successfully saved stats');
   } catch (error) {
-    console.error('[Storage] Failed to save stats:', error);
+    logger.error('[Storage] Failed to save stats:', error);
     throw error;
   }
 }

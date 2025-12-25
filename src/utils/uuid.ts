@@ -1,3 +1,5 @@
+import { logger } from './logger';
+
 /**
  * UUID generation utility with Android WebView compatibility
  *
@@ -15,7 +17,7 @@ export function generateUUID(): string {
     try {
       return crypto.randomUUID();
     } catch (error) {
-      console.warn('[UUID] crypto.randomUUID failed, using fallback:', error);
+      logger.warn('[UUID] crypto.randomUUID failed, using fallback:', error);
     }
   }
 
