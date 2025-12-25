@@ -27,7 +27,7 @@ export const LockAnimation: React.FC<LockAnimationProps> = ({ show, onComplete }
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 animate-in fade-in duration-200">
-      <div className="flex flex-col items-center gap-md animate-in zoom-in duration-500">
+      <div className="flex flex-col items-center gap-4 animate-in zoom-in duration-500">
         <div className="relative">
           {/* Lock Icon with animation */}
           <div className="text-8xl animate-bounce">🔒</div>

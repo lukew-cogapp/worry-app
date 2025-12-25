@@ -78,8 +78,8 @@ export const AddWorrySheet: React.FC<AddWorrySheetProps> = ({
 
       {/* Modal */}
       <div className="fixed inset-x-0 bottom-0 z-50 bg-card rounded-t-2xl shadow-dialog max-h-[90vh] overflow-y-auto animate-slide-up">
-        <div className="p-lg">
-          <div className="flex items-center justify-between mb-lg">
+        <div className="p-6">
+          <div className="flex items-center justify-between mb-6">
             <h2 className="text-2xl font-bold text-foreground">{lang.addWorry.title}</h2>
             <Button
               variant="ghost"
@@ -92,7 +92,7 @@ export const AddWorrySheet: React.FC<AddWorrySheetProps> = ({
             </Button>
           </div>
 
-          <form onSubmit={handleSubmit} className="space-y-md">
+          <form onSubmit={handleSubmit} className="space-y-4">
             <div>
               <label
                 htmlFor="worry-content"
@@ -112,14 +112,14 @@ export const AddWorrySheet: React.FC<AddWorrySheetProps> = ({
                 placeholder={lang.addWorry.fields.content.placeholder}
                 rows={3}
                 disabled={isSubmitting || isReleasing}
-                className="w-full px-sm py-xs border border-input rounded-md bg-background text-foreground placeholder-muted-foreground focus:ring-2 focus:ring-ring focus:border-transparent resize-none disabled:opacity-50 disabled:cursor-not-allowed"
+                className="w-full px-3 py-2 border border-input rounded-md bg-background text-foreground placeholder-muted-foreground focus:ring-2 focus:ring-ring focus:border-transparent resize-none disabled:opacity-50 disabled:cursor-not-allowed"
               />
             </div>
 
             <div>
               <label
                 htmlFor="worry-action"
-                className="block text-sm font-medium text-foreground mb-xs"
+                className="block text-sm font-medium text-foreground mb-2"
               >
                 {lang.addWorry.fields.action.label}{' '}
                 <span className="text-muted-foreground">
@@ -138,7 +138,7 @@ export const AddWorrySheet: React.FC<AddWorrySheetProps> = ({
                 }}
                 placeholder={lang.addWorry.fields.action.placeholder}
                 disabled={isSubmitting || isReleasing}
-                className="w-full px-sm py-xs border border-input rounded-md bg-background text-foreground placeholder-muted-foreground focus:ring-2 focus:ring-ring focus:border-transparent disabled:opacity-50 disabled:cursor-not-allowed"
+                className="w-full px-3 py-2 border border-input rounded-md bg-background text-foreground placeholder-muted-foreground focus:ring-2 focus:ring-ring focus:border-transparent disabled:opacity-50 disabled:cursor-not-allowed"
               />
             </div>
 
@@ -148,8 +148,8 @@ export const AddWorrySheet: React.FC<AddWorrySheetProps> = ({
               defaultTime={defaultUnlockTime}
             />
 
-            <div className="space-y-sm pt-md">
-              <div className="flex gap-sm">
+            <div className="space-y-3 pt-4">
+              <div className="flex gap-3">
                 <Button
                   type="button"
                   variant="secondary"
@@ -164,8 +164,8 @@ export const AddWorrySheet: React.FC<AddWorrySheetProps> = ({
                   disabled={!content.trim() || isSubmitting || isReleasing}
                   className="flex-1 min-h-touch-target"
                 >
-                  {isSubmitting && <Loader2 className="size-icon-sm mr-xs animate-spin" />}
-                  {!isSubmitting && <Lock className="size-icon-sm mr-xs" />}
+                  {isSubmitting && <Loader2 className="size-icon-sm mr-2 animate-spin" />}
+                  {!isSubmitting && <Lock className="size-icon-sm mr-2" />}
                   {lang.addWorry.buttons.submit}
                 </Button>
               </div>
@@ -178,8 +178,8 @@ export const AddWorrySheet: React.FC<AddWorrySheetProps> = ({
                   disabled={!content.trim() || isSubmitting || isReleasing}
                   className="w-full min-h-touch-target"
                 >
-                  {isReleasing && <Loader2 className="size-icon-sm mr-xs animate-spin" />}
-                  {!isReleasing && <Sparkles className="size-icon-sm mr-xs" />}
+                  {isReleasing && <Loader2 className="size-icon-sm mr-2 animate-spin" />}
+                  {!isReleasing && <Sparkles className="size-icon-sm mr-2" />}
                   {lang.addWorry.buttons.release}
                 </Button>
               )}

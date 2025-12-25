@@ -51,7 +51,7 @@ export const WorryCard: React.FC<WorryCardProps> = ({
             variant="secondary"
             className="bg-blue-100 dark:bg-blue-950 text-blue-700 dark:text-blue-300 border-blue-200 dark:border-blue-900"
           >
-            <Lock className="size-icon-xs mr-xs" />
+            <Lock className="size-icon-xs mr-2" />
             {lang.worryCard.status.locked}
           </Badge>
         );
@@ -61,7 +61,7 @@ export const WorryCard: React.FC<WorryCardProps> = ({
             variant="secondary"
             className="bg-amber-100 dark:bg-amber-950 text-amber-700 dark:text-amber-300 border-amber-200 dark:border-amber-900"
           >
-            <Package className="size-icon-xs mr-xs" />
+            <Package className="size-icon-xs mr-2" />
             {lang.worryCard.status.ready}
           </Badge>
         );
@@ -71,7 +71,7 @@ export const WorryCard: React.FC<WorryCardProps> = ({
             variant="secondary"
             className="bg-green-100 dark:bg-green-950 text-green-700 dark:text-green-300 border-green-200 dark:border-green-900"
           >
-            <CheckCircle2 className="size-icon-xs mr-xs" />
+            <CheckCircle2 className="size-icon-xs mr-2" />
             {lang.worryCard.status.resolved}
           </Badge>
         );
@@ -81,7 +81,7 @@ export const WorryCard: React.FC<WorryCardProps> = ({
             variant="secondary"
             className="bg-purple-100 dark:bg-purple-950 text-purple-700 dark:text-purple-300 border-purple-200 dark:border-purple-900"
           >
-            <Sparkles className="size-icon-xs mr-xs" />
+            <Sparkles className="size-icon-xs mr-2" />
             {lang.worryCard.status.released}
           </Badge>
         );
@@ -95,17 +95,17 @@ export const WorryCard: React.FC<WorryCardProps> = ({
       className="transition-all hover:shadow-md cursor-pointer"
       onClick={() => onClick?.(worry.id)}
     >
-      <CardContent className="p-md">
-        <div className="flex items-start justify-between gap-sm mb-sm">
+      <CardContent className="p-4">
+        <div className="flex items-start justify-between gap-3 mb-3">
           <div className="flex-1 min-w-0">
             <p className="text-foreground font-medium line-clamp-2">{worry.content}</p>
             {worry.action && (
-              <p className="text-sm text-muted-foreground mt-xs">
+              <p className="text-sm text-muted-foreground mt-2">
                 <span className="font-medium">{lang.worryCard.labels.action}</span> {worry.action}
               </p>
             )}
           </div>
-          <div className="flex items-center gap-xs">
+          <div className="flex items-center gap-2">
             {getStatusBadge()}
             {onEdit && (worry.status === 'locked' || worry.status === 'unlocked') && (
               <Button
@@ -124,7 +124,7 @@ export const WorryCard: React.FC<WorryCardProps> = ({
           </div>
         </div>
 
-        <div className="flex items-center gap-xs text-xs text-muted-foreground">
+        <div className="flex items-center gap-2 text-xs text-muted-foreground">
           {worry.status === 'locked' && (
             <span>{lang.worryCard.labels.unlocks(getRelativeTime(worry.unlockAt))}</span>
           )}
@@ -138,8 +138,8 @@ export const WorryCard: React.FC<WorryCardProps> = ({
 
         {worry.status === 'locked' && (onUnlockNow || onDismiss) && (
           <>
-            <Separator className="my-sm" />
-            <div className="flex gap-xs">
+            <Separator className="my-3" />
+            <div className="flex gap-2">
               {onUnlockNow && (
                 <Button
                   variant="secondary"
@@ -151,7 +151,7 @@ export const WorryCard: React.FC<WorryCardProps> = ({
                   disabled={isUnlocking || isDismissing}
                   className="text-xs"
                 >
-                  {isUnlocking && <Loader2 className="mr-xs size-icon-xs animate-spin" />}
+                  {isUnlocking && <Loader2 className="mr-2 size-icon-xs animate-spin" />}
                   {lang.worryCard.buttons.unlockNow}
                 </Button>
               )}
@@ -166,7 +166,7 @@ export const WorryCard: React.FC<WorryCardProps> = ({
                   disabled={isUnlocking || isDismissing}
                   className="text-xs"
                 >
-                  {isDismissing && <Loader2 className="mr-xs size-icon-xs animate-spin" />}
+                  {isDismissing && <Loader2 className="mr-2 size-icon-xs animate-spin" />}
                   {lang.worryCard.buttons.dismiss}
                 </Button>
               )}
@@ -176,8 +176,8 @@ export const WorryCard: React.FC<WorryCardProps> = ({
 
         {worry.status === 'unlocked' && (onResolve || onSnooze || onDismiss) && (
           <>
-            <Separator className="my-sm" />
-            <div className="flex gap-xs">
+            <Separator className="my-3" />
+            <div className="flex gap-2">
               {onResolve && (
                 <Button
                   variant="default"
@@ -189,7 +189,7 @@ export const WorryCard: React.FC<WorryCardProps> = ({
                   disabled={isResolving || isSnoozing || isDismissing}
                   className="text-xs bg-green-600 hover:bg-green-700 text-white"
                 >
-                  {isResolving && <Loader2 className="mr-xs size-icon-xs animate-spin" />}
+                  {isResolving && <Loader2 className="mr-2 size-icon-xs animate-spin" />}
                   {lang.worryCard.buttons.markDone}
                 </Button>
               )}
@@ -203,7 +203,7 @@ export const WorryCard: React.FC<WorryCardProps> = ({
                       disabled={isResolving || isSnoozing || isDismissing}
                       className="text-xs min-h-touch-target"
                     >
-                      {isSnoozing && <Loader2 className="mr-xs size-icon-xs animate-spin" />}
+                      {isSnoozing && <Loader2 className="mr-2 size-icon-xs animate-spin" />}
                       {lang.worryCard.buttons.snooze}
                     </Button>
                   </DropdownMenuTrigger>
@@ -259,7 +259,7 @@ export const WorryCard: React.FC<WorryCardProps> = ({
                   disabled={isResolving || isSnoozing || isDismissing}
                   className="text-xs"
                 >
-                  {isDismissing && <Loader2 className="mr-xs size-icon-xs animate-spin" />}
+                  {isDismissing && <Loader2 className="mr-2 size-icon-xs animate-spin" />}
                   {lang.worryCard.buttons.dismiss}
                 </Button>
               )}

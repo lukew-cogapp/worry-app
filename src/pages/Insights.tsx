@@ -73,7 +73,7 @@ export const Insights: React.FC = () => {
     <div className="flex flex-col min-h-screen bg-background">
       {/* Header */}
       <header className="sticky top-0 z-10 bg-card border-b border-border">
-        <div className="flex items-center justify-between px-md py-md max-w-4xl mx-auto w-full">
+        <div className="flex items-center justify-between px-4 py-4 max-w-4xl mx-auto w-full">
           <Link to="/" aria-label={lang.aria.back}>
             <svg
               className="size-icon-md text-foreground"
@@ -97,12 +97,12 @@ export const Insights: React.FC = () => {
 
       {/* Content */}
       <main className="flex-1 overflow-auto">
-        <div className="max-w-4xl mx-auto px-md py-lg space-y-lg">
+        <div className="max-w-4xl mx-auto px-4 py-6 space-y-6">
           {metrics.total === 0 ? (
             <Card>
-              <CardContent className="p-lg text-center">
-                <BarChart3 className="size-icon-xl mx-auto mb-md text-muted-foreground" />
-                <h2 className="text-xl font-semibold text-foreground mb-xs">
+              <CardContent className="p-6 text-center">
+                <BarChart3 className="size-icon-xl mx-auto mb-4 text-muted-foreground" />
+                <h2 className="text-xl font-semibold text-foreground mb-2">
                   {lang.insights.empty.title}
                 </h2>
                 <p className="text-muted-foreground">{lang.insights.empty.message}</p>
@@ -111,9 +111,9 @@ export const Insights: React.FC = () => {
           ) : (
             <>
               {/* Overview Stats */}
-              <div className="grid grid-cols-2 gap-md">
+              <div className="grid grid-cols-2 gap-4">
                 <Card>
-                  <CardHeader className="p-md">
+                  <CardHeader className="p-4">
                     <CardDescription className="text-sm">
                       {lang.insights.stats.total}
                     </CardDescription>
@@ -122,7 +122,7 @@ export const Insights: React.FC = () => {
                 </Card>
 
                 <Card>
-                  <CardHeader className="p-md">
+                  <CardHeader className="p-4">
                     <CardDescription className="text-sm">
                       {lang.insights.stats.completed}
                     </CardDescription>
@@ -131,7 +131,7 @@ export const Insights: React.FC = () => {
                 </Card>
 
                 <Card>
-                  <CardHeader className="p-md">
+                  <CardHeader className="p-4">
                     <CardDescription className="text-sm">
                       {lang.insights.stats.locked}
                     </CardDescription>
@@ -140,7 +140,7 @@ export const Insights: React.FC = () => {
                 </Card>
 
                 <Card>
-                  <CardHeader className="p-md">
+                  <CardHeader className="p-4">
                     <CardDescription className="text-sm">
                       {lang.insights.stats.unlocked}
                     </CardDescription>
@@ -150,21 +150,21 @@ export const Insights: React.FC = () => {
               </div>
 
               {/* Key Insights */}
-              <div className="space-y-md">
+              <div className="space-y-4">
                 <h2 className="text-xl font-semibold text-foreground">
                   {lang.insights.keyInsights.title}
                 </h2>
 
                 {/* Completion Rate */}
                 <Card>
-                  <CardHeader className="p-md">
-                    <div className="flex items-start gap-sm">
-                      <CheckCircle2 className="size-icon-md text-primary flex-shrink-0 mt-xs" />
+                  <CardHeader className="p-4">
+                    <div className="flex items-start gap-3">
+                      <CheckCircle2 className="size-icon-md text-primary flex-shrink-0 mt-2" />
                       <div className="flex-1">
-                        <CardTitle className="text-lg mb-xs">
+                        <CardTitle className="text-lg mb-2">
                           {lang.insights.keyInsights.completionRate.title}
                         </CardTitle>
-                        <div className="text-3xl font-bold text-primary mb-xs">
+                        <div className="text-3xl font-bold text-primary mb-2">
                           {metrics.completionRate}%
                         </div>
                         <CardDescription>
@@ -181,14 +181,14 @@ export const Insights: React.FC = () => {
                 {/* Resolution vs Dismissal */}
                 {metrics.completed > 0 && (
                   <Card>
-                    <CardHeader className="p-md">
-                      <div className="flex items-start gap-sm">
-                        <TrendingDown className="size-icon-md text-primary flex-shrink-0 mt-xs" />
+                    <CardHeader className="p-4">
+                      <div className="flex items-start gap-3">
+                        <TrendingDown className="size-icon-md text-primary flex-shrink-0 mt-2" />
                         <div className="flex-1">
-                          <CardTitle className="text-lg mb-xs">
+                          <CardTitle className="text-lg mb-2">
                             {lang.insights.keyInsights.resolutionRate.title}
                           </CardTitle>
-                          <div className="text-3xl font-bold text-primary mb-xs">
+                          <div className="text-3xl font-bold text-primary mb-2">
                             {metrics.resolutionRate}%
                           </div>
                           <CardDescription>
@@ -198,7 +198,7 @@ export const Insights: React.FC = () => {
                             )}
                           </CardDescription>
                           {metrics.dismissed > metrics.resolved && (
-                            <p className="text-sm text-muted-foreground mt-sm">
+                            <p className="text-sm text-muted-foreground mt-3">
                               {lang.insights.keyInsights.resolutionRate.insight}
                             </p>
                           )}
@@ -211,14 +211,14 @@ export const Insights: React.FC = () => {
                 {/* Average Time to Resolve */}
                 {metrics.avgTimeToResolve > 0 && (
                   <Card>
-                    <CardHeader className="p-md">
-                      <div className="flex items-start gap-sm">
-                        <XCircle className="size-icon-md text-primary flex-shrink-0 mt-xs" />
+                    <CardHeader className="p-4">
+                      <div className="flex items-start gap-3">
+                        <XCircle className="size-icon-md text-primary flex-shrink-0 mt-2" />
                         <div className="flex-1">
-                          <CardTitle className="text-lg mb-xs">
+                          <CardTitle className="text-lg mb-2">
                             {lang.insights.keyInsights.avgTimeToResolve.title}
                           </CardTitle>
-                          <div className="text-3xl font-bold text-primary mb-xs">
+                          <div className="text-3xl font-bold text-primary mb-2">
                             {formatTimeToResolve(metrics.avgTimeToResolve)}
                           </div>
                           <CardDescription>
@@ -233,10 +233,8 @@ export const Insights: React.FC = () => {
                 {/* This Week */}
                 {metrics.thisWeekCount > 0 && (
                   <Card>
-                    <CardHeader className="p-md">
-                      <CardTitle className="text-lg mb-xs">
-                        {lang.insights.thisWeek.title}
-                      </CardTitle>
+                    <CardHeader className="p-4">
+                      <CardTitle className="text-lg mb-2">{lang.insights.thisWeek.title}</CardTitle>
                       <CardDescription>
                         {lang.insights.thisWeek.description(
                           metrics.thisWeekCount,

@@ -19,12 +19,9 @@ export const DateTimePicker: React.FC<DateTimePickerProps> = ({
   };
 
   return (
-    <div className="space-y-sm">
+    <div className="space-y-3">
       <div>
-        <label
-          htmlFor="unlock-datetime"
-          className="block text-sm font-medium text-foreground mb-xs"
-        >
+        <label htmlFor="unlock-datetime" className="block text-sm font-medium text-foreground mb-2">
           {lang.addWorry.fields.unlockAt.label}
         </label>
         <input
@@ -32,15 +29,15 @@ export const DateTimePicker: React.FC<DateTimePickerProps> = ({
           id="unlock-datetime"
           value={value ? new Date(value).toISOString().slice(0, 16) : ''}
           onChange={(e) => onChange(new Date(e.target.value).toISOString())}
-          className="w-full min-h-touch-target px-sm py-xs border border-border rounded-md bg-background text-foreground focus:ring-2 focus:ring-primary focus:border-transparent transition-shadow"
+          className="w-full min-h-touch-target px-3 py-2 border border-border rounded-md bg-background text-foreground focus:ring-2 focus:ring-primary focus:border-transparent transition-shadow"
         />
       </div>
 
       <div>
-        <p className="text-sm text-muted-foreground mb-xs">
+        <p className="text-sm text-muted-foreground mb-2">
           {lang.addWorry.fields.unlockAt.quickOptions}
         </p>
-        <div className="grid grid-cols-3 gap-xs">
+        <div className="grid grid-cols-3 gap-2">
           <Button
             type="button"
             variant="secondary"

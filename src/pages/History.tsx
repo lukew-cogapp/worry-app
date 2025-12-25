@@ -169,7 +169,7 @@ export const History: React.FC = () => {
     <div className="min-h-screen bg-background">
       {/* Header */}
       <header className="bg-card border-b border-border">
-        <div className="max-w-4xl mx-auto px-md py-md flex items-center gap-md">
+        <div className="max-w-4xl mx-auto px-4 py-4 flex items-center gap-4">
           <Link
             to="/"
             className="text-muted-foreground hover:text-foreground transition-colors"
@@ -196,8 +196,8 @@ export const History: React.FC = () => {
 
       {/* Filters */}
       <div className="bg-card border-b border-border">
-        <div className="max-w-4xl mx-auto px-md py-sm overflow-x-auto">
-          <div className="flex gap-xs">
+        <div className="max-w-4xl mx-auto px-4 py-3 overflow-x-auto">
+          <div className="flex gap-2">
             {(
               [
                 { key: 'all', label: lang.history.filters.all },
@@ -211,7 +211,7 @@ export const History: React.FC = () => {
                 key={key}
                 type="button"
                 onClick={() => setFilter(key)}
-                className={`min-h-touch-target px-md py-xs rounded-full text-sm font-medium whitespace-nowrap transition-colors ${
+                className={`min-h-touch-target px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-colors ${
                   filter === key
                     ? 'bg-primary text-primary-foreground'
                     : 'bg-secondary text-secondary-foreground hover:bg-secondary/80'
@@ -226,7 +226,7 @@ export const History: React.FC = () => {
 
       {/* Search */}
       <div className="bg-card border-b border-border">
-        <div className="max-w-4xl mx-auto px-md py-sm">
+        <div className="max-w-4xl mx-auto px-4 py-3">
           <div className="relative">
             <input
               type="text"
@@ -234,10 +234,10 @@ export const History: React.FC = () => {
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               aria-label={lang.aria.search}
-              className="w-full px-md py-xs pl-10 border border-input rounded-lg bg-background text-foreground placeholder-muted-foreground focus:ring-2 focus:ring-ring focus:border-transparent"
+              className="w-full px-4 py-2 pl-10 border border-input rounded-lg bg-background text-foreground placeholder-muted-foreground focus:ring-2 focus:ring-ring focus:border-transparent"
             />
             <svg
-              className="absolute left-sm top-1/2 -translate-y-1/2 size-icon text-muted-foreground"
+              className="absolute left-3 top-1/2 -translate-y-1/2 size-icon text-muted-foreground"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
@@ -255,7 +255,7 @@ export const History: React.FC = () => {
       </div>
 
       {/* Main Content */}
-      <main className="max-w-4xl mx-auto px-md py-lg">
+      <main className="max-w-4xl mx-auto px-4 py-6">
         {filteredWorries.length === 0 ? (
           <EmptyState
             title={lang.history.empty.title(filter)}
@@ -266,7 +266,7 @@ export const History: React.FC = () => {
             }
           />
         ) : (
-          <div className="space-y-sm">
+          <div className="space-y-3">
             {filteredWorries
               .slice()
               .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
@@ -285,7 +285,7 @@ export const History: React.FC = () => {
                       variant="ghost"
                       size="icon"
                       onClick={() => setWorryToDelete(worry.id)}
-                      className="absolute top-xs right-xs min-h-touch-target min-w-touch-target text-muted-foreground hover:text-destructive active:scale-95"
+                      className="absolute top-2 right-2 min-h-touch-target min-w-touch-target text-muted-foreground hover:text-destructive active:scale-95"
                       aria-label={lang.aria.delete}
                     >
                       <svg
@@ -326,7 +326,7 @@ export const History: React.FC = () => {
               disabled={isDeleting}
               className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
             >
-              {isDeleting && <Loader2 className="mr-xs size-icon-sm animate-spin" />}
+              {isDeleting && <Loader2 className="mr-2 size-icon-sm animate-spin" />}
               {lang.history.deleteDialog.confirm}
             </AlertDialogAction>
           </AlertDialogFooter>
@@ -354,7 +354,7 @@ export const History: React.FC = () => {
               disabled={loadingStates[worryToDismiss || '']?.dismissing}
             >
               {loadingStates[worryToDismiss || '']?.dismissing && (
-                <Loader2 className="mr-xs size-icon-sm animate-spin" />
+                <Loader2 className="mr-2 size-icon-sm animate-spin" />
               )}
               {lang.history.dismissDialog.confirm}
             </AlertDialogAction>

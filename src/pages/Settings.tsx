@@ -22,7 +22,7 @@ export const Settings: React.FC = () => {
     <div className="min-h-screen bg-background">
       {/* Header */}
       <header className="bg-card border-b border-border">
-        <div className="max-w-4xl mx-auto px-md py-md flex items-center gap-md">
+        <div className="max-w-4xl mx-auto px-4 py-4 flex items-center gap-4">
           <Link
             to="/"
             className="text-muted-foreground hover:text-foreground transition-colors"
@@ -61,7 +61,7 @@ export const Settings: React.FC = () => {
               value={preferences.defaultUnlockTime}
               onChange={(e) => updatePreferences({ defaultUnlockTime: e.target.value })}
               disabled={isSaving}
-              className="min-h-touch-target px-sm py-xs border border-input rounded-md bg-background text-foreground disabled:opacity-50 disabled:cursor-not-allowed"
+              className="min-h-touch-target px-3 py-2 border border-input rounded-md bg-background text-foreground disabled:opacity-50 disabled:cursor-not-allowed"
             />
           </div>
 

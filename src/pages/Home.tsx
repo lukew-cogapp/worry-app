@@ -212,12 +212,12 @@ export const Home: React.FC = () => {
     <div className="min-h-screen bg-background">
       {/* Header */}
       <header className="bg-card border-b border-border">
-        <div className="max-w-4xl mx-auto px-md py-md flex items-center justify-between">
+        <div className="max-w-4xl mx-auto px-4 py-4 flex items-center justify-between">
           <div>
             <h1 className="text-3xl font-bold text-foreground tracking-tight">{lang.app.name}</h1>
             <p className="text-sm text-muted-foreground">{lang.app.tagline}</p>
           </div>
-          <div className="flex items-center gap-md">
+          <div className="flex items-center gap-4">
             <Link
               to="/insights"
               className="text-muted-foreground hover:text-foreground transition-colors"
@@ -259,7 +259,7 @@ export const Home: React.FC = () => {
       </header>
 
       {/* Main Content */}
-      <main className="max-w-4xl mx-auto px-md py-lg pb-24">
+      <main className="max-w-4xl mx-auto px-4 py-6 pb-24">
         {(isLoadingWorries || isLoadingPreferences) && (
           <div className="flex items-center justify-center py-12">
             <Loader2 className="size-icon-lg animate-spin text-muted-foreground" />
@@ -272,11 +272,11 @@ export const Home: React.FC = () => {
 
         {/* Unlocked Worries */}
         {!isLoadingWorries && !isLoadingPreferences && unlockedWorries.length > 0 && (
-          <section className="mb-xl">
-            <h2 className="text-xl font-bold text-foreground mb-md tracking-tight">
+          <section className="mb-8">
+            <h2 className="text-xl font-bold text-foreground mb-4 tracking-tight">
               {lang.home.sections.ready}
             </h2>
-            <div className="space-y-sm">
+            <div className="space-y-3">
               {unlockedWorries.map((worry) => (
                 <WorryCard
                   key={worry.id}
@@ -297,8 +297,8 @@ export const Home: React.FC = () => {
         {/* Locked Worries Summary */}
         {!isLoadingWorries && !isLoadingPreferences && lockedWorries.length > 0 && (
           <section>
-            <div className="bg-secondary/20 rounded-lg p-lg border border-primary/20">
-              <div className="flex items-center gap-sm mb-xs">
+            <div className="bg-secondary/20 rounded-lg p-6 border border-primary/20">
+              <div className="flex items-center gap-3 mb-2">
                 <Lock className="size-icon-lg text-primary" />
                 <div>
                   <h2 className="text-xl font-bold text-foreground tracking-tight">
@@ -311,7 +311,7 @@ export const Home: React.FC = () => {
               </div>
               <Link
                 to="/history"
-                className="text-sm text-primary hover:underline inline-block mt-xs"
+                className="text-sm text-primary hover:underline inline-block mt-2"
               >
                 {lang.home.sections.locked.viewAll}
               </Link>
@@ -380,7 +380,7 @@ export const Home: React.FC = () => {
               disabled={loadingStates[worryToDismiss || '']?.dismissing}
             >
               {loadingStates[worryToDismiss || '']?.dismissing && (
-                <Loader2 className="mr-xs size-icon-sm animate-spin" />
+                <Loader2 className="mr-2 size-icon-sm animate-spin" />
               )}
               {lang.history.dismissDialog.confirm}
             </AlertDialogAction>
@@ -405,7 +405,7 @@ export const Home: React.FC = () => {
               {lang.history.releaseDialog.cancel}
             </AlertDialogCancel>
             <AlertDialogAction onClick={confirmRelease} disabled={isReleasingWorry}>
-              {isReleasingWorry && <Loader2 className="mr-xs size-icon-sm animate-spin" />}
+              {isReleasingWorry && <Loader2 className="mr-2 size-icon-sm animate-spin" />}
               {lang.history.releaseDialog.confirm}
             </AlertDialogAction>
           </AlertDialogFooter>

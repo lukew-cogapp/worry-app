@@ -24,35 +24,39 @@ function App() {
     let urlListenerHandle: PluginListenerHandle | undefined;
 
     async function init() {
-      // Request notification permissions
-      await notifications.requestPermissions();
-      await notifications.registerNotificationActions();
-
-      // Load stored data
+      // Load stored data first (works on all platforms)
       await loadPreferences();
       await loadWorries();
 
-      // Handle notification actions
-      notificationListenerHandle = await LocalNotifications.addListener(
-        'localNotificationActionPerformed',
-        (action) => {
-          const { worryId } = action.notification.extra;
+      // Capacitor-specific features - may fail on web, which is fine
+      try {
+        await notifications.requestPermissions();
+        await notifications.registerNotificationActions();
 
-          if (action.actionId === 'done') {
-            resolveWorry(worryId);
-          } else if (action.actionId === 'snooze') {
-            snoozeWorry(worryId, 60 * 60 * 1000); // 1 hour
+        // Handle notification actions
+        notificationListenerHandle = await LocalNotifications.addListener(
+          'localNotificationActionPerformed',
+          (action) => {
+            const { worryId } = action.notification.extra;
+
+            if (action.actionId === 'done') {
+              resolveWorry(worryId);
+            } else if (action.actionId === 'snooze') {
+              snoozeWorry(worryId, 60 * 60 * 1000); // 1 hour
+            }
           }
-        }
-      );
+        );
 
-      // Handle deep links from notification tap
-      urlListenerHandle = await CapApp.addListener('appUrlOpen', (_event) => {
-        // Handle worry://open/{worryId} URLs if needed in future
-      });
+        // Handle deep links from notification tap
+        urlListenerHandle = await CapApp.addListener('appUrlOpen', (_event) => {
+          // Handle worry://open/{worryId} URLs if needed in future
+        });
 
-      // Hide splash screen
-      await SplashScreen.hide();
+        // Hide splash screen
+        await SplashScreen.hide();
+      } catch {
+        // Capacitor features not available on web - this is expected
+      }
     }
 
     init().catch((error) => {
