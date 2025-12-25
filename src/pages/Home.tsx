@@ -1,25 +1,15 @@
-import confetti from 'canvas-confetti';
 import { Loader2, Lock } from 'lucide-react';
 import type React from 'react';
 import { useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { toast } from 'sonner';
 import { AddWorrySheet } from '../components/AddWorrySheet';
+import { ConfirmationDialog } from '../components/ConfirmationDialog';
 import { DebugErrorDialog } from '../components/DebugErrorDialog';
 import { EditWorrySheet } from '../components/EditWorrySheet';
 import { EmptyState } from '../components/EmptyState';
 import { LockAnimation } from '../components/LockAnimation';
 import { Onboarding } from '../components/Onboarding';
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-} from '../components/ui/alert-dialog';
 import { WorryCard } from '../components/WorryCard';
 import { TOAST_DURATIONS } from '../config/constants';
 import { formatDuration, lang } from '../config/language';
@@ -107,13 +97,9 @@ export const Home: React.FC = () => {
       await resolveWorry(worryToResolve, resolutionNote.trim() || undefined);
       await resolveHaptic();
 
-      // Celebration confetti!
-      confetti({
-        particleCount: 50,
-        spread: 60,
-        origin: { y: 0.6 },
-        colors: ['#6366f1', '#8b5cf6', '#a855f7'],
-      });
+      // Subtle success glow
+      document.body.classList.add('success-glow');
+      setTimeout(() => document.body.classList.remove('success-glow'), 1000);
 
       toast.success(lang.toasts.success.worryResolved);
       setWorryToResolve(null);
@@ -438,7 +424,7 @@ export const Home: React.FC = () => {
       <Onboarding />
 
       {/* Resolve Dialog */}
-      <AlertDialog
+      <ConfirmationDialog
         open={!!worryToResolve}
         onOpenChange={(open) => {
           if (!open) {
@@ -446,93 +432,42 @@ export const Home: React.FC = () => {
             setResolutionNote('');
           }
         }}
-      >
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>{lang.resolveWorry.title}</AlertDialogTitle>
-            <AlertDialogDescription>
-              <label htmlFor="resolution-note" className="block text-sm font-medium mb-2 mt-4">
-                {lang.resolveWorry.noteLabel}
-              </label>
-              <textarea
-                id="resolution-note"
-                value={resolutionNote}
-                onChange={(e) => setResolutionNote(e.target.value)}
-                placeholder={lang.resolveWorry.notePlaceholder}
-                rows={3}
-                className="w-full px-3 py-2 border border-input rounded-md bg-background text-foreground placeholder-muted-foreground focus:ring-2 focus:ring-ring focus:border-transparent resize-none"
-              />
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel disabled={loadingStates[worryToResolve || '']?.resolving}>
-              {lang.resolveWorry.cancel}
-            </AlertDialogCancel>
-            <AlertDialogAction
-              onClick={confirmResolve}
-              disabled={loadingStates[worryToResolve || '']?.resolving}
-            >
-              {loadingStates[worryToResolve || '']?.resolving && (
-                <Loader2 className="mr-2 size-icon-sm animate-spin" />
-              )}
-              {lang.resolveWorry.confirm}
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
+        title={lang.resolveWorry.title}
+        description=""
+        confirmText={lang.resolveWorry.confirm}
+        cancelText={lang.resolveWorry.cancel}
+        onConfirm={confirmResolve}
+        isLoading={loadingStates[worryToResolve || '']?.resolving}
+        showTextarea
+        textareaValue={resolutionNote}
+        onTextareaChange={setResolutionNote}
+        textareaLabel={lang.resolveWorry.noteLabel}
+        textareaPlaceholder={lang.resolveWorry.notePlaceholder}
+      />
 
       {/* Dismiss Confirmation Dialog */}
-      <AlertDialog
+      <ConfirmationDialog
         open={!!worryToDismiss}
         onOpenChange={(open) => !open && setWorryToDismiss(null)}
-      >
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>{lang.history.dismissDialog.title}</AlertDialogTitle>
-            <AlertDialogDescription>
-              {lang.history.dismissDialog.description}
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel disabled={loadingStates[worryToDismiss || '']?.dismissing}>
-              {lang.history.dismissDialog.cancel}
-            </AlertDialogCancel>
-            <AlertDialogAction
-              onClick={confirmDismiss}
-              disabled={loadingStates[worryToDismiss || '']?.dismissing}
-            >
-              {loadingStates[worryToDismiss || '']?.dismissing && (
-                <Loader2 className="mr-2 size-icon-sm animate-spin" />
-              )}
-              {lang.history.dismissDialog.confirm}
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
+        title={lang.history.dismissDialog.title}
+        description={lang.history.dismissDialog.description}
+        confirmText={lang.history.dismissDialog.confirm}
+        cancelText={lang.history.dismissDialog.cancel}
+        onConfirm={confirmDismiss}
+        isLoading={loadingStates[worryToDismiss || '']?.dismissing}
+      />
 
       {/* Release Confirmation Dialog */}
-      <AlertDialog
+      <ConfirmationDialog
         open={!!contentToRelease}
         onOpenChange={(open) => !open && setContentToRelease(null)}
-      >
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>{lang.history.releaseDialog.title}</AlertDialogTitle>
-            <AlertDialogDescription>
-              {lang.history.releaseDialog.description}
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel disabled={isReleasingWorry}>
-              {lang.history.releaseDialog.cancel}
-            </AlertDialogCancel>
-            <AlertDialogAction onClick={confirmRelease} disabled={isReleasingWorry}>
-              {isReleasingWorry && <Loader2 className="mr-2 size-icon-sm animate-spin" />}
-              {lang.history.releaseDialog.confirm}
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
+        title={lang.history.releaseDialog.title}
+        description={lang.history.releaseDialog.description}
+        confirmText={lang.history.releaseDialog.confirm}
+        cancelText={lang.history.releaseDialog.cancel}
+        onConfirm={confirmRelease}
+        isLoading={isReleasingWorry}
+      />
 
       <DebugErrorDialog error={debugError} onClose={clearError} />
     </div>

@@ -1,21 +1,11 @@
-import { Loader2 } from 'lucide-react';
 import type React from 'react';
 import { useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { toast } from 'sonner';
+import { ConfirmationDialog } from '../components/ConfirmationDialog';
 import { DebugErrorDialog } from '../components/DebugErrorDialog';
 import { EditWorrySheet } from '../components/EditWorrySheet';
 import { EmptyState } from '../components/EmptyState';
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-} from '../components/ui/alert-dialog';
 import {
   Select,
   SelectContent,
@@ -332,56 +322,29 @@ export const History: React.FC = () => {
       </main>
 
       {/* Delete Confirmation Dialog */}
-      <AlertDialog open={!!worryToDelete} onOpenChange={(open) => !open && setWorryToDelete(null)}>
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>{lang.history.deleteDialog.title}</AlertDialogTitle>
-            <AlertDialogDescription>{lang.history.deleteDialog.description}</AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel disabled={isDeleting}>
-              {lang.history.deleteDialog.cancel}
-            </AlertDialogCancel>
-            <AlertDialogAction
-              onClick={handleDelete}
-              disabled={isDeleting}
-              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
-            >
-              {isDeleting && <Loader2 className="mr-2 size-icon-sm animate-spin" />}
-              {lang.history.deleteDialog.confirm}
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
+      <ConfirmationDialog
+        open={!!worryToDelete}
+        onOpenChange={(open) => !open && setWorryToDelete(null)}
+        title={lang.history.deleteDialog.title}
+        description={lang.history.deleteDialog.description}
+        confirmText={lang.history.deleteDialog.confirm}
+        cancelText={lang.history.deleteDialog.cancel}
+        onConfirm={handleDelete}
+        isLoading={isDeleting}
+        variant="destructive"
+      />
 
       {/* Dismiss Confirmation Dialog */}
-      <AlertDialog
+      <ConfirmationDialog
         open={!!worryToDismiss}
         onOpenChange={(open) => !open && setWorryToDismiss(null)}
-      >
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>{lang.history.dismissDialog.title}</AlertDialogTitle>
-            <AlertDialogDescription>
-              {lang.history.dismissDialog.description}
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel disabled={loadingStates[worryToDismiss || '']?.dismissing}>
-              {lang.history.dismissDialog.cancel}
-            </AlertDialogCancel>
-            <AlertDialogAction
-              onClick={confirmDismiss}
-              disabled={loadingStates[worryToDismiss || '']?.dismissing}
-            >
-              {loadingStates[worryToDismiss || '']?.dismissing && (
-                <Loader2 className="mr-2 size-icon-sm animate-spin" />
-              )}
-              {lang.history.dismissDialog.confirm}
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
+        title={lang.history.dismissDialog.title}
+        description={lang.history.dismissDialog.description}
+        confirmText={lang.history.dismissDialog.confirm}
+        cancelText={lang.history.dismissDialog.cancel}
+        onConfirm={confirmDismiss}
+        isLoading={loadingStates[worryToDismiss || '']?.dismissing}
+      />
 
       {/* Edit Worry Sheet */}
       <EditWorrySheet

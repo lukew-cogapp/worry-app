@@ -141,5 +141,32 @@
     padding-bottom: env(safe-area-inset-bottom);
     padding-left: env(safe-area-inset-left);
     padding-right: env(safe-area-inset-right);
+    position: relative;
+  }
+
+  /* Subtle success glow animation */
+  body.success-glow::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    background: radial-gradient(circle at center, hsl(var(--primary) / 0.15) 0%, transparent 70%);
+    animation: glow-pulse 1000ms ease-out;
+    pointer-events: none;
+    z-index: 9999;
+  }
+
+  @keyframes glow-pulse {
+    0% {
+      opacity: 0;
+      transform: scale(0.8);
+    }
+    50% {
+      opacity: 1;
+      transform: scale(1);
+    }
+    100% {
+      opacity: 0;
+      transform: scale(1.1);
+    }
   }
 }
