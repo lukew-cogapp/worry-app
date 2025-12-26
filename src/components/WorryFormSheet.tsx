@@ -1,6 +1,6 @@
 import { Edit3, Loader2, Lock, Sparkles } from 'lucide-react';
 import type React from 'react';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { FORM_VALIDATION } from '../config/constants';
 import { lang } from '../config/language';
 import { useEscapeKey } from '../hooks/useEscapeKey';
@@ -45,6 +45,7 @@ export const WorryFormSheet: React.FC<WorryFormSheetProps> = ({
   onEdit,
   worry,
 }) => {
+  const modalRef = useRef<HTMLDivElement | null>(null);
   const [content, setContent] = useState('');
   const [action, setAction] = useState('');
   const [unlockAt, setUnlockAt] = useState('');
@@ -131,6 +132,40 @@ export const WorryFormSheet: React.FC<WorryFormSheetProps> = ({
     };
   }, [isOpen]);
 
+  useEffect(() => {
+    if (!isOpen) return;
+    const container = modalRef.current;
+    if (!container) return;
+
+    const focusableSelector =
+      'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])';
+    const focusable = Array.from(container.querySelectorAll<HTMLElement>(focusableSelector)).filter(
+      (el) => !el.hasAttribute('disabled')
+    );
+    focusable[0]?.focus();
+
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key !== 'Tab') return;
+      const items = Array.from(container.querySelectorAll<HTMLElement>(focusableSelector)).filter(
+        (el) => !el.hasAttribute('disabled')
+      );
+      if (items.length === 0) return;
+      const first = items[0];
+      const last = items[items.length - 1];
+      const active = document.activeElement;
+      if (event.shiftKey && active === first) {
+        event.preventDefault();
+        last.focus();
+      } else if (!event.shiftKey && active === last) {
+        event.preventDefault();
+        first.focus();
+      }
+    };
+
+    document.addEventListener('keydown', handleKeyDown);
+    return () => document.removeEventListener('keydown', handleKeyDown);
+  }, [isOpen]);
+
   if (!isOpen || (mode === 'edit' && !worry)) return null;
 
   const title = mode === 'add' ? lang.addWorry.title : lang.editWorry.title;
@@ -149,10 +184,18 @@ export const WorryFormSheet: React.FC<WorryFormSheetProps> = ({
       />
 
       {/* Modal */}
-      <div className="fixed inset-x-0 bottom-0 z-50 bg-card rounded-t-2xl shadow-dialog max-h-[90vh] overflow-y-auto overflow-x-hidden animate-slide-up">
+      <div
+        ref={modalRef}
+        className="fixed inset-x-0 bottom-0 z-50 bg-card rounded-t-2xl shadow-dialog max-h-[90vh] overflow-y-auto overflow-x-hidden animate-slide-up"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="worry-form-title"
+      >
         <div className="p-lg">
           <div className="flex items-center justify-between mb-lg">
-            <h2 className="text-2xl font-bold text-foreground">{title}</h2>
+            <h2 id="worry-form-title" className="text-2xl font-bold text-foreground">
+              {title}
+            </h2>
             <Button
               variant="ghost"
               size="icon"
@@ -186,10 +229,13 @@ export const WorryFormSheet: React.FC<WorryFormSheetProps> = ({
                 maxLength={FORM_VALIDATION.WORRY_CONTENT_MAX_LENGTH}
                 disabled={isLoading}
                 aria-invalid={!!error}
+                aria-describedby={error ? 'worry-content-error' : undefined}
                 className="bg-background resize-none disabled:cursor-not-allowed"
               />
               <div className="flex items-center justify-between mt-1">
-                <p className="text-xs text-destructive">{error}</p>
+                <p id="worry-content-error" className="text-xs text-destructive" role="alert">
+                  {error}
+                </p>
                 <p className="text-xs text-muted-foreground">
                   {content.length}/{FORM_VALIDATION.WORRY_CONTENT_MAX_LENGTH}
                 </p>
@@ -235,6 +281,7 @@ export const WorryFormSheet: React.FC<WorryFormSheetProps> = ({
                 <Button
                   type="button"
                   variant="ghost"
+                  size="lg"
                   onClick={handleRelease}
                   disabled={!content.trim() || isLoading}
                   className="w-full min-h-touch-target"
@@ -249,6 +296,7 @@ export const WorryFormSheet: React.FC<WorryFormSheetProps> = ({
                 <Button
                   type="button"
                   variant="ghost"
+                  size="lg"
                   onClick={handleClose}
                   disabled={isLoading}
                   className="flex-1 min-h-touch-target"
@@ -258,6 +306,7 @@ export const WorryFormSheet: React.FC<WorryFormSheetProps> = ({
 
                 <Button
                   type="submit"
+                  size="lg"
                   disabled={!content.trim() || isLoading}
                   className="flex-1 min-h-touch-target"
                 >

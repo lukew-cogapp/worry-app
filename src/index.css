@@ -74,32 +74,32 @@
 
 @layer base {
   :root {
-    /* Calming color palette - Soft, muted, warm tones */
-    --background: 210 25% 92%;
-    --foreground: 220 25% 25%;
-    --card: 210 20% 96%;
-    --card-foreground: 220 25% 25%;
-    --popover: 210 20% 96%;
-    --popover-foreground: 220 25% 25%;
+    /* Calming color palette - cohesive lavender range */
+    --background: 246 30% 94%;
+    --foreground: 248 22% 24%;
+    --card: 246 26% 97%;
+    --card-foreground: 248 22% 24%;
+    --popover: 246 26% 97%;
+    --popover-foreground: 248 22% 24%;
 
-    /* Muted teal primary - gentle and peaceful */
-    --primary: 190 45% 45%;
+    /* Muted lavender primary */
+    --primary: 258 36% 50%;
     --primary-foreground: 0 0% 100%;
 
-    /* Dusty lavender secondary - soft and soothing */
-    --secondary: 250 25% 88%;
-    --secondary-foreground: 250 20% 35%;
+    /* Soft lavender secondary */
+    --secondary: 264 22% 90%;
+    --secondary-foreground: 258 24% 32%;
 
-    /* Warm sage muted tones */
-    --muted: 160 15% 90%;
-    --muted-foreground: 210 15% 50%;
+    /* Misty lavender-gray muted tones */
+    --muted: 250 16% 92%;
+    --muted-foreground: 248 12% 50%;
 
-    /* Soft blush accent */
-    --accent: 250 20% 90%;
-    --accent-foreground: 250 20% 30%;
+    /* Light lilac accent */
+    --accent: 262 20% 92%;
+    --accent-foreground: 258 22% 30%;
 
     /* Semantic colors - muted coral */
-    --destructive: 5 50% 55%;
+    --destructive: 6 50% 55%;
     --destructive-foreground: 0 0% 100%;
     --border: 210 15% 85%;
     --input: 210 15% 85%;
@@ -107,77 +107,77 @@
     --radius: 1rem;
 
     /* Custom calming gradients */
-    --gradient-calm: linear-gradient(135deg, hsl(190 45% 45%) 0%, hsl(250 25% 65%) 100%);
+    --gradient-calm: linear-gradient(135deg, hsl(258 36% 50%) 0%, hsl(270 32% 62%) 100%);
 
     /* Semantic status colors */
-    --status-locked-bg: 219 95% 90%;
-    --status-locked-fg: 219 75% 35%;
-    --status-locked-border: 219 85% 85%;
+    --status-locked-bg: 258 34% 92%;
+    --status-locked-fg: 258 28% 34%;
+    --status-locked-border: 258 26% 84%;
 
-    --status-ready-bg: 38 92% 90%;
-    --status-ready-fg: 38 92% 35%;
-    --status-ready-border: 38 92% 85%;
+    --status-ready-bg: 270 32% 92%;
+    --status-ready-fg: 270 30% 34%;
+    --status-ready-border: 270 24% 84%;
 
-    --status-resolved-bg: 142 71% 90%;
-    --status-resolved-fg: 142 71% 35%;
-    --status-resolved-border: 142 71% 85%;
+    --status-resolved-bg: 160 32% 90%;
+    --status-resolved-fg: 160 32% 32%;
+    --status-resolved-border: 160 26% 82%;
 
-    --status-released-bg: 271 91% 92%;
-    --status-released-fg: 271 81% 40%;
-    --status-released-border: 271 91% 87%;
+    --status-released-bg: 282 28% 92%;
+    --status-released-fg: 282 30% 36%;
+    --status-released-border: 282 24% 84%;
 
-    --status-dismissed-bg: 0 0% 90%;
-    --status-dismissed-fg: 0 0% 40%;
-    --status-dismissed-border: 0 0% 85%;
+    --status-dismissed-bg: 248 12% 90%;
+    --status-dismissed-fg: 248 10% 42%;
+    --status-dismissed-border: 248 10% 84%;
   }
 
   .dark {
-    /* Dark mode - deeper blues with warm undertones */
-    --background: 222 47% 11%;
-    --foreground: 210 40% 98%;
-    --card: 222 47% 15%;
-    --card-foreground: 210 40% 98%;
-    --popover: 222 47% 15%;
-    --popover-foreground: 210 40% 98%;
+    /* Dark mode - cohesive deep lavender */
+    --background: 248 24% 10%;
+    --foreground: 252 30% 96%;
+    --card: 248 24% 14%;
+    --card-foreground: 252 30% 96%;
+    --popover: 248 24% 14%;
+    --popover-foreground: 252 30% 96%;
 
     /* Softer primary in dark mode */
-    --primary: 211 75% 55%;
+    --primary: 262 52% 62%;
     --primary-foreground: 0 0% 100%;
 
     /* Muted lavender secondary */
-    --secondary: 270 40% 30%;
-    --secondary-foreground: 270 60% 90%;
+    --secondary: 258 20% 22%;
+    --secondary-foreground: 262 28% 86%;
 
-    --muted: 217 33% 17%;
-    --muted-foreground: 215 20% 65%;
-    --accent: 217 33% 17%;
-    --accent-foreground: 210 40% 98%;
+    --muted: 248 16% 18%;
+    --muted-foreground: 248 14% 64%;
+    --accent: 248 16% 18%;
+    --accent-foreground: 252 30% 96%;
     --destructive: 0 63% 31%;
     --destructive-foreground: 210 40% 98%;
-    --border: 217 33% 17%;
-    --input: 217 33% 17%;
-    --ring: 211 75% 55%;
+    --border: 248 16% 18%;
+    --input: 248 16% 18%;
+    --ring: 262 52% 62%;
 
     /* Semantic status colors - dark mode */
-    --status-locked-bg: 219 75% 15%;
-    --status-locked-fg: 219 75% 70%;
-    --status-locked-border: 219 75% 25%;
+    --status-locked-bg: 258 26% 20%;
+    --status-locked-fg: 262 32% 78%;
+    --status-locked-border: 258 22% 30%;
 
-    --status-ready-bg: 38 82% 18%;
-    --status-ready-fg: 38 92% 75%;
-    --status-ready-border: 38 82% 28%;
+    --status-ready-bg: 270 22% 20%;
+    --status-ready-fg: 270 30% 80%;
+    --status-ready-border: 270 18% 30%;
 
-    --status-resolved-bg: 142 61% 18%;
-    --status-resolved-fg: 142 71% 75%;
-    --status-resolved-border: 142 61% 28%;
+    --status-resolved-bg: 160 22% 20%;
+    --status-resolved-fg: 160 30% 78%;
+    --status-resolved-border: 160 18% 30%;
 
-    --status-released-bg: 271 81% 20%;
-    --status-released-fg: 271 91% 80%;
-    --status-released-border: 271 81% 30%;
+    --status-released-bg: 282 22% 20%;
+    --status-released-fg: 282 28% 80%;
+    --status-released-border: 282 18% 30%;
 
-    --status-dismissed-bg: 0 0% 20%;
-    --status-dismissed-fg: 0 0% 70%;
-    --status-dismissed-border: 0 0% 30%;
+    --status-dismissed-bg: 248 12% 20%;
+    --status-dismissed-fg: 248 12% 70%;
+    --status-dismissed-border: 248 10% 30%;
   }
 }
 

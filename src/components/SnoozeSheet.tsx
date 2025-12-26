@@ -95,6 +95,7 @@ export const SnoozeSheet: React.FC<SnoozeSheetProps> = ({ open, onOpenChange, on
               <Button
                 key={option.duration}
                 variant="secondary"
+                size="lg"
                 onClick={() => handleSnooze(option.duration)}
                 className="w-full min-h-touch-target justify-start"
               >
@@ -104,7 +105,12 @@ export const SnoozeSheet: React.FC<SnoozeSheetProps> = ({ open, onOpenChange, on
           </div>
 
           {/* Cancel */}
-          <Button variant="ghost" onClick={handleClose} className="w-full min-h-touch-target mt-md">
+          <Button
+            variant="ghost"
+            size="lg"
+            onClick={handleClose}
+            className="w-full min-h-touch-target mt-md"
+          >
             {lang.addWorry.buttons.cancel}
           </Button>
         </div>

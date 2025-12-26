@@ -109,11 +109,24 @@ const WorryCardComponent: React.FC<WorryCardProps> = ({
     }
   };
 
+  const isClickable = Boolean(onClick);
+
   return (
     <>
       <Card
-        className="transition-all duration-300 ease-out hover:shadow-lg cursor-pointer active:scale-[0.98] active:shadow-sm"
+        className={`transition-all duration-300 ease-out hover:shadow-lg active:scale-[0.98] active:shadow-sm ${
+          isClickable ? 'cursor-pointer' : ''
+        }`}
         onClick={() => onClick?.(worry.id)}
+        role={isClickable ? 'button' : undefined}
+        tabIndex={isClickable ? 0 : undefined}
+        onKeyDown={(event) => {
+          if (!isClickable) return;
+          if (event.key === 'Enter' || event.key === ' ') {
+            event.preventDefault();
+            onClick?.(worry.id);
+          }
+        }}
       >
         <CardContent className="p-md">
           <div className="flex items-start justify-between gap-sm mb-sm">

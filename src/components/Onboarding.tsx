@@ -97,7 +97,7 @@ export const Onboarding: React.FC = () => {
             </div>
           </div>
 
-          <Button onClick={handleComplete} className="w-full mt-sm min-h-touch-target">
+          <Button size="lg" onClick={handleComplete} className="w-full mt-sm min-h-touch-target">
             {lang.onboarding.cta}
           </Button>
         </div>

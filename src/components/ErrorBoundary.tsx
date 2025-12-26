@@ -70,12 +70,12 @@ export class ErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoun
             <h1 className="text-2xl font-bold mb-xs text-foreground">{lang.errorBoundary.title}</h1>
             <p className="text-muted-foreground mb-md">{lang.errorBoundary.message}</p>
 
-            {import.meta.env.DEV && this.state.error && (
-              <details className="mb-md text-left bg-muted p-sm rounded-md">
+            {this.state.error && (
+              <details className="mb-md text-left bg-muted p-sm rounded-md" open>
                 <summary className="cursor-pointer text-sm font-medium mb-xs">
                   {lang.errorBoundary.devDetails}
                 </summary>
-                <pre className="text-xs text-muted-foreground overflow-auto">
+                <pre className="text-xs text-muted-foreground overflow-auto whitespace-pre-wrap break-words">
                   {this.state.error.message}
                   {'\n\n'}
                   {this.state.error.stack}

@@ -66,6 +66,8 @@ export const ConfirmationDialog: React.FC<ConfirmationDialogProps> = ({
 
   if (!open) return null;
 
+  const descriptionId = description ? 'dialog-description' : undefined;
+
   return (
     <>
       {/* Backdrop */}
@@ -81,7 +83,7 @@ export const ConfirmationDialog: React.FC<ConfirmationDialogProps> = ({
         role="alertdialog"
         aria-modal="true"
         aria-labelledby="dialog-title"
-        aria-describedby="dialog-description"
+        aria-describedby={descriptionId}
       >
         <div className="p-lg max-h-[90vh] overflow-y-auto overflow-x-hidden">
           {/* Header */}
@@ -135,6 +137,7 @@ export const ConfirmationDialog: React.FC<ConfirmationDialogProps> = ({
           <div className="flex gap-3">
             <Button
               variant="ghost"
+              size="lg"
               onClick={handleClose}
               disabled={isLoading}
               className="flex-1 min-h-touch-target"
@@ -144,6 +147,7 @@ export const ConfirmationDialog: React.FC<ConfirmationDialogProps> = ({
             <Button
               onClick={onConfirm}
               disabled={isLoading}
+              size="lg"
               variant={variant === 'destructive' ? 'destructive' : 'default'}
               className="flex-1 min-h-touch-target"
             >
