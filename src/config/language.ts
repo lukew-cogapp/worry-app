@@ -86,22 +86,9 @@ export const lang = {
   history: {
     title: 'Worry History',
     subtitle: 'View all your worries',
-    filters: {
-      all: 'All',
-      locked: 'Locked',
-      unlocked: 'Unlocked',
-      resolved: 'Resolved',
-      dismissed: 'Dismissed',
-      released: 'Released',
-    },
-    search: {
-      placeholder: 'Search worries...',
-    },
     empty: {
-      title: (filter: string) => `No ${filter === 'all' ? '' : filter} worries`,
-      messageAll: "You haven't added any worries yet.",
-      messageFiltered: (filter: string) => `You don't have any ${filter} worries.`,
-      noSearchResults: 'No worries match your search.',
+      title: 'No worries',
+      message: "You haven't added any worries yet.",
     },
     deleteDialog: {
       title: 'Delete Worry?',

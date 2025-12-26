@@ -52,10 +52,7 @@ export const History: React.FC = () => {
         <main className="flex-1 overflow-y-auto">
           <PageContainer className="py-lg" withBottomPadding>
             {sortedWorries.length === 0 ? (
-              <EmptyState
-                title={lang.history.empty.title('all')}
-                message={lang.history.empty.messageAll}
-              />
+              <EmptyState title={lang.history.empty.title} message={lang.history.empty.message} />
             ) : (
               <div className="space-y-3">
                 {sortedWorries.map((worry) => (
