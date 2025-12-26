@@ -1,6 +1,6 @@
 import { Loader2, Lock } from 'lucide-react';
 import type React from 'react';
-import { useMemo, useState } from 'react';
+import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { toast } from 'sonner';
 import { AddWorrySheet } from '../components/AddWorrySheet';
@@ -16,7 +16,7 @@ import { formatDuration, lang } from '../config/language';
 import { useDebugError } from '../hooks/useDebugError';
 import { useHaptics } from '../hooks/useHaptics';
 import { usePreferencesStore } from '../store/preferencesStore';
-import { useWorryStore } from '../store/worryStore';
+import { useLockedWorries, useUnlockedWorries, useWorryStore } from '../store/worryStore';
 import type { Worry } from '../types';
 
 export const Home: React.FC = () => {
@@ -48,10 +48,25 @@ export const Home: React.FC = () => {
   const [loadingStates, setLoadingStates] = useState<
     Record<string, { resolving?: boolean; snoozing?: boolean; dismissing?: boolean }>
   >({});
+  const [isShowingSuccessGlow, setIsShowingSuccessGlow] = useState(false);
 
-  const unlockedWorries = useMemo(() => worries.filter((w) => w.status === 'unlocked'), [worries]);
-  const lockedWorries = useMemo(() => worries.filter((w) => w.status === 'locked'), [worries]);
+  // Optimized selectors with shallow comparison (prevents unnecessary re-renders)
+  const unlockedWorries = useUnlockedWorries();
+  const lockedWorries = useLockedWorries();
   const hasWorries = worries.length > 0;
+
+  // Show success glow animation with race condition protection
+  const showSuccessGlow = () => {
+    if (isShowingSuccessGlow) return; // Prevent overlapping animations
+
+    setIsShowingSuccessGlow(true);
+    document.body.classList.add('success-glow');
+
+    setTimeout(() => {
+      document.body.classList.remove('success-glow');
+      setIsShowingSuccessGlow(false);
+    }, 1000);
+  };
 
   const handleAddWorry = async (worry: { content: string; action?: string; unlockAt: string }) => {
     setIsAddingWorry(true);
@@ -97,9 +112,7 @@ export const Home: React.FC = () => {
       await resolveWorry(worryToResolve, resolutionNote.trim() || undefined);
       await resolveHaptic();
 
-      // Subtle success glow
-      document.body.classList.add('success-glow');
-      setTimeout(() => document.body.classList.remove('success-glow'), 1000);
+      showSuccessGlow();
 
       toast.success(lang.toasts.success.worryResolved);
       setWorryToResolve(null);

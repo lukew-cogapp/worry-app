@@ -1,4 +1,5 @@
 import { create } from 'zustand';
+import { useShallow } from 'zustand/react/shallow';
 import * as notifications from '../services/notifications';
 import * as storage from '../services/storage';
 import type { Worry } from '../types';
@@ -215,3 +216,25 @@ export const useWorryStore = create<WorryStore>((set, get) => ({
   dismissedWorries: () => get().worries.filter((w) => w.status === 'dismissed' && !w.releasedAt),
   releasedWorries: () => get().worries.filter((w) => w.releasedAt !== undefined),
 }));
+
+/**
+ * Optimized selector hooks using shallow comparison
+ * These prevent unnecessary re-renders by memoizing filtered arrays
+ */
+
+export const useLockedWorries = () =>
+  useWorryStore(useShallow((state) => state.worries.filter((w) => w.status === 'locked')));
+
+export const useUnlockedWorries = () =>
+  useWorryStore(useShallow((state) => state.worries.filter((w) => w.status === 'unlocked')));
+
+export const useResolvedWorries = () =>
+  useWorryStore(useShallow((state) => state.worries.filter((w) => w.status === 'resolved')));
+
+export const useDismissedWorries = () =>
+  useWorryStore(
+    useShallow((state) => state.worries.filter((w) => w.status === 'dismissed' && !w.releasedAt))
+  );
+
+export const useReleasedWorries = () =>
+  useWorryStore(useShallow((state) => state.worries.filter((w) => w.releasedAt !== undefined)));
