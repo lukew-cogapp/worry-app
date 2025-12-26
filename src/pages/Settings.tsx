@@ -88,7 +88,7 @@ export const Settings: React.FC = () => {
           <Separator />
 
           {/* Encouraging Messages */}
-          <div className="p-6">
+          <div className="p-lg">
             <div className="flex items-center justify-between">
               <div className="space-y-0.5">
                 <Label htmlFor="encouraging-messages" className="text-base font-medium">
@@ -111,7 +111,7 @@ export const Settings: React.FC = () => {
         </div>
 
         {/* About Section */}
-        <div className="mt-8 bg-card rounded-lg border border-border p-6">
+        <div className="mt-8 bg-card rounded-lg border border-border p-lg">
           <h2 className="text-lg font-semibold text-foreground mb-2">
             {lang.settings.about.title}
           </h2>

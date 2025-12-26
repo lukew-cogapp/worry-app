@@ -1,6 +1,7 @@
 import { Edit3, Loader2 } from 'lucide-react';
 import type React from 'react';
 import { useCallback, useEffect, useState } from 'react';
+import { FORM_VALIDATION } from '../config/constants';
 import { lang } from '../config/language';
 import { useEscapeKey } from '../hooks/useEscapeKey';
 import type { Worry } from '../types';
@@ -99,9 +100,13 @@ export const EditWorrySheet: React.FC<EditWorrySheetProps> = ({
                 }}
                 placeholder={lang.addWorry.fields.content.placeholder}
                 rows={3}
+                maxLength={FORM_VALIDATION.WORRY_CONTENT_MAX_LENGTH}
                 disabled={isSubmitting}
                 className="w-full px-3 py-2 border border-input rounded-md bg-background text-foreground placeholder-muted-foreground focus:ring-2 focus:ring-ring focus:border-transparent resize-none disabled:opacity-50 disabled:cursor-not-allowed"
               />
+              <p className="text-xs text-muted-foreground text-right mt-1">
+                {content.length}/{FORM_VALIDATION.WORRY_CONTENT_MAX_LENGTH}
+              </p>
             </div>
 
             <div>
@@ -125,9 +130,13 @@ export const EditWorrySheet: React.FC<EditWorrySheetProps> = ({
                   }
                 }}
                 placeholder={lang.addWorry.fields.action.placeholder}
+                maxLength={FORM_VALIDATION.WORRY_ACTION_MAX_LENGTH}
                 disabled={isSubmitting}
                 className="w-full px-3 py-2 border border-input rounded-md bg-background text-foreground placeholder-muted-foreground focus:ring-2 focus:ring-ring focus:border-transparent disabled:opacity-50 disabled:cursor-not-allowed"
               />
+              <p className="text-xs text-muted-foreground text-right mt-1">
+                {action.length}/{FORM_VALIDATION.WORRY_ACTION_MAX_LENGTH}
+              </p>
             </div>
 
             {worry.status === 'locked' && (

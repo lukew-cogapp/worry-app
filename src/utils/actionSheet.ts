@@ -1,5 +1,6 @@
 import { ActionSheet, ActionSheetButtonStyle } from '@capacitor/action-sheet';
 import { Capacitor } from '@capacitor/core';
+import { logger } from './logger';
 
 /**
  * Action Sheet utility for native-first UX
@@ -46,7 +47,7 @@ export async function showActionSheet(
 
     return true; // Action sheet was shown
   } catch (error) {
-    console.error('[ActionSheet] Failed to show action sheet:', error);
+    logger.error('[ActionSheet] Failed to show action sheet:', error);
     return false; // Fall back to dropdown
   }
 }
@@ -94,7 +95,7 @@ export async function showConfirmSheet(
 
     return true;
   } catch (error) {
-    console.error('[ActionSheet] Failed to show confirm sheet:', error);
+    logger.error('[ActionSheet] Failed to show confirm sheet:', error);
     return false;
   }
 }

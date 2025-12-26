@@ -272,19 +272,53 @@ export const lang = {
   animations: {
     lockAway: 'Worry locked away safely',
   },
+
+  // Debug error dialog
+  debugErrorDialog: {
+    title: 'Debug: Error Occurred',
+    description: 'This dialog is for debugging purposes. It will be hidden in production.',
+    labels: {
+      errorMessage: 'Error Message:',
+      details: 'Details:',
+      stackTrace: 'Stack Trace:',
+    },
+    actions: {
+      close: 'Close',
+    },
+  },
+
+  // Error boundary
+  errorBoundary: {
+    title: 'Something went wrong',
+    message:
+      "We're sorry, but something unexpected happened. This error has been logged and we'll look into it.",
+    devDetails: 'Error Details (Development Only)',
+    actions: {
+      tryAgain: 'Try Again',
+      reload: 'Reload App',
+    },
+  },
 } as const;
 
-// Helper to format duration
+// Helper to format duration with better precision
 export function formatDuration(milliseconds: number): string {
-  const minutes = milliseconds / (60 * 1000);
-  const hours = minutes / 60;
-  const days = hours / 24;
+  const totalMinutes = Math.floor(milliseconds / (60 * 1000));
+  const totalHours = Math.floor(totalMinutes / 60);
+  const totalDays = Math.floor(totalHours / 24);
 
-  if (days >= 1) {
-    return `${days} ${days === 1 ? 'day' : 'days'}`;
+  if (totalDays >= 1) {
+    const remainingHours = totalHours % 24;
+    if (remainingHours > 0) {
+      return `${totalDays} ${totalDays === 1 ? 'day' : 'days'}, ${remainingHours} ${remainingHours === 1 ? 'hour' : 'hours'}`;
+    }
+    return `${totalDays} ${totalDays === 1 ? 'day' : 'days'}`;
   }
-  if (hours >= 1) {
-    return `${hours} ${hours === 1 ? 'hour' : 'hours'}`;
+  if (totalHours >= 1) {
+    const remainingMinutes = totalMinutes % 60;
+    if (remainingMinutes > 0) {
+      return `${totalHours} ${totalHours === 1 ? 'hour' : 'hours'}, ${remainingMinutes} ${remainingMinutes === 1 ? 'minute' : 'minutes'}`;
+    }
+    return `${totalHours} ${totalHours === 1 ? 'hour' : 'hours'}`;
   }
-  return `${minutes} ${minutes === 1 ? 'minute' : 'minutes'}`;
+  return `${totalMinutes} ${totalMinutes === 1 ? 'minute' : 'minutes'}`;
 }

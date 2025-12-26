@@ -1,4 +1,5 @@
 import React from 'react';
+import { lang } from '../config/language';
 import { Button } from './ui/button';
 
 interface ErrorBoundaryProps {
@@ -66,16 +67,13 @@ export class ErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoun
                 />
               </svg>
             </div>
-            <h1 className="text-2xl font-bold mb-xs text-foreground">Something went wrong</h1>
-            <p className="text-muted-foreground mb-md">
-              We're sorry, but something unexpected happened. This error has been logged and we'll
-              look into it.
-            </p>
+            <h1 className="text-2xl font-bold mb-xs text-foreground">{lang.errorBoundary.title}</h1>
+            <p className="text-muted-foreground mb-md">{lang.errorBoundary.message}</p>
 
             {import.meta.env.DEV && this.state.error && (
               <details className="mb-md text-left bg-muted p-sm rounded-md">
                 <summary className="cursor-pointer text-sm font-medium mb-xs">
-                  Error Details (Development Only)
+                  {lang.errorBoundary.devDetails}
                 </summary>
                 <pre className="text-xs text-muted-foreground overflow-auto">
                   {this.state.error.message}
@@ -87,10 +85,10 @@ export class ErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoun
 
             <div className="flex gap-sm justify-center">
               <Button onClick={this.handleReset} variant="outline">
-                Try Again
+                {lang.errorBoundary.actions.tryAgain}
               </Button>
               <Button onClick={() => window.location.reload()} variant="default">
-                Reload App
+                {lang.errorBoundary.actions.reload}
               </Button>
             </div>
           </div>

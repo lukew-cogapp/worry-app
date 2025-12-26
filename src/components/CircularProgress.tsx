@@ -15,7 +15,7 @@ export const CircularProgress: React.FC<CircularProgressProps> = ({
 }) => {
   const radius = (size - strokeWidth) / 2;
   const circumference = radius * 2 * Math.PI;
-  const offset = circumference - (value / 100) * circumference;
+  const offset = Math.round(circumference - (value / 100) * circumference);
 
   return (
     <div className="relative inline-flex items-center justify-center">
