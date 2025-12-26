@@ -5,14 +5,15 @@ import { FORM_VALIDATION, WORRY_CATEGORIES } from '../config/constants';
 import { lang } from '../config/language';
 import { useBodyScrollLock } from '../hooks/useBodyScrollLock';
 import { useEscapeKey } from '../hooks/useEscapeKey';
+import { usePreferencesStore } from '../store/preferencesStore';
 import type { Worry, WorryCategory } from '../types';
 import { getTomorrow } from '../utils/dates';
 import { DateTimePicker } from './DateTimePicker';
 import { SheetShell } from './SheetShell';
 import { Button } from './ui/button';
-import { Checkbox } from './ui/checkbox';
 import { Input } from './ui/input';
 import { Label } from './ui/label';
+import { Switch } from './ui/switch';
 import { Textarea } from './ui/textarea';
 
 type Mode = 'add' | 'edit';
@@ -67,6 +68,7 @@ export const WorryFormSheet: React.FC<WorryFormSheetProps> = ({
   onEdit,
   worry,
 }) => {
+  const preferences = usePreferencesStore((s) => s.preferences);
   const contentInputRef = useRef<HTMLTextAreaElement>(null);
   const [content, setContent] = useState('');
   const [action, setAction] = useState('');
@@ -274,70 +276,80 @@ export const WorryFormSheet: React.FC<WorryFormSheetProps> = ({
           </p>
         </div>
 
-        <div>
-          <div className="block text-sm font-medium text-foreground mb-2">
-            {lang.addWorry.fields.category.label}{' '}
-            <span className="text-muted-foreground">{lang.addWorry.fields.category.optional}</span>
+        {preferences.showCategoryField && (
+          <div>
+            <div className="block text-sm font-medium text-foreground mb-2">
+              {lang.addWorry.fields.category.label}{' '}
+              <span className="text-muted-foreground">
+                {lang.addWorry.fields.category.optional}
+              </span>
+            </div>
+            <div className="flex flex-wrap gap-2">
+              {WORRY_CATEGORIES.map((cat) => (
+                <Button
+                  key={cat}
+                  type="button"
+                  variant={category === cat ? 'default' : 'outline'}
+                  size="sm"
+                  onClick={() => setCategory(category === cat ? '' : (cat as WorryCategory))}
+                  disabled={isLoading}
+                  className="rounded-full px-3 py-1 h-8 text-sm"
+                >
+                  {lang.categories[cat as WorryCategory]}
+                </Button>
+              ))}
+            </div>
           </div>
-          <div className="flex flex-wrap gap-2">
-            {WORRY_CATEGORIES.map((cat) => (
-              <Button
-                key={cat}
-                type="button"
-                variant={category === cat ? 'default' : 'outline'}
-                size="sm"
-                onClick={() => setCategory(category === cat ? '' : (cat as WorryCategory))}
-                disabled={isLoading}
-                className="rounded-full px-3 py-1 h-8 text-sm"
-              >
-                {lang.categories[cat as WorryCategory]}
-              </Button>
-            ))}
-          </div>
-        </div>
+        )}
 
-        <div>
-          <label
-            htmlFor="worry-best-outcome"
-            className="block text-sm font-medium text-foreground mb-2"
-          >
-            {lang.addWorry.fields.bestOutcome.label}{' '}
-            <span className="text-muted-foreground">
-              {lang.addWorry.fields.bestOutcome.optional}
-            </span>
-          </label>
-          <Textarea
-            id="worry-best-outcome"
-            value={bestOutcome}
-            onChange={(e) => setBestOutcome(e.target.value)}
-            placeholder={lang.addWorry.fields.bestOutcome.placeholder}
-            rows={2}
-            maxLength={FORM_VALIDATION.BEST_OUTCOME_MAX_LENGTH}
-            disabled={isLoading}
-            className="bg-background resize-none disabled:cursor-not-allowed"
-          />
-          <div className="flex items-center justify-between mt-1">
-            <p className="text-xs text-muted-foreground">{lang.addWorry.fields.bestOutcome.hint}</p>
-            <p className="text-caption ml-auto">
-              {bestOutcome.length}/{FORM_VALIDATION.BEST_OUTCOME_MAX_LENGTH}
-            </p>
+        {preferences.showBestOutcomeField && (
+          <div>
+            <label
+              htmlFor="worry-best-outcome"
+              className="block text-sm font-medium text-foreground mb-2"
+            >
+              {lang.addWorry.fields.bestOutcome.label}{' '}
+              <span className="text-muted-foreground">
+                {lang.addWorry.fields.bestOutcome.optional}
+              </span>
+            </label>
+            <Textarea
+              id="worry-best-outcome"
+              value={bestOutcome}
+              onChange={(e) => setBestOutcome(e.target.value)}
+              placeholder={lang.addWorry.fields.bestOutcome.placeholder}
+              rows={2}
+              maxLength={FORM_VALIDATION.BEST_OUTCOME_MAX_LENGTH}
+              disabled={isLoading}
+              className="bg-background resize-none disabled:cursor-not-allowed"
+            />
+            <div className="flex items-center justify-between mt-1">
+              <p className="text-xs text-muted-foreground">
+                {lang.addWorry.fields.bestOutcome.hint}
+              </p>
+              <p className="text-caption ml-auto">
+                {bestOutcome.length}/{FORM_VALIDATION.BEST_OUTCOME_MAX_LENGTH}
+              </p>
+            </div>
           </div>
-        </div>
+        )}
 
-        <div className="flex items-center space-x-2">
-          <Checkbox
-            id="worry-talked-to-someone"
-            checked={talkedToSomeone}
-            onCheckedChange={(checked: boolean) => setTalkedToSomeone(checked)}
-            disabled={isLoading}
-          />
-          <Label
-            htmlFor="worry-talked-to-someone"
-            className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 cursor-pointer"
-          >
-            {lang.addWorry.fields.talkedToSomeone.label}
-          </Label>
-        </div>
+        {preferences.showTalkedToSomeoneField && (
+          <div className="flex items-center space-x-2">
+            <Switch
+              id="worry-talked-to-someone"
+              checked={talkedToSomeone}
+              onCheckedChange={(checked) => setTalkedToSomeone(checked)}
+              disabled={isLoading}
+            />
+            <Label
+              htmlFor="worry-talked-to-someone"
+              className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 cursor-pointer"
+            >
+              {lang.addWorry.fields.talkedToSomeone.label}
+            </Label>
+          </div>
+        )}
 
         {showDatePicker && (
           <div>

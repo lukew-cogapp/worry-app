@@ -33,6 +33,9 @@ export interface UserPreferences {
   quietHoursEnd?: string; // e.g., "08:00"
   hapticFeedback: boolean;
   encouragingMessages: boolean; // Show supportive text in notifications
+  showCategoryField: boolean; // Show category selector in worry form
+  showBestOutcomeField: boolean; // Show best outcome field in worry form
+  showTalkedToSomeoneField: boolean; // Show talked to someone toggle in worry form
 }
 
 export interface WorryStats {

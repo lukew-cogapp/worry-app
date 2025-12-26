@@ -207,6 +207,22 @@ export const lang = {
         description: 'Show supportive text in notifications',
       },
     },
+    formFields: {
+      title: 'Form Fields',
+      description: 'Choose which optional fields appear when adding worries',
+      showCategory: {
+        title: 'Category',
+        description: 'Organize worries by life area (Work, Health, etc.)',
+      },
+      showBestOutcome: {
+        title: 'Best Outcome',
+        description: 'Imagine the best possible outcome for perspective',
+      },
+      showTalkedToSomeone: {
+        title: 'Discussed with Someone',
+        description: "Track if you've talked about this worry",
+      },
+    },
     dangerZone: {
       title: 'Danger Zone',
       reset: {

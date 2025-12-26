@@ -111,6 +111,90 @@ export const Settings: React.FC = () => {
               </div>
             </div>
 
+            {/* Form Fields */}
+            <div className="mt-8 bg-card rounded-lg border border-border overflow-hidden">
+              <div className="p-lg pb-sm">
+                <h2 className="text-lg font-semibold text-foreground mb-1">
+                  {lang.settings.formFields.title}
+                </h2>
+                <p className="text-sm text-muted-foreground leading-relaxed">
+                  {lang.settings.formFields.description}
+                </p>
+              </div>
+
+              <Separator />
+
+              {/* Category Field */}
+              <div className="p-lg">
+                <div className="flex items-center justify-between">
+                  <div className="space-y-0.5">
+                    <Label htmlFor="show-category-field" className="text-base font-medium">
+                      {lang.settings.formFields.showCategory.title}
+                    </Label>
+                    <p className="text-sm text-muted-foreground leading-relaxed">
+                      {lang.settings.formFields.showCategory.description}
+                    </p>
+                  </div>
+                  <Switch
+                    id="show-category-field"
+                    checked={preferences.showCategoryField}
+                    onCheckedChange={(checked: boolean) =>
+                      updatePreferences({ showCategoryField: checked })
+                    }
+                    disabled={isSaving}
+                  />
+                </div>
+              </div>
+
+              <Separator />
+
+              {/* Best Outcome Field */}
+              <div className="p-lg">
+                <div className="flex items-center justify-between">
+                  <div className="space-y-0.5">
+                    <Label htmlFor="show-best-outcome-field" className="text-base font-medium">
+                      {lang.settings.formFields.showBestOutcome.title}
+                    </Label>
+                    <p className="text-sm text-muted-foreground leading-relaxed">
+                      {lang.settings.formFields.showBestOutcome.description}
+                    </p>
+                  </div>
+                  <Switch
+                    id="show-best-outcome-field"
+                    checked={preferences.showBestOutcomeField}
+                    onCheckedChange={(checked: boolean) =>
+                      updatePreferences({ showBestOutcomeField: checked })
+                    }
+                    disabled={isSaving}
+                  />
+                </div>
+              </div>
+
+              <Separator />
+
+              {/* Talked to Someone Field */}
+              <div className="p-lg">
+                <div className="flex items-center justify-between">
+                  <div className="space-y-0.5">
+                    <Label htmlFor="show-talked-field" className="text-base font-medium">
+                      {lang.settings.formFields.showTalkedToSomeone.title}
+                    </Label>
+                    <p className="text-sm text-muted-foreground leading-relaxed">
+                      {lang.settings.formFields.showTalkedToSomeone.description}
+                    </p>
+                  </div>
+                  <Switch
+                    id="show-talked-field"
+                    checked={preferences.showTalkedToSomeoneField}
+                    onCheckedChange={(checked: boolean) =>
+                      updatePreferences({ showTalkedToSomeoneField: checked })
+                    }
+                    disabled={isSaving}
+                  />
+                </div>
+              </div>
+            </div>
+
             {/* Danger Zone */}
             <div className="mt-8 bg-card rounded-lg border border-destructive/30 overflow-hidden">
               <div className="p-lg">
