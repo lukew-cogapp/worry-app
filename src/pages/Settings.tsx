@@ -42,7 +42,7 @@ export const Settings: React.FC = () => {
       <div className="flex-1 overflow-y-auto">
         {/* Main Content */}
         <main>
-          <PageContainer className="py-lg">
+          <PageContainer className="py-lg" withBottomPadding>
             <div className="bg-card rounded-lg border border-border overflow-hidden">
               {/* Default Unlock Time */}
               <div className="p-lg">

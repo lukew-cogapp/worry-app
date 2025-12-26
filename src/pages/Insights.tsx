@@ -75,7 +75,7 @@ export const Insights: React.FC = () => {
     <div className="h-full flex flex-col bg-background overflow-hidden">
       <PageHeader title={lang.insights.title} subtitle={lang.insights.subtitle} />
       <main className="flex-1 overflow-y-auto">
-        <PageContainer className="py-lg space-y-lg">
+        <PageContainer className="py-lg space-y-lg" withBottomPadding>
           {metrics.total === 0 ? (
             <Card>
               <CardContent className="p-lg text-center">

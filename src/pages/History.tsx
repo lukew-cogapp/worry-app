@@ -131,7 +131,7 @@ export const History: React.FC = () => {
 
         {/* Main Content */}
         <main className="flex-1 overflow-y-auto">
-          <PageContainer className="py-lg">
+          <PageContainer className="py-lg" withBottomPadding>
             {filteredWorries.length === 0 ? (
               <EmptyState
                 title={lang.history.empty.title(filter)}
