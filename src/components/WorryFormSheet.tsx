@@ -1,6 +1,6 @@
 import { Edit3, Loader2, Lock, Sparkles } from 'lucide-react';
 import type React from 'react';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { FORM_VALIDATION } from '../config/constants';
 import { lang } from '../config/language';
 import { useBodyScrollLock } from '../hooks/useBodyScrollLock';
@@ -48,6 +48,7 @@ export const WorryFormSheet: React.FC<WorryFormSheetProps> = ({
   onEdit,
   worry,
 }) => {
+  const contentInputRef = useRef<HTMLTextAreaElement>(null);
   const [content, setContent] = useState('');
   const [action, setAction] = useState('');
   const [contentError, setContentError] = useState('');
@@ -144,6 +145,17 @@ export const WorryFormSheet: React.FC<WorryFormSheetProps> = ({
     }
   }, [unlockAt]);
 
+  // Autofocus on content input when sheet opens (skip in test environment)
+  useEffect(() => {
+    if (isOpen && contentInputRef.current && !import.meta.env.VITEST) {
+      // Small delay to ensure the sheet animation has started
+      const timer = setTimeout(() => {
+        contentInputRef.current?.focus();
+      }, 100);
+      return () => clearTimeout(timer);
+    }
+  }, [isOpen]);
+
   useBodyScrollLock(isOpen);
 
   if (!isOpen || (mode === 'edit' && !worry)) return null;
@@ -170,6 +182,7 @@ export const WorryFormSheet: React.FC<WorryFormSheetProps> = ({
             {lang.addWorry.fields.content.label}
           </label>
           <Textarea
+            ref={contentInputRef}
             id="worry-content"
             value={content}
             onChange={(e) => setContent(e.target.value)}
