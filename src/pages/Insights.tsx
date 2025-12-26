@@ -2,6 +2,7 @@ import { BarChart3, Flame, TrendingDown, XCircle } from 'lucide-react';
 import type React from 'react';
 import { useMemo } from 'react';
 import { CircularProgress } from '../components/CircularProgress';
+import { PageContainer } from '../components/PageContainer';
 import { PageHeader } from '../components/PageHeader';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../components/ui/card';
 import { lang } from '../config/language';
@@ -74,14 +75,12 @@ export const Insights: React.FC = () => {
     <div className="h-full flex flex-col bg-background overflow-hidden">
       <PageHeader title={lang.insights.title} subtitle={lang.insights.subtitle} />
       <main className="flex-1 overflow-y-auto">
-        <div className="max-w-4xl mx-auto px-md py-lg space-y-lg">
+        <PageContainer className="py-lg space-y-lg">
           {metrics.total === 0 ? (
             <Card>
               <CardContent className="p-lg text-center">
                 <BarChart3 className="size-icon-xl mx-auto mb-4 text-muted-foreground" />
-                <h2 className="text-xl font-semibold text-foreground mb-2">
-                  {lang.insights.empty.title}
-                </h2>
+                <h2 className="text-foreground mb-2">{lang.insights.empty.title}</h2>
                 <p className="text-muted-foreground">{lang.insights.empty.message}</p>
               </CardContent>
             </Card>
@@ -94,7 +93,7 @@ export const Insights: React.FC = () => {
                     <div className="flex items-center gap-md">
                       <Flame className="size-icon-xl text-primary" aria-hidden="true" />
                       <div className="flex-1">
-                        <CardTitle className="text-2xl mb-1">
+                        <CardTitle className="text-2xl mb-1 tracking-tight">
                           {lang.insights.weeklyStreak.title(metrics.thisWeekResolved)}
                         </CardTitle>
                         <CardDescription className="text-base">
@@ -147,14 +146,12 @@ export const Insights: React.FC = () => {
 
               {/* Key Insights */}
               <div className="space-y-md">
-                <h2 className="text-xl font-semibold text-foreground">
-                  {lang.insights.keyInsights.title}
-                </h2>
+                <h2 className="text-foreground">{lang.insights.keyInsights.title}</h2>
 
                 {/* Completion Rate */}
                 <Card>
                   <CardHeader className="p-lg">
-                    <CardTitle className="text-lg mb-4">
+                    <CardTitle className="text-lg mb-4 tracking-tight">
                       {lang.insights.keyInsights.completionRate.title}
                     </CardTitle>
                     <div className="flex items-center gap-lg">
@@ -178,7 +175,7 @@ export const Insights: React.FC = () => {
                       <div className="flex items-start gap-sm">
                         <TrendingDown className="size-icon-md text-primary flex-shrink-0 mt-2" />
                         <div className="flex-1">
-                          <CardTitle className="text-lg mb-2">
+                          <CardTitle className="text-lg mb-2 tracking-tight">
                             {lang.insights.keyInsights.resolutionRate.title}
                           </CardTitle>
                           <div className="text-3xl font-bold text-primary mb-2">
@@ -208,7 +205,7 @@ export const Insights: React.FC = () => {
                       <div className="flex items-start gap-sm">
                         <XCircle className="size-icon-md text-primary flex-shrink-0 mt-2" />
                         <div className="flex-1">
-                          <CardTitle className="text-lg mb-2">
+                          <CardTitle className="text-lg mb-2 tracking-tight">
                             {lang.insights.keyInsights.avgTimeToResolve.title}
                           </CardTitle>
                           <div className="text-3xl font-bold text-primary mb-2">
@@ -227,7 +224,9 @@ export const Insights: React.FC = () => {
                 {metrics.thisWeekCount > 0 && (
                   <Card>
                     <CardHeader className="p-md">
-                      <CardTitle className="text-lg mb-2">{lang.insights.thisWeek.title}</CardTitle>
+                      <CardTitle className="text-lg mb-2 tracking-tight">
+                        {lang.insights.thisWeek.title}
+                      </CardTitle>
                       <CardDescription>
                         {lang.insights.thisWeek.description(
                           metrics.thisWeekCount,
@@ -240,7 +239,7 @@ export const Insights: React.FC = () => {
               </div>
             </>
           )}
-        </div>
+        </PageContainer>
       </main>
     </div>
   );

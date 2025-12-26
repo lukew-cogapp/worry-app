@@ -55,7 +55,7 @@ const WorryCardComponent: React.FC<WorryCardProps> = ({
         return (
           <Badge
             variant="secondary"
-            className="bg-[hsl(var(--status-locked-bg))] text-[hsl(var(--status-locked-fg))] border-[hsl(var(--status-locked-border))]"
+            className="bg-status-locked text-status-locked-foreground border-status-locked-border"
           >
             <Lock className="size-icon-xs mr-xs" />
             {lang.worryCard.status.locked}
@@ -65,7 +65,7 @@ const WorryCardComponent: React.FC<WorryCardProps> = ({
         return (
           <Badge
             variant="secondary"
-            className="bg-[hsl(var(--status-ready-bg))] text-[hsl(var(--status-ready-fg))] border-[hsl(var(--status-ready-border))]"
+            className="bg-status-ready text-status-ready-foreground border-status-ready-border"
           >
             <Package className="size-icon-xs mr-xs" />
             {lang.worryCard.status.ready}
@@ -75,7 +75,7 @@ const WorryCardComponent: React.FC<WorryCardProps> = ({
         return (
           <Badge
             variant="secondary"
-            className="bg-[hsl(var(--status-resolved-bg))] text-[hsl(var(--status-resolved-fg))] border-[hsl(var(--status-resolved-border))]"
+            className="bg-status-resolved text-status-resolved-foreground border-status-resolved-border"
           >
             <CheckCircle2 className="size-icon-xs mr-xs" />
             {lang.worryCard.status.resolved}
@@ -87,7 +87,7 @@ const WorryCardComponent: React.FC<WorryCardProps> = ({
           return (
             <Badge
               variant="secondary"
-              className="bg-[hsl(var(--status-released-bg))] text-[hsl(var(--status-released-fg))] border-[hsl(var(--status-released-border))]"
+              className="bg-status-released text-status-released-foreground border-status-released-border"
             >
               <Sparkles className="size-icon-xs mr-xs" />
               {lang.worryCard.status.released}
@@ -98,7 +98,7 @@ const WorryCardComponent: React.FC<WorryCardProps> = ({
         return (
           <Badge
             variant="secondary"
-            className="bg-[hsl(var(--status-dismissed-bg))] text-[hsl(var(--status-dismissed-fg))] border-[hsl(var(--status-dismissed-border))]"
+            className="bg-status-dismissed text-status-dismissed-foreground border-status-dismissed-border"
           >
             <XCircle className="size-icon-xs mr-xs" />
             {lang.worryCard.status.dismissed}
@@ -114,7 +114,7 @@ const WorryCardComponent: React.FC<WorryCardProps> = ({
   return (
     <>
       <Card
-        className={`transition-all duration-300 ease-out hover:shadow-lg active:scale-[0.98] active:shadow-sm ${
+        className={`transition-all duration-300 ease-out active:scale-[0.98] active:shadow-sm ${
           isClickable ? 'cursor-pointer' : ''
         }`}
         onClick={() => onClick?.(worry.id)}
@@ -154,7 +154,7 @@ const WorryCardComponent: React.FC<WorryCardProps> = ({
                     e.stopPropagation();
                     onEdit(worry.id);
                   }}
-                  className="min-h-touch-target min-w-touch-target text-muted-foreground hover:text-foreground"
+                  className="min-h-touch-target min-w-touch-target text-muted-foreground active:text-foreground"
                   aria-label={lang.aria.editWorry}
                 >
                   <Edit3 className="size-icon-sm" />
@@ -168,7 +168,7 @@ const WorryCardComponent: React.FC<WorryCardProps> = ({
                     e.stopPropagation();
                     onDelete(worry.id);
                   }}
-                  className="min-h-touch-target min-w-touch-target text-muted-foreground hover:text-destructive"
+                  className="min-h-touch-target min-w-touch-target text-muted-foreground active:text-destructive"
                   aria-label={lang.aria.delete}
                 >
                   <Trash2 className="size-icon-sm" />
@@ -177,7 +177,7 @@ const WorryCardComponent: React.FC<WorryCardProps> = ({
             </div>
           </div>
 
-          <div className="flex items-center gap-xs text-sm text-muted-foreground leading-relaxed">
+          <div className="flex items-center gap-xs text-caption">
             {worry.status === 'locked' && (
               <span>{lang.worryCard.labels.unlocks(getRelativeTime(worry.unlockAt))}</span>
             )}

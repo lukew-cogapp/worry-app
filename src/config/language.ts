@@ -101,6 +101,7 @@ export const lang = {
       title: (filter: string) => `No ${filter === 'all' ? '' : filter} worries`,
       messageAll: "You haven't added any worries yet.",
       messageFiltered: (filter: string) => `You don't have any ${filter} worries.`,
+      noSearchResults: 'No worries match your search.',
     },
     deleteDialog: {
       title: 'Delete Worry?',

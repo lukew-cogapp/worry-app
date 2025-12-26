@@ -2,6 +2,25 @@
 
 All notable changes to Worry Box are documented here.
 
+## [0.1.6] - 2025-12-26
+
+### Added
+- **SheetShell component** - Unified bottom sheet with slide-up animation, backdrop, and focus trapping
+- **PageContainer component** - Consistent page padding wrapper
+- **InputGroup component** - shadcn/ui input with icon support
+- **useBodyScrollLock hook** - Prevents body scroll when modals are open
+- **Status color tokens** - Added 15 status colors to @theme for cleaner utility classes
+
+### Changed
+- **Status badges** - Replaced verbose `bg-[hsl(var(--status-locked-bg))]` with clean `bg-status-locked` utilities
+- **History unlock flow** - Now navigates to home screen after manually unlocking a worry
+- **Component refactoring** - ConfirmationDialog, SnoozeSheet, WorryFormSheet use SheetShell
+- **Destructive color** - Improved accessibility with higher contrast coral (6 72% 48%)
+
+### Fixed
+- **Search empty state** - Shows "No worries match your search" instead of generic empty message
+- **Body scroll locking** - Fixed UI shifting issues when modals open
+
 ## [0.1.5] - 2024-12-26
 
 ### Added

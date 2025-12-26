@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
 import { lang } from '../config/language';
 import type { Worry } from '../types';
@@ -23,6 +24,7 @@ export function useHistoryActions(
   ) => Promise<void>,
   worries: Worry[]
 ) {
+  const navigate = useNavigate();
   const { unlockWorry: unlockHaptic } = useHaptics();
   const { handleError } = useDebugError();
   const { loadingStates, setLoading, clearLoading } = useLoadingStates<HistoryAction>();
@@ -43,6 +45,8 @@ export function useHistoryActions(
       await unlockWorryNow(id);
       await unlockHaptic();
       toast.success(lang.toasts.success.worryUnlocked);
+      // Navigate to home so user can act on the unlocked worry
+      navigate('/');
     } catch (error) {
       handleError(error, {
         operation: 'unlockWorryNow',

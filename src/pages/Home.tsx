@@ -10,6 +10,8 @@ import { EditWorrySheet } from '../components/EditWorrySheet';
 import { EmptyState } from '../components/EmptyState';
 import { LockAnimation } from '../components/LockAnimation';
 import { Onboarding } from '../components/Onboarding';
+import { PageContainer } from '../components/PageContainer';
+import { PageHeader } from '../components/PageHeader';
 import { Button } from '../components/ui/button';
 import { WorryCard } from '../components/WorryCard';
 import { lang } from '../config/language';
@@ -137,35 +139,33 @@ export const Home: React.FC = () => {
 
   return (
     <div className="h-full flex flex-col bg-background overflow-hidden">
-      {/* Header */}
-      <header className="bg-card border-b border-border">
-        <div className="max-w-4xl mx-auto px-md py-md flex items-center justify-between">
-          <div>
-            <h1 className="text-3xl font-bold text-foreground tracking-tight">{lang.app.name}</h1>
-            <p className="text-sm text-muted-foreground leading-relaxed">{lang.app.tagline}</p>
-          </div>
-          <div className="flex items-center gap-md">
+      <PageHeader
+        title={lang.app.name}
+        subtitle={lang.app.tagline}
+        showBack={false}
+        rightSlot={
+          <div className="flex items-center justify-end gap-sm">
             <Link
               to="/insights"
-              className="text-muted-foreground hover:text-foreground transition-colors"
+              className="text-muted-foreground active:text-foreground transition-colors"
               aria-label={lang.aria.insights}
             >
               <BarChart3 className="size-icon-md" aria-hidden="true" />
             </Link>
             <Link
               to="/settings"
-              className="text-muted-foreground hover:text-foreground transition-colors"
+              className="text-muted-foreground active:text-foreground transition-colors"
               aria-label={lang.aria.settings}
             >
               <Settings className="size-icon-md" aria-hidden="true" />
             </Link>
           </div>
-        </div>
-      </header>
+        }
+      />
 
       {/* Main Content */}
       <main className="flex-1 overflow-y-auto">
-        <div className="max-w-4xl mx-auto px-md py-lg pb-24">
+        <PageContainer className="py-lg pb-24">
           {(isLoadingWorries || isLoadingPreferences) && (
             <div className="flex items-center justify-center py-12">
               <Loader2 className="size-icon-lg animate-spin text-muted-foreground" />
@@ -179,9 +179,7 @@ export const Home: React.FC = () => {
           {/* Unlocked Worries */}
           {!isLoadingWorries && !isLoadingPreferences && unlockedWorries.length > 0 && (
             <section className="mb-8">
-              <h2 className="text-xl font-bold text-foreground mb-4 tracking-tight">
-                {lang.home.sections.ready}
-              </h2>
+              <h2 className="text-foreground mb-4 tracking-tight">{lang.home.sections.ready}</h2>
               <div className="space-y-3">
                 {unlockedWorries.map((worry, index) => (
                   <div
@@ -212,7 +210,7 @@ export const Home: React.FC = () => {
             lockedWorries.length === 0 &&
             hasWorries && (
               <div className="text-center mb-6">
-                <Link to="/history" className="text-sm text-primary hover:underline">
+                <Link to="/history" className="text-sm text-primary active:underline">
                   {lang.home.sections.locked.viewAll}
                 </Link>
               </div>
@@ -225,7 +223,7 @@ export const Home: React.FC = () => {
                 <div className="flex items-center gap-sm mb-2">
                   <Lock className="size-icon-lg text-primary" />
                   <div>
-                    <h2 className="text-xl font-bold text-foreground tracking-tight">
+                    <h2 className="text-foreground tracking-tight">
                       {lang.home.sections.locked.title(lockedWorries.length)}
                     </h2>
                     <p className="text-sm text-muted-foreground">
@@ -235,14 +233,14 @@ export const Home: React.FC = () => {
                 </div>
                 <Link
                   to="/history"
-                  className="text-sm text-primary hover:underline inline-block mt-2"
+                  className="text-sm text-primary active:underline inline-block mt-2"
                 >
                   {lang.home.sections.locked.viewAll}
                 </Link>
               </div>
             </section>
           )}
-        </div>
+        </PageContainer>
       </main>
 
       {/* FAB */}
@@ -254,7 +252,7 @@ export const Home: React.FC = () => {
           buttonTap();
           setIsAddSheetOpen(true);
         }}
-        className="fixed bottom-fab-offset right-fab-offset transition-all duration-300 hover:scale-110 active:scale-95 active:rotate-90"
+        className="fixed bottom-fab-offset right-fab-offset transition-all duration-300 active:scale-95 active:rotate-90"
         aria-label={lang.aria.addWorry}
       >
         +

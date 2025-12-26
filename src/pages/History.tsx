@@ -5,8 +5,10 @@ import { ConfirmationDialog } from '../components/ConfirmationDialog';
 import { DebugErrorDialog } from '../components/DebugErrorDialog';
 import { EditWorrySheet } from '../components/EditWorrySheet';
 import { EmptyState } from '../components/EmptyState';
+import { PageContainer } from '../components/PageContainer';
 import { PageHeader } from '../components/PageHeader';
 import { Input } from '../components/ui/input';
+import { InputGroup, InputGroupIcon } from '../components/ui/input-group';
 import {
   Select,
   SelectContent,
@@ -79,7 +81,7 @@ export const History: React.FC = () => {
       <div className="flex-1 overflow-y-auto">
         {/* Filters */}
         <div className="bg-card border-b border-border">
-          <div className="max-w-4xl mx-auto px-md py-sm">
+          <PageContainer className="py-sm">
             <Select value={filter} onValueChange={(value: FilterType) => setFilter(value)}>
               <SelectTrigger className="w-full sm:w-[200px]">
                 <SelectValue />
@@ -105,13 +107,13 @@ export const History: React.FC = () => {
                 </SelectItem>
               </SelectContent>
             </Select>
-          </div>
+          </PageContainer>
         </div>
 
         {/* Search */}
         <div className="bg-card border-b border-border">
-          <div className="max-w-4xl mx-auto px-md py-sm">
-            <div className="relative">
+          <PageContainer className="py-sm">
+            <InputGroup>
               <Input
                 type="text"
                 placeholder={lang.history.search.placeholder}
@@ -120,58 +122,61 @@ export const History: React.FC = () => {
                 aria-label={lang.aria.search}
                 className="pl-10 bg-background min-h-touch-target"
               />
-              <Search
-                className="absolute left-3 top-1/2 -translate-y-1/2 size-icon text-muted-foreground"
-                aria-hidden="true"
-              />
-            </div>
-          </div>
+              <InputGroupIcon>
+                <Search className="size-icon" aria-hidden="true" />
+              </InputGroupIcon>
+            </InputGroup>
+          </PageContainer>
         </div>
 
         {/* Main Content */}
-        <main className="max-w-4xl mx-auto px-md py-lg">
-          {filteredWorries.length === 0 ? (
-            <EmptyState
-              title={lang.history.empty.title(filter)}
-              message={
-                filter === 'all'
-                  ? lang.history.empty.messageAll
-                  : lang.history.empty.messageFiltered(filter)
-              }
-            />
-          ) : (
-            <div className="space-y-3">
-              {filteredWorries
-                .slice()
-                .sort((a, b) => {
-                  // Active (unlocked) worries first, then sort by createdAt descending
-                  const aIsActive = a.status === 'unlocked' ? 1 : 0;
-                  const bIsActive = b.status === 'unlocked' ? 1 : 0;
-                  if (aIsActive !== bIsActive) return bIsActive - aIsActive;
-                  return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
-                })
-                .map((worry) => (
-                  <WorryCard
-                    key={worry.id}
-                    worry={worry}
-                    onUnlockNow={
-                      worry.status === 'locked' ? historyActions.handleUnlockNow : undefined
-                    }
-                    onDismiss={
-                      worry.status === 'locked' ? historyActions.handleDismissClick : undefined
-                    }
-                    onEdit={historyActions.handleOpenEdit}
-                    onDelete={
-                      worry.status === 'resolved' || worry.status === 'dismissed'
-                        ? (id) => historyActions.setWorryToDelete(id)
-                        : undefined
-                    }
-                    isUnlocking={historyActions.loadingStates[worry.id]?.unlocking}
-                    isDismissing={historyActions.loadingStates[worry.id]?.dismissing}
-                  />
-                ))}
-            </div>
-          )}
+        <main className="flex-1 overflow-y-auto">
+          <PageContainer className="py-lg">
+            {filteredWorries.length === 0 ? (
+              <EmptyState
+                title={lang.history.empty.title(filter)}
+                message={
+                  searchQuery
+                    ? lang.history.empty.noSearchResults
+                    : filter === 'all'
+                      ? lang.history.empty.messageAll
+                      : lang.history.empty.messageFiltered(filter)
+                }
+              />
+            ) : (
+              <div className="space-y-3">
+                {filteredWorries
+                  .slice()
+                  .sort((a, b) => {
+                    // Active (unlocked) worries first, then sort by createdAt descending
+                    const aIsActive = a.status === 'unlocked' ? 1 : 0;
+                    const bIsActive = b.status === 'unlocked' ? 1 : 0;
+                    if (aIsActive !== bIsActive) return bIsActive - aIsActive;
+                    return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
+                  })
+                  .map((worry) => (
+                    <WorryCard
+                      key={worry.id}
+                      worry={worry}
+                      onUnlockNow={
+                        worry.status === 'locked' ? historyActions.handleUnlockNow : undefined
+                      }
+                      onDismiss={
+                        worry.status === 'locked' ? historyActions.handleDismissClick : undefined
+                      }
+                      onEdit={historyActions.handleOpenEdit}
+                      onDelete={
+                        worry.status === 'resolved' || worry.status === 'dismissed'
+                          ? (id) => historyActions.setWorryToDelete(id)
+                          : undefined
+                      }
+                      isUnlocking={historyActions.loadingStates[worry.id]?.unlocking}
+                      isDismissing={historyActions.loadingStates[worry.id]?.dismissing}
+                    />
+                  ))}
+              </div>
+            )}
+          </PageContainer>
         </main>
 
         {/* Delete Confirmation Dialog */}

@@ -1,9 +1,11 @@
 import { Clock } from 'lucide-react';
 import type React from 'react';
-import { useCallback, useEffect } from 'react';
+import { useCallback } from 'react';
 import { SNOOZE_DURATIONS } from '../config/constants';
 import { lang } from '../config/language';
+import { useBodyScrollLock } from '../hooks/useBodyScrollLock';
 import { useEscapeKey } from '../hooks/useEscapeKey';
+import { SheetShell } from './SheetShell';
 import { Button } from './ui/button';
 
 interface SnoozeSheetProps {
@@ -32,19 +34,7 @@ export const SnoozeSheet: React.FC<SnoozeSheetProps> = ({ open, onOpenChange, on
   // Handle Escape key
   useEscapeKey(handleClose, open);
 
-  // Prevent body scroll when open
-  useEffect(() => {
-    if (open) {
-      document.body.style.overflow = 'hidden';
-    } else {
-      document.body.style.overflow = '';
-    }
-    return () => {
-      document.body.style.overflow = '';
-    };
-  }, [open]);
-
-  if (!open) return null;
+  useBodyScrollLock(open);
 
   const options = [
     { label: lang.worryCard.snooze.thirtyMin, duration: SNOOZE_DURATIONS.THIRTY_MINUTES },
@@ -54,67 +44,36 @@ export const SnoozeSheet: React.FC<SnoozeSheetProps> = ({ open, onOpenChange, on
   ];
 
   return (
-    <>
-      {/* Backdrop */}
-      <div
-        className="fixed inset-0 bg-black/50 z-40 transition-opacity"
-        onClick={handleClose}
-        aria-hidden="true"
-      />
-
-      {/* Bottom Sheet */}
-      <div
-        className="fixed inset-x-0 bottom-0 z-50 bg-card rounded-t-2xl shadow-dialog animate-slide-up"
-        role="dialog"
-        aria-modal="true"
-        aria-labelledby="snooze-title"
-      >
-        <div className="p-lg max-h-[90vh] overflow-y-auto overflow-x-hidden">
-          {/* Header */}
-          <div className="flex items-center justify-between mb-md">
-            <div className="flex items-center gap-2">
-              <Clock className="size-icon-md text-muted-foreground" />
-              <h2 id="snooze-title" className="text-xl font-bold text-foreground">
-                {lang.worryCard.buttons.snoozeOptions}
-              </h2>
-            </div>
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={handleClose}
-              className="text-muted-foreground hover:text-foreground text-2xl size-button-icon"
-              aria-label={lang.aria.close}
-            >
-              ×
-            </Button>
-          </div>
-
-          {/* Options */}
-          <div className="space-y-2">
-            {options.map((option) => (
-              <Button
-                key={option.duration}
-                variant="secondary"
-                size="lg"
-                onClick={() => handleSnooze(option.duration)}
-                className="w-full min-h-touch-target justify-start"
-              >
-                {option.label}
-              </Button>
-            ))}
-          </div>
-
-          {/* Cancel */}
+    <SheetShell
+      open={open}
+      onClose={handleClose}
+      ariaLabelledBy="snooze-title"
+      title={lang.worryCard.buttons.snoozeOptions}
+      headerIcon={<Clock className="size-icon-md text-muted-foreground" />}
+      trapFocus
+    >
+      <div className="space-y-2">
+        {options.map((option) => (
           <Button
-            variant="ghost"
+            key={option.duration}
+            variant="secondary"
             size="lg"
-            onClick={handleClose}
-            className="w-full min-h-touch-target mt-md"
+            onClick={() => handleSnooze(option.duration)}
+            className="w-full min-h-touch-target justify-start"
           >
-            {lang.addWorry.buttons.cancel}
+            {option.label}
           </Button>
-        </div>
+        ))}
       </div>
-    </>
+
+      <Button
+        variant="ghost"
+        size="lg"
+        onClick={handleClose}
+        className="w-full min-h-touch-target mt-md"
+      >
+        {lang.addWorry.buttons.cancel}
+      </Button>
+    </SheetShell>
   );
 };

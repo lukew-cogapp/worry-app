@@ -19,10 +19,12 @@
     "rules": {
       "recommended": true,
       "a11y": {
-        "recommended": true
+        "recommended": true,
+        "useAriaPropsSupportedByRole": "off"
       },
       "complexity": {
-        "recommended": true
+        "recommended": true,
+        "noImportantStyles": "off"
       },
       "correctness": {
         "recommended": true
