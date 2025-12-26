@@ -142,7 +142,7 @@ export const Settings: React.FC = () => {
             {lang.settings.about.title}
           </h2>
           <p className="text-sm text-muted-foreground mb-1">
-            {lang.settings.about.version('0.1.4')}
+            {lang.settings.about.version('0.1.5')}
           </p>
           <p className="text-sm text-muted-foreground italic">{lang.onboarding.quote}</p>
         </div>

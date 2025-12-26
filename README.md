@@ -318,35 +318,9 @@ Private - Luke & Jack Tondeur (60/40 equity split)
 
 ## Version
 
-**0.1.4** - Testing & Quality Assurance (Current)
-- **shadcn/ui enhancements** - Added Switch, Select, Separator, Badge components
-- **Settings redesign** - Upgraded to use shadcn Switch and Select for better UX
-- **WorryCard polish** - Enhanced with shadcn Card, Badge, and Button components
-- **Vitest testing** - Comprehensive test suite for state management and utilities
-- **Lefthook integration** - Pre-commit hooks for type checking and linting
-- **GitHub Actions CI** - Automated testing and build verification
+Current version: **0.1.5**
 
-0.1.3 - Release & Let Go
-- **"I Can't Control This"** quick action - Release worries you can't control directly into the box
-- Metaphorical "worry release" for accepting what's beyond your control
-- Special encouraging message when releasing worries
-- Updated addWorry to return the created worry for better composability
-
-0.1.2 - Calming Design Update
-- shadcn/ui component library integration
-- Calming color palette with soft blues and lavenders
-- Semantic color tokens for consistent theming
-- Enhanced accessibility and visual polish
-
-0.1.1 - Enhanced UX Release
-- Toast notifications for instant feedback
-- Lock animation for visual delight
-- Keyboard shortcuts for power users
-- Search functionality in History
-- Onboarding for new users
-- Better error handling
-
-0.1.0 - Initial MVP Release
+See [CHANGELOG.md](./CHANGELOG.md) for full version history.
 
 ---
 

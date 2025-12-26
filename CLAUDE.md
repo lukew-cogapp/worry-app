@@ -8,12 +8,14 @@ This document provides comprehensive context for Claude Code when working on thi
 
 **Core Philosophy:** "You can't always control what happens, but you can control when you worry about it."
 
-## Current Version: 0.1.4
+## Current Version: 0.1.5
 
 Recent work completed:
-1. **Code review fixes** - Fixed critical issues (notification ID collisions, type safety, error handling)
-2. **Design token system** - Complete migration to Tailwind v4 @theme directive
-3. **Insights Dashboard** - Retention feature showing user metrics and patterns
+1. **App icons & splash screens** - Generated via @capacitor/assets from custom icon.svg
+2. **Reset data feature** - Settings option to clear all worries and reset onboarding
+3. **Design audit fixes** - Replaced inline SVGs with lucide-react, fixed hardcoded strings
+4. **Improved error display** - ErrorBoundary now shows details in all builds
+5. **Component refactoring** - Unified AddWorrySheet/EditWorrySheet into WorryFormSheet
 
 ## Tech Stack
 
@@ -442,36 +444,37 @@ if (import.meta.env.PROD) {
 
 ## Recent Changes
 
-### v0.1.4 Latest (Dec 2024)
-1. **Critical Fixes:**
-   - Fixed notification ID collisions (use random instead of Date.now)
-   - Added type safety (PluginListenerHandle instead of any)
-   - Added error handling to App.tsx init()
-   - Added JSON.parse error handling in storage.ts
+### v0.1.5 Latest (Dec 2024)
+1. **App Icons & Splash Screens:**
+   - Custom app icon (Package icon from lucide)
+   - Generated all densities via @capacitor/assets
+   - Dark mode splash screen support
+   - PWA icons and manifest
 
-2. **Design Token System:**
-   - Complete migration to Tailwind v4 @theme
-   - Added size-icon-xl (64px)
-   - Added ANIMATION_DURATIONS constants
-   - Moved hardcoded animation text to lang config
-   - 100% design token coverage
+2. **Reset Data Feature:**
+   - "Remove All Content" button in Settings danger zone
+   - Clears all worries and resets onboarding state
+   - Confirmation dialog before destructive action
 
-3. **Insights Dashboard:**
-   - New /insights route with metrics
-   - Completion rate, resolution rate, avg time to resolve
-   - Weekly activity tracking
-   - Empty state for new users
-   - Navigation icon in Home header
+3. **Design Audit Fixes:**
+   - Replaced inline SVGs with lucide-react icons
+   - Fixed hardcoded strings in language.ts
+   - Standardized backdrop opacity
 
-4. **Error Handling & Debugging Infrastructure:**
-   - Created `useDebugError` hook for centralized error handling
-   - Built `DebugErrorDialog` component for on-screen error display
-   - Implemented `logger` utility for conditional logging
-   - Added comprehensive error context to all async operations
-   - Production mode automatically disables debug features
-   - Android WebView UUID fallback (`src/utils/uuid.ts`)
-   - Added detailed logging to storage and store layers
-   - Updated documentation with debugging workflows
+4. **Component Refactoring:**
+   - Unified AddWorrySheet and EditWorrySheet into WorryFormSheet
+   - Extracted reusable hooks (useHistoryActions, useHomeActions)
+   - Fixed Onboarding modal using shadcn Dialog
+
+5. **Error Display Improvements:**
+   - ErrorBoundary shows details in all builds (not just dev)
+   - Details panel open by default for easier debugging
+
+### v0.1.4 (Dec 2024)
+- Fixed notification ID collisions
+- Complete design token migration
+- Insights Dashboard with metrics
+- Debug error handling infrastructure
 
 ## When to Ask for Clarification
 
