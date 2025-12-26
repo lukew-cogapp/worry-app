@@ -2,6 +2,7 @@ import React from 'react';
 import { lang } from '../config/language';
 import { getNextMonday, getNextWeek, getTomorrow } from '../utils/dates';
 import { Button } from './ui/button';
+import { Input } from './ui/input';
 
 interface DateTimePickerProps {
   value: string;
@@ -24,12 +25,12 @@ const DateTimePickerComponent: React.FC<DateTimePickerProps> = ({
         <label htmlFor="unlock-datetime" className="block text-sm font-medium text-foreground mb-2">
           {lang.addWorry.fields.unlockAt.label}
         </label>
-        <input
+        <Input
           type="datetime-local"
           id="unlock-datetime"
           value={value ? new Date(value).toISOString().slice(0, 16) : ''}
           onChange={(e) => onChange(new Date(e.target.value).toISOString())}
-          className="w-full min-h-touch-target px-3 py-2 border border-border rounded-md bg-background text-foreground focus:ring-2 focus:ring-primary focus:border-transparent transition-shadow"
+          className="min-h-touch-target bg-background"
         />
       </div>
 

@@ -112,7 +112,7 @@ const WorryCardComponent: React.FC<WorryCardProps> = ({
   return (
     <>
       <Card
-        className="transition-all duration-300 ease-out shadow-card hover:shadow-lg cursor-pointer active:scale-[0.98] active:shadow-sm"
+        className="transition-all duration-300 ease-out hover:shadow-lg cursor-pointer active:scale-[0.98] active:shadow-sm"
         onClick={() => onClick?.(worry.id)}
       >
         <CardContent className="p-md">

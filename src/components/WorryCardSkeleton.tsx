@@ -5,7 +5,7 @@ import { Skeleton } from './ui/skeleton';
 export const WorryCardSkeleton: React.FC = () => {
   return (
     <Card>
-      <CardContent className="p-4">
+      <CardContent className="p-md">
         <div className="flex items-start justify-between gap-3 mb-3">
           <div className="flex-1 min-w-0 space-y-2">
             <Skeleton className="h-5 w-full" />

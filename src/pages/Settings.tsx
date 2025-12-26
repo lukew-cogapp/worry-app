@@ -5,6 +5,7 @@ import { toast } from 'sonner';
 import { ConfirmationDialog } from '../components/ConfirmationDialog';
 import { PageHeader } from '../components/PageHeader';
 import { Button } from '../components/ui/button';
+import { Input } from '../components/ui/input';
 import { Label } from '../components/ui/label';
 import { Separator } from '../components/ui/separator';
 import { Switch } from '../components/ui/switch';
@@ -27,7 +28,7 @@ export const Settings: React.FC = () => {
       await clearAllData();
       toast.success(lang.toasts.success.dataCleared);
       setShowResetDialog(false);
-    } catch (error) {
+    } catch {
       toast.error('Failed to reset data. Please try again.');
     } finally {
       setIsResetting(false);
@@ -39,7 +40,7 @@ export const Settings: React.FC = () => {
       <PageHeader title={lang.settings.title} subtitle={lang.settings.subtitle} />
 
       {/* Main Content */}
-      <main className="max-w-4xl mx-auto px-4 py-6">
+      <main className="max-w-4xl mx-auto px-md py-lg">
         <div className="bg-card rounded-lg border border-border overflow-hidden">
           {/* Default Unlock Time */}
           <div className="p-lg">
@@ -49,13 +50,13 @@ export const Settings: React.FC = () => {
             <p className="text-sm text-muted-foreground mt-1 mb-sm">
               {lang.settings.sections.defaultTime.description}
             </p>
-            <input
+            <Input
               type="time"
               id="default-unlock-time"
               value={preferences.defaultUnlockTime}
               onChange={(e) => updatePreferences({ defaultUnlockTime: e.target.value })}
               disabled={isSaving}
-              className="min-h-touch-target px-3 py-2 border border-input rounded-md bg-background text-foreground disabled:opacity-50 disabled:cursor-not-allowed"
+              className="min-h-touch-target bg-background"
             />
           </div>
 

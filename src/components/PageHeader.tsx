@@ -16,7 +16,7 @@ interface PageHeaderProps {
 export const PageHeader: React.FC<PageHeaderProps> = ({ title, subtitle, backTo = '/' }) => {
   return (
     <header className="bg-card border-b border-border">
-      <div className="max-w-4xl mx-auto px-4 py-4 flex items-center gap-4">
+      <div className="max-w-4xl mx-auto px-md py-md flex items-center gap-md">
         <Link
           to={backTo}
           className="text-muted-foreground hover:text-foreground transition-colors"

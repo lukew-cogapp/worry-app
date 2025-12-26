@@ -69,7 +69,7 @@ export const SnoozeSheet: React.FC<SnoozeSheetProps> = ({ open, onOpenChange, on
         aria-modal="true"
         aria-labelledby="snooze-title"
       >
-        <div className="p-lg">
+        <div className="p-lg max-h-[90vh] overflow-y-auto overflow-x-hidden">
           {/* Header */}
           <div className="flex items-center justify-between mb-md">
             <div className="flex items-center gap-2">

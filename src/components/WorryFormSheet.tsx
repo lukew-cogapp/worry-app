@@ -7,6 +7,8 @@ import { useEscapeKey } from '../hooks/useEscapeKey';
 import type { Worry } from '../types';
 import { DateTimePicker } from './DateTimePicker';
 import { Button } from './ui/button';
+import { Input } from './ui/input';
+import { Textarea } from './ui/textarea';
 
 type Mode = 'add' | 'edit';
 
@@ -117,6 +119,18 @@ export const WorryFormSheet: React.FC<WorryFormSheetProps> = ({
     }
   }, [content]);
 
+  // Prevent body scroll when open
+  useEffect(() => {
+    if (isOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+    }
+    return () => {
+      document.body.style.overflow = '';
+    };
+  }, [isOpen]);
+
   if (!isOpen || (mode === 'edit' && !worry)) return null;
 
   const title = mode === 'add' ? lang.addWorry.title : lang.editWorry.title;
@@ -158,7 +172,7 @@ export const WorryFormSheet: React.FC<WorryFormSheetProps> = ({
               >
                 {lang.addWorry.fields.content.label}
               </label>
-              <textarea
+              <Textarea
                 id="worry-content"
                 value={content}
                 onChange={(e) => setContent(e.target.value)}
@@ -172,7 +186,7 @@ export const WorryFormSheet: React.FC<WorryFormSheetProps> = ({
                 maxLength={FORM_VALIDATION.WORRY_CONTENT_MAX_LENGTH}
                 disabled={isLoading}
                 aria-invalid={!!error}
-                className="w-full px-3 py-2 border border-input rounded-md bg-background text-foreground placeholder-muted-foreground focus:ring-2 focus:ring-ring focus:border-transparent resize-none disabled:opacity-50 disabled:cursor-not-allowed"
+                className="bg-background resize-none disabled:cursor-not-allowed"
               />
               <div className="flex items-center justify-between mt-1">
                 <p className="text-xs text-destructive">{error}</p>
@@ -192,7 +206,7 @@ export const WorryFormSheet: React.FC<WorryFormSheetProps> = ({
                   {lang.addWorry.fields.action.optional}
                 </span>
               </label>
-              <input
+              <Input
                 type="text"
                 id="worry-action"
                 value={action}
@@ -205,7 +219,7 @@ export const WorryFormSheet: React.FC<WorryFormSheetProps> = ({
                 placeholder={lang.addWorry.fields.action.placeholder}
                 maxLength={FORM_VALIDATION.WORRY_ACTION_MAX_LENGTH}
                 disabled={isLoading}
-                className="w-full px-3 py-2 border border-input rounded-md bg-background text-foreground placeholder-muted-foreground focus:ring-2 focus:ring-ring focus:border-transparent disabled:opacity-50 disabled:cursor-not-allowed"
+                className="bg-background"
               />
               <p className="text-xs text-muted-foreground text-right mt-1">
                 {action.length}/{FORM_VALIDATION.WORRY_ACTION_MAX_LENGTH}
@@ -234,7 +248,7 @@ export const WorryFormSheet: React.FC<WorryFormSheetProps> = ({
               <div className="flex gap-3">
                 <Button
                   type="button"
-                  variant="secondary"
+                  variant="ghost"
                   onClick={handleClose}
                   disabled={isLoading}
                   className="flex-1 min-h-touch-target"

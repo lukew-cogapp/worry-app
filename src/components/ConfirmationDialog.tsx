@@ -4,6 +4,7 @@ import { useCallback, useEffect } from 'react';
 import { lang } from '../config/language';
 import { useEscapeKey } from '../hooks/useEscapeKey';
 import { Button } from './ui/button';
+import { Textarea } from './ui/textarea';
 
 interface ConfirmationDialogProps {
   open: boolean;
@@ -82,7 +83,7 @@ export const ConfirmationDialog: React.FC<ConfirmationDialogProps> = ({
         aria-labelledby="dialog-title"
         aria-describedby="dialog-description"
       >
-        <div className="p-lg">
+        <div className="p-lg max-h-[90vh] overflow-y-auto overflow-x-hidden">
           {/* Header */}
           <div className="flex items-center justify-between mb-md">
             <h2 id="dialog-title" className="text-xl font-bold text-foreground">
@@ -118,14 +119,14 @@ export const ConfirmationDialog: React.FC<ConfirmationDialogProps> = ({
                   {textareaLabel}
                 </label>
               )}
-              <textarea
+              <Textarea
                 id="dialog-textarea"
                 value={textareaValue}
                 onChange={(e) => onTextareaChange?.(e.target.value)}
                 placeholder={textareaPlaceholder}
                 rows={3}
                 disabled={isLoading}
-                className="w-full px-3 py-2 border border-input rounded-md bg-background text-foreground placeholder-muted-foreground focus:ring-2 focus:ring-ring focus:border-transparent resize-none disabled:opacity-50"
+                className="bg-background resize-none"
               />
             </div>
           )}
@@ -133,7 +134,7 @@ export const ConfirmationDialog: React.FC<ConfirmationDialogProps> = ({
           {/* Actions */}
           <div className="flex gap-3">
             <Button
-              variant="secondary"
+              variant="ghost"
               onClick={handleClose}
               disabled={isLoading}
               className="flex-1 min-h-touch-target"

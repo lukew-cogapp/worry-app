@@ -6,6 +6,7 @@ import { DebugErrorDialog } from '../components/DebugErrorDialog';
 import { EditWorrySheet } from '../components/EditWorrySheet';
 import { EmptyState } from '../components/EmptyState';
 import { PageHeader } from '../components/PageHeader';
+import { Input } from '../components/ui/input';
 import {
   Select,
   SelectContent,
@@ -78,7 +79,7 @@ export const History: React.FC = () => {
 
       {/* Filters */}
       <div className="bg-card border-b border-border">
-        <div className="max-w-4xl mx-auto px-4 py-3">
+        <div className="max-w-4xl mx-auto px-md py-sm">
           <Select value={filter} onValueChange={(value: FilterType) => setFilter(value)}>
             <SelectTrigger className="w-full sm:w-[200px]">
               <SelectValue />
@@ -109,15 +110,15 @@ export const History: React.FC = () => {
 
       {/* Search */}
       <div className="bg-card border-b border-border">
-        <div className="max-w-4xl mx-auto px-4 py-3">
+        <div className="max-w-4xl mx-auto px-md py-sm">
           <div className="relative">
-            <input
+            <Input
               type="text"
               placeholder={lang.history.search.placeholder}
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               aria-label={lang.aria.search}
-              className="w-full px-4 py-2 pl-10 border border-input rounded-lg bg-background text-foreground placeholder-muted-foreground focus:ring-2 focus:ring-ring focus:border-transparent"
+              className="pl-10 bg-background min-h-touch-target"
             />
             <Search
               className="absolute left-3 top-1/2 -translate-y-1/2 size-icon text-muted-foreground"
@@ -128,7 +129,7 @@ export const History: React.FC = () => {
       </div>
 
       {/* Main Content */}
-      <main className="max-w-4xl mx-auto px-4 py-6">
+      <main className="max-w-4xl mx-auto px-md py-lg">
         {filteredWorries.length === 0 ? (
           <EmptyState
             title={lang.history.empty.title(filter)}

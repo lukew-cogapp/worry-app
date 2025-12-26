@@ -5,6 +5,7 @@ import { useEffect, useState } from 'react';
 import { lang } from '../config/language';
 import { STORAGE_KEYS } from '../types';
 import { Button } from './ui/button';
+import { Dialog, DialogContent } from './ui/dialog';
 
 export const Onboarding: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -27,10 +28,22 @@ export const Onboarding: React.FC = () => {
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
-      <div className="bg-card rounded-2xl max-w-md w-full p-lg shadow-2xl animate-in fade-in zoom-in duration-300 border border-border min-h-[300px]">
-        <div className="flex flex-col items-center text-center space-y-4">
-          <div className="mb-2">
+    <Dialog
+      open={isOpen}
+      onOpenChange={(open) => {
+        if (open) {
+          setIsOpen(true);
+        }
+      }}
+    >
+      <DialogContent
+        showCloseButton={false}
+        className="w-full max-w-md"
+        onEscapeKeyDown={(event) => event.preventDefault()}
+        onPointerDownOutside={(event) => event.preventDefault()}
+      >
+        <div className="flex flex-col items-center text-center space-y-md">
+          <div className="mb-sm">
             <Package className="size-icon-xl text-primary" />
           </div>
 
@@ -40,8 +53,8 @@ export const Onboarding: React.FC = () => {
 
           <p className="text-muted-foreground italic text-sm">{lang.onboarding.quote}</p>
 
-          <div className="space-y-3 text-left w-full">
-            <div className="flex gap-3">
+          <div className="space-y-sm text-left w-full">
+            <div className="flex gap-sm">
               <div className="flex-shrink-0">
                 <Lock className="size-icon-md text-primary" />
               </div>
@@ -55,7 +68,7 @@ export const Onboarding: React.FC = () => {
               </div>
             </div>
 
-            <div className="flex gap-3">
+            <div className="flex gap-sm">
               <div className="flex-shrink-0">
                 <Bell className="size-icon-md text-primary" />
               </div>
@@ -69,7 +82,7 @@ export const Onboarding: React.FC = () => {
               </div>
             </div>
 
-            <div className="flex gap-3">
+            <div className="flex gap-sm">
               <div className="flex-shrink-0">
                 <Sparkles className="size-icon-md text-primary" />
               </div>
@@ -84,11 +97,11 @@ export const Onboarding: React.FC = () => {
             </div>
           </div>
 
-          <Button onClick={handleComplete} className="w-full mt-4 min-h-touch-target">
+          <Button onClick={handleComplete} className="w-full mt-sm min-h-touch-target">
             {lang.onboarding.cta}
           </Button>
         </div>
-      </div>
-    </div>
+      </DialogContent>
+    </Dialog>
   );
 };

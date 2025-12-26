@@ -42,6 +42,16 @@
   --size-touch-target: 2.75rem; /* 44px - minimum touch target */
   --size-button-icon: 2.5rem; /* 10 in Tailwind (40px) */
 
+  /* Max width tokens */
+  --max-width-xs: 20rem; /* 320px */
+  --max-width-sm: 24rem; /* 384px */
+  --max-width-md: 28rem; /* 448px */
+  --max-width-lg: 32rem; /* 512px */
+  --max-width-xl: 36rem; /* 576px */
+  --max-width-2xl: 42rem; /* 672px */
+  --max-width-3xl: 48rem; /* 768px */
+  --max-width-4xl: 56rem; /* 896px */
+
   /* Shadow tokens - softer, calming shadows with color */
   --shadow-sm: 0 1px 3px 0 rgb(100 120 150 / 0.08);
   --shadow-card: 0 2px 8px -2px rgb(100 120 150 / 0.12), 0 1px 3px -1px rgb(100 120 150 / 0.08);

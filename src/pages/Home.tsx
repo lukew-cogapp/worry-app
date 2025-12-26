@@ -10,6 +10,7 @@ import { EditWorrySheet } from '../components/EditWorrySheet';
 import { EmptyState } from '../components/EmptyState';
 import { LockAnimation } from '../components/LockAnimation';
 import { Onboarding } from '../components/Onboarding';
+import { Button } from '../components/ui/button';
 import { WorryCard } from '../components/WorryCard';
 import { lang } from '../config/language';
 import { useDebugError } from '../hooks/useDebugError';
@@ -138,12 +139,12 @@ export const Home: React.FC = () => {
     <div className="min-h-screen bg-background">
       {/* Header */}
       <header className="bg-card border-b border-border">
-        <div className="max-w-4xl mx-auto px-4 py-4 flex items-center justify-between">
+        <div className="max-w-4xl mx-auto px-md py-md flex items-center justify-between">
           <div>
             <h1 className="text-3xl font-bold text-foreground tracking-tight">{lang.app.name}</h1>
             <p className="text-sm text-muted-foreground">{lang.app.tagline}</p>
           </div>
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-md">
             <Link
               to="/insights"
               className="text-muted-foreground hover:text-foreground transition-colors"
@@ -163,7 +164,7 @@ export const Home: React.FC = () => {
       </header>
 
       {/* Main Content */}
-      <main className="max-w-4xl mx-auto px-4 py-6 pb-24">
+      <main className="max-w-4xl mx-auto px-md py-lg pb-24">
         {(isLoadingWorries || isLoadingPreferences) && (
           <div className="flex items-center justify-center py-12">
             <Loader2 className="size-icon-lg animate-spin text-muted-foreground" />
@@ -203,10 +204,11 @@ export const Home: React.FC = () => {
           </section>
         )}
 
-        {/* View History Link - show when no unlocked worries but has history */}
+        {/* View History Link - show when no unlocked worries and no locked summary */}
         {!isLoadingWorries &&
           !isLoadingPreferences &&
           unlockedWorries.length === 0 &&
+          lockedWorries.length === 0 &&
           hasWorries && (
             <div className="text-center mb-6">
               <Link to="/history" className="text-sm text-primary hover:underline">
@@ -218,8 +220,8 @@ export const Home: React.FC = () => {
         {/* Locked Worries Summary */}
         {!isLoadingWorries && !isLoadingPreferences && lockedWorries.length > 0 && (
           <section>
-            <div className="bg-secondary/20 rounded-lg p-6 border border-primary/20">
-              <div className="flex items-center gap-3 mb-2">
+            <div className="bg-secondary/20 rounded-lg p-lg border border-primary/20">
+              <div className="flex items-center gap-sm mb-2">
                 <Lock className="size-icon-lg text-primary" />
                 <div>
                   <h2 className="text-xl font-bold text-foreground tracking-tight">
@@ -242,17 +244,19 @@ export const Home: React.FC = () => {
       </main>
 
       {/* FAB */}
-      <button
+      <Button
         type="button"
+        variant="fab"
+        size="fab"
         onClick={() => {
           buttonTap();
           setIsAddSheetOpen(true);
         }}
-        className="fixed bottom-fab-offset right-fab-offset size-fab bg-primary hover:bg-primary/90 text-primary-foreground rounded-full shadow-lg flex items-center justify-center text-2xl transition-all duration-300 hover:scale-110 active:scale-95 active:rotate-90"
+        className="fixed bottom-fab-offset right-fab-offset transition-all duration-300 hover:scale-110 active:scale-95 active:rotate-90"
         aria-label={lang.aria.addWorry}
       >
         +
-      </button>
+      </Button>
 
       {/* Add Worry Sheet */}
       <AddWorrySheet

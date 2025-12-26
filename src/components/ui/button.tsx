@@ -18,6 +18,7 @@ const buttonVariants = cva(
         ghost:
           'border border-muted-foreground/40 bg-transparent text-foreground hover:bg-accent hover:border-muted-foreground/60 dark:border-muted-foreground/30 dark:hover:border-muted-foreground/50',
         link: 'text-primary underline-offset-4 hover:underline',
+        fab: 'bg-primary text-primary-foreground shadow-lg hover:bg-primary/90 rounded-full',
       },
       size: {
         default: 'h-9 px-4 py-2 has-[>svg]:px-3',
@@ -26,6 +27,7 @@ const buttonVariants = cva(
         icon: 'size-9',
         'icon-sm': 'size-8',
         'icon-lg': 'size-10',
+        fab: 'size-fab text-2xl',
       },
     },
     defaultVariants: {
