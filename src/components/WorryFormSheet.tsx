@@ -1,16 +1,19 @@
 import { Edit3, Loader2, Lock, Sparkles } from 'lucide-react';
 import type React from 'react';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { FORM_VALIDATION } from '../config/constants';
+import { FORM_VALIDATION, WORRY_CATEGORIES } from '../config/constants';
 import { lang } from '../config/language';
 import { useBodyScrollLock } from '../hooks/useBodyScrollLock';
 import { useEscapeKey } from '../hooks/useEscapeKey';
-import type { Worry } from '../types';
+import type { Worry, WorryCategory } from '../types';
 import { getTomorrow } from '../utils/dates';
 import { DateTimePicker } from './DateTimePicker';
 import { SheetShell } from './SheetShell';
 import { Button } from './ui/button';
+import { Checkbox } from './ui/checkbox';
 import { Input } from './ui/input';
+import { Label } from './ui/label';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './ui/select';
 import { Textarea } from './ui/textarea';
 
 type Mode = 'add' | 'edit';
@@ -22,13 +25,30 @@ interface WorryFormSheetProps {
   defaultTime?: string;
 
   // Add mode props
-  onAdd?: (data: { content: string; action?: string; unlockAt: string }) => void;
+  onAdd?: (data: {
+    content: string;
+    action?: string;
+    unlockAt: string;
+    category?: WorryCategory;
+    bestOutcome?: string;
+    talkedToSomeone?: boolean;
+  }) => void;
   onRelease?: (content: string) => void;
   isSubmitting?: boolean;
   isReleasing?: boolean;
 
   // Edit mode props
-  onEdit?: (id: string, updates: { content?: string; action?: string; unlockAt?: string }) => void;
+  onEdit?: (
+    id: string,
+    updates: {
+      content?: string;
+      action?: string;
+      unlockAt?: string;
+      category?: WorryCategory;
+      bestOutcome?: string;
+      talkedToSomeone?: boolean;
+    }
+  ) => void;
   worry?: Worry | null;
 }
 
@@ -51,6 +71,9 @@ export const WorryFormSheet: React.FC<WorryFormSheetProps> = ({
   const contentInputRef = useRef<HTMLTextAreaElement>(null);
   const [content, setContent] = useState('');
   const [action, setAction] = useState('');
+  const [category, setCategory] = useState<WorryCategory | ''>('');
+  const [bestOutcome, setBestOutcome] = useState('');
+  const [talkedToSomeone, setTalkedToSomeone] = useState(false);
   const [contentError, setContentError] = useState('');
   const [unlockError, setUnlockError] = useState('');
 
@@ -64,12 +87,18 @@ export const WorryFormSheet: React.FC<WorryFormSheetProps> = ({
       setContent(worry.content);
       setAction(worry.action || '');
       setUnlockAt(worry.unlockAt);
+      setCategory(worry.category || '');
+      setBestOutcome(worry.bestOutcome || '');
+      setTalkedToSomeone(worry.talkedToSomeone || false);
     }
   }, [mode, worry]);
 
   const resetForm = useCallback(() => {
     setContent('');
     setAction('');
+    setCategory('');
+    setBestOutcome('');
+    setTalkedToSomeone(false);
     setUnlockAt(defaultUnlockAt);
     setContentError('');
     setUnlockError('');
@@ -99,6 +128,9 @@ export const WorryFormSheet: React.FC<WorryFormSheetProps> = ({
         content: trimmedContent,
         action: action.trim() || undefined,
         unlockAt,
+        category: category ? (category as WorryCategory) : undefined,
+        bestOutcome: bestOutcome.trim() || undefined,
+        talkedToSomeone: talkedToSomeone || undefined,
       });
       resetForm();
     } else if (mode === 'edit' && onEdit && worry) {
@@ -106,6 +138,9 @@ export const WorryFormSheet: React.FC<WorryFormSheetProps> = ({
         content: trimmedContent,
         action: action.trim() || undefined,
         unlockAt,
+        category: category ? (category as WorryCategory) : undefined,
+        bestOutcome: bestOutcome.trim() || undefined,
+        talkedToSomeone: talkedToSomeone || undefined,
       });
     }
 
@@ -238,6 +273,75 @@ export const WorryFormSheet: React.FC<WorryFormSheetProps> = ({
           <p className="text-caption text-right mt-1">
             {action.length}/{FORM_VALIDATION.WORRY_ACTION_MAX_LENGTH}
           </p>
+        </div>
+
+        <div>
+          <label
+            htmlFor="worry-category"
+            className="block text-sm font-medium text-foreground mb-2"
+          >
+            {lang.addWorry.fields.category.label}{' '}
+            <span className="text-muted-foreground">{lang.addWorry.fields.category.optional}</span>
+          </label>
+          <Select
+            value={category}
+            onValueChange={(value) => setCategory(value as WorryCategory)}
+            disabled={isLoading}
+          >
+            <SelectTrigger id="worry-category" className="bg-background">
+              <SelectValue placeholder={lang.addWorry.fields.category.placeholder} />
+            </SelectTrigger>
+            <SelectContent>
+              {WORRY_CATEGORIES.map((cat) => (
+                <SelectItem key={cat} value={cat}>
+                  {lang.categories[cat as WorryCategory]}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
+
+        <div>
+          <label
+            htmlFor="worry-best-outcome"
+            className="block text-sm font-medium text-foreground mb-2"
+          >
+            {lang.addWorry.fields.bestOutcome.label}{' '}
+            <span className="text-muted-foreground">
+              {lang.addWorry.fields.bestOutcome.optional}
+            </span>
+          </label>
+          <Textarea
+            id="worry-best-outcome"
+            value={bestOutcome}
+            onChange={(e) => setBestOutcome(e.target.value)}
+            placeholder={lang.addWorry.fields.bestOutcome.placeholder}
+            rows={2}
+            maxLength={FORM_VALIDATION.BEST_OUTCOME_MAX_LENGTH}
+            disabled={isLoading}
+            className="bg-background resize-none disabled:cursor-not-allowed"
+          />
+          <div className="flex items-center justify-between mt-1">
+            <p className="text-xs text-muted-foreground">{lang.addWorry.fields.bestOutcome.hint}</p>
+            <p className="text-caption ml-auto">
+              {bestOutcome.length}/{FORM_VALIDATION.BEST_OUTCOME_MAX_LENGTH}
+            </p>
+          </div>
+        </div>
+
+        <div className="flex items-center space-x-2">
+          <Checkbox
+            id="worry-talked-to-someone"
+            checked={talkedToSomeone}
+            onCheckedChange={(checked: boolean) => setTalkedToSomeone(checked)}
+            disabled={isLoading}
+          />
+          <Label
+            htmlFor="worry-talked-to-someone"
+            className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 cursor-pointer"
+          >
+            {lang.addWorry.fields.talkedToSomeone.label}
+          </Label>
         </div>
 
         {showDatePicker && (

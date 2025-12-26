@@ -66,4 +66,18 @@ export const FORM_VALIDATION = {
   WORRY_CONTENT_MAX_LENGTH: 500,
   /** Maximum length for worry action */
   WORRY_ACTION_MAX_LENGTH: 200,
+  /** Maximum length for best outcome reflection */
+  BEST_OUTCOME_MAX_LENGTH: 300,
 } as const;
+
+/**
+ * Worry categories for organization
+ */
+export const WORRY_CATEGORIES = [
+  'work',
+  'health',
+  'relationships',
+  'finance',
+  'personal',
+  'other',
+] as const;

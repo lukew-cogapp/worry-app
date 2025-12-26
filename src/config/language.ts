@@ -48,6 +48,20 @@ export const lang = {
         label: 'When can you act on this?',
         quickOptions: 'Quick options:',
       },
+      category: {
+        label: 'Category',
+        optional: '(optional)',
+        placeholder: 'Select a category...',
+      },
+      bestOutcome: {
+        label: "What's the best possible outcome?",
+        optional: '(optional)',
+        placeholder: 'In an ideal world, this would...',
+        hint: 'Taking a moment to imagine the best outcome can help put worries in perspective.',
+      },
+      talkedToSomeone: {
+        label: 'Have you talked to someone about this?',
+      },
     },
     buttons: {
       cancel: 'Cancel',
@@ -57,6 +71,16 @@ export const lang = {
     validation: {
       contentRequired: "Please describe what's worrying you",
     },
+  },
+
+  // Worry categories
+  categories: {
+    work: 'Work',
+    health: 'Health',
+    relationships: 'Relationships',
+    finance: 'Finance',
+    personal: 'Personal',
+    other: 'Other',
   },
 
   // Date quick options
@@ -157,6 +181,10 @@ export const lang = {
     timeUnits: {
       day: (count: number) => `${count} ${count === 1 ? 'day' : 'days'}`,
       hour: (count: number) => `${count} ${count === 1 ? 'hour' : 'hours'}`,
+    },
+    categoryBreakdown: {
+      title: 'Worries by Category',
+      uncategorized: 'Uncategorized',
     },
   },
 

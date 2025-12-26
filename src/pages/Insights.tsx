@@ -7,6 +7,7 @@ import { PageHeader } from '../components/PageHeader';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../components/ui/card';
 import { lang } from '../config/language';
 import { useWorryStore } from '../store/worryStore';
+import type { WorryCategory } from '../types';
 
 export const Insights: React.FC = () => {
   const worries = useWorryStore((s) => s.worries);
@@ -46,6 +47,13 @@ export const Insights: React.FC = () => {
     const thisWeek = worries.filter((w) => new Date(w.createdAt) >= oneWeekAgo);
     const thisWeekResolved = thisWeek.filter((w) => w.status === 'resolved').length;
 
+    // Calculate category breakdown
+    const categoryBreakdown: Record<string, number> = {};
+    worries.forEach((w) => {
+      const category = w.category || 'uncategorized';
+      categoryBreakdown[category] = (categoryBreakdown[category] || 0) + 1;
+    });
+
     return {
       total,
       resolved,
@@ -58,6 +66,7 @@ export const Insights: React.FC = () => {
       completionRate,
       thisWeekCount: thisWeek.length,
       thisWeekResolved,
+      categoryBreakdown,
     };
   }, [worries]);
 
@@ -233,6 +242,47 @@ export const Insights: React.FC = () => {
                           metrics.thisWeekResolved
                         )}
                       </CardDescription>
+                    </CardHeader>
+                  </Card>
+                )}
+
+                {/* Category Breakdown */}
+                {Object.keys(metrics.categoryBreakdown).length > 0 && (
+                  <Card>
+                    <CardHeader className="p-md">
+                      <CardTitle className="text-lg mb-3 tracking-tight">
+                        {lang.insights.categoryBreakdown.title}
+                      </CardTitle>
+                      <div className="space-y-3">
+                        {Object.entries(metrics.categoryBreakdown)
+                          .sort(([, a], [, b]) => b - a)
+                          .map(([category, count]) => {
+                            const percentage = Math.round((count / metrics.total) * 100);
+                            const categoryLabel =
+                              category === 'uncategorized'
+                                ? lang.insights.categoryBreakdown.uncategorized
+                                : lang.categories[category as WorryCategory];
+
+                            return (
+                              <div key={category} className="space-y-1">
+                                <div className="flex items-center justify-between text-sm">
+                                  <span className="font-medium text-foreground">
+                                    {categoryLabel}
+                                  </span>
+                                  <span className="text-muted-foreground">
+                                    {count} ({percentage}%)
+                                  </span>
+                                </div>
+                                <div className="h-2 bg-muted rounded-full overflow-hidden">
+                                  <div
+                                    className="h-full bg-primary transition-all"
+                                    style={{ width: `${percentage}%` }}
+                                  />
+                                </div>
+                              </div>
+                            );
+                          })}
+                      </div>
                     </CardHeader>
                   </Card>
                 )}

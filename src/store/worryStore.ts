@@ -2,7 +2,7 @@ import { create } from 'zustand';
 import { useShallow } from 'zustand/react/shallow';
 import * as notifications from '../services/notifications';
 import * as storage from '../services/storage';
-import type { Worry } from '../types';
+import type { Worry, WorryCategory } from '../types';
 import { logger } from '../utils/logger';
 import { generateUUID } from '../utils/uuid';
 
@@ -18,7 +18,14 @@ interface WorryStore {
   ) => Promise<Worry>;
   editWorry: (
     id: string,
-    updates: { content?: string; action?: string; unlockAt?: string }
+    updates: {
+      content?: string;
+      action?: string;
+      unlockAt?: string;
+      category?: WorryCategory;
+      bestOutcome?: string;
+      talkedToSomeone?: boolean;
+    }
   ) => Promise<void>;
   resolveWorry: (id: string, note?: string) => Promise<void>;
   dismissWorry: (id: string) => Promise<void>;
@@ -117,6 +124,10 @@ export const useWorryStore = create<WorryStore>((set, get) => ({
       content: updates.content ?? worry.content,
       action: updates.action ?? worry.action,
       unlockAt: updates.unlockAt ?? worry.unlockAt,
+      category: updates.category !== undefined ? updates.category : worry.category,
+      bestOutcome: updates.bestOutcome !== undefined ? updates.bestOutcome : worry.bestOutcome,
+      talkedToSomeone:
+        updates.talkedToSomeone !== undefined ? updates.talkedToSomeone : worry.talkedToSomeone,
     };
 
     // Reschedule notification if unlockAt changed

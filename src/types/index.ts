@@ -2,6 +2,8 @@
 
 export type WorryStatus = 'locked' | 'unlocked' | 'resolved' | 'dismissed';
 
+export type WorryCategory = 'work' | 'health' | 'relationships' | 'finance' | 'personal' | 'other';
+
 export interface Worry {
   id: string; // UUID v4
   content: string; // What the user is worried about
@@ -18,7 +20,11 @@ export interface Worry {
   status: WorryStatus;
   notificationId: number; // Capacitor notification ID
 
-  tags?: string[]; // Optional categorisation
+  // Categorization and reflection
+  category?: WorryCategory; // Life area category
+  tags?: string[]; // Optional custom tags
+  bestOutcome?: string; // What's the best possible outcome?
+  talkedToSomeone?: boolean; // Have you discussed this with someone?
 }
 
 export interface UserPreferences {
