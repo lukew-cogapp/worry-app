@@ -1,4 +1,5 @@
 import { create } from 'zustand';
+import { useShallow } from 'zustand/react/shallow';
 import * as notifications from '../services/notifications';
 import * as storage from '../services/storage';
 import type { Worry } from '../types';
@@ -11,6 +12,7 @@ interface WorryStore {
 
   // Actions
   loadWorries: () => Promise<void>;
+  checkAndUnlockExpired: () => Promise<void>;
   addWorry: (
     worry: Omit<Worry, 'id' | 'createdAt' | 'status' | 'notificationId'>
   ) => Promise<Worry>;
@@ -49,6 +51,25 @@ export const useWorryStore = create<WorryStore>((set, get) => ({
     });
     set({ worries: updated, isLoading: false });
     await storage.saveWorries(updated);
+  },
+
+  checkAndUnlockExpired: async () => {
+    const now = new Date();
+    const worries = get().worries;
+    const updated = worries.map((w) => {
+      if (w.status === 'locked' && new Date(w.unlockAt) <= now) {
+        logger.log('[Store] Auto-unlocking expired worry:', w.id);
+        return { ...w, status: 'unlocked' as const, unlockedAt: now.toISOString() };
+      }
+      return w;
+    });
+
+    // Only update if there are changes
+    const hasChanges = updated.some((w, i) => w.status !== worries[i].status);
+    if (hasChanges) {
+      set({ worries: updated });
+      await storage.saveWorries(updated);
+    }
   },
 
   addWorry: async (worryData) => {
@@ -195,3 +216,25 @@ export const useWorryStore = create<WorryStore>((set, get) => ({
   dismissedWorries: () => get().worries.filter((w) => w.status === 'dismissed' && !w.releasedAt),
   releasedWorries: () => get().worries.filter((w) => w.releasedAt !== undefined),
 }));
+
+/**
+ * Optimized selector hooks using shallow comparison
+ * These prevent unnecessary re-renders by memoizing filtered arrays
+ */
+
+export const useLockedWorries = () =>
+  useWorryStore(useShallow((state) => state.worries.filter((w) => w.status === 'locked')));
+
+export const useUnlockedWorries = () =>
+  useWorryStore(useShallow((state) => state.worries.filter((w) => w.status === 'unlocked')));
+
+export const useResolvedWorries = () =>
+  useWorryStore(useShallow((state) => state.worries.filter((w) => w.status === 'resolved')));
+
+export const useDismissedWorries = () =>
+  useWorryStore(
+    useShallow((state) => state.worries.filter((w) => w.status === 'dismissed' && !w.releasedAt))
+  );
+
+export const useReleasedWorries = () =>
+  useWorryStore(useShallow((state) => state.worries.filter((w) => w.releasedAt !== undefined)));

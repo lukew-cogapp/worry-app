@@ -1,31 +1,22 @@
 import { Loader2, Lock } from 'lucide-react';
 import type React from 'react';
-import { useMemo, useState } from 'react';
+import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { toast } from 'sonner';
 import { AddWorrySheet } from '../components/AddWorrySheet';
+import { ConfirmationDialog } from '../components/ConfirmationDialog';
 import { DebugErrorDialog } from '../components/DebugErrorDialog';
 import { EditWorrySheet } from '../components/EditWorrySheet';
 import { EmptyState } from '../components/EmptyState';
 import { LockAnimation } from '../components/LockAnimation';
 import { Onboarding } from '../components/Onboarding';
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-} from '../components/ui/alert-dialog';
 import { WorryCard } from '../components/WorryCard';
-import { TOAST_DURATIONS } from '../config/constants';
-import { formatDuration, lang } from '../config/language';
+import { lang } from '../config/language';
 import { useDebugError } from '../hooks/useDebugError';
 import { useHaptics } from '../hooks/useHaptics';
+import { useWorryActions } from '../hooks/useWorryActions';
 import { usePreferencesStore } from '../store/preferencesStore';
-import { useWorryStore } from '../store/worryStore';
+import { useLockedWorries, useUnlockedWorries, useWorryStore } from '../store/worryStore';
 import type { Worry } from '../types';
 
 export const Home: React.FC = () => {
@@ -33,15 +24,14 @@ export const Home: React.FC = () => {
   const isLoadingWorries = useWorryStore((s) => s.isLoading);
   const addWorry = useWorryStore((s) => s.addWorry);
   const editWorry = useWorryStore((s) => s.editWorry);
-  const resolveWorry = useWorryStore((s) => s.resolveWorry);
-  const dismissWorry = useWorryStore((s) => s.dismissWorry);
-  const releaseWorry = useWorryStore((s) => s.releaseWorry);
-  const snoozeWorry = useWorryStore((s) => s.snoozeWorry);
   const defaultUnlockTime = usePreferencesStore((s) => s.preferences.defaultUnlockTime);
   const isLoadingPreferences = usePreferencesStore((s) => s.isLoading);
 
-  const { lockWorry, resolveWorry: resolveHaptic } = useHaptics();
+  const { lockWorry, buttonTap } = useHaptics();
   const { debugError, handleError, clearError } = useDebugError();
+
+  // Worry action handlers (resolve, dismiss, snooze, release) with loading states
+  const worryActions = useWorryActions();
 
   const [isAddSheetOpen, setIsAddSheetOpen] = useState(false);
   const [isEditSheetOpen, setIsEditSheetOpen] = useState(false);
@@ -50,16 +40,10 @@ export const Home: React.FC = () => {
   const [isAddingWorry, setIsAddingWorry] = useState(false);
   const [isReleasingWorry, setIsReleasingWorry] = useState(false);
   const [isEditingWorry, setIsEditingWorry] = useState(false);
-  const [worryToDismiss, setWorryToDismiss] = useState<string | null>(null);
-  const [worryToResolve, setWorryToResolve] = useState<string | null>(null);
-  const [resolutionNote, setResolutionNote] = useState('');
-  const [contentToRelease, setContentToRelease] = useState<string | null>(null);
-  const [loadingStates, setLoadingStates] = useState<
-    Record<string, { resolving?: boolean; snoozing?: boolean; dismissing?: boolean }>
-  >({});
 
-  const unlockedWorries = useMemo(() => worries.filter((w) => w.status === 'unlocked'), [worries]);
-  const lockedWorries = useMemo(() => worries.filter((w) => w.status === 'locked'), [worries]);
+  // Optimized selectors with shallow comparison (prevents unnecessary re-renders)
+  const unlockedWorries = useUnlockedWorries();
+  const lockedWorries = useLockedWorries();
   const hasWorries = worries.length > 0;
 
   const handleAddWorry = async (worry: { content: string; action?: string; unlockAt: string }) => {
@@ -91,131 +75,25 @@ export const Home: React.FC = () => {
   };
 
   const handleResolveClick = (id: string) => {
-    setWorryToResolve(id);
-    setResolutionNote('');
-  };
-
-  const confirmResolve = async () => {
-    if (!worryToResolve) return;
-
-    setLoadingStates((prev) => ({
-      ...prev,
-      [worryToResolve]: { ...prev[worryToResolve], resolving: true },
-    }));
-    try {
-      await resolveWorry(worryToResolve, resolutionNote.trim() || undefined);
-      await resolveHaptic();
-      toast.success(lang.toasts.success.worryResolved);
-      setWorryToResolve(null);
-      setResolutionNote('');
-    } catch (error) {
-      handleError(error, {
-        operation: 'resolveWorry',
-        worryId: worryToResolve,
-        hasNote: !!resolutionNote.trim(),
-      });
-
-      toast.error(lang.toasts.error.resolveWorry, {
-        action: {
-          label: 'Retry',
-          onClick: confirmResolve,
-        },
-      });
-    } finally {
-      setLoadingStates((prev) => ({
-        ...prev,
-        [worryToResolve]: { ...prev[worryToResolve], resolving: false },
-      }));
-    }
-  };
-
-  const handleSnooze = async (id: string, durationMs: number) => {
-    setLoadingStates((prev) => ({ ...prev, [id]: { ...prev[id], snoozing: true } }));
-    try {
-      await snoozeWorry(id, durationMs);
-      await lockWorry();
-      toast.success(lang.toasts.success.snoozed(formatDuration(durationMs)));
-    } catch (error) {
-      handleError(error, {
-        operation: 'snoozeWorry',
-        worryId: id,
-        durationMs,
-      });
-
-      toast.error(lang.toasts.error.snoozeWorry, {
-        action: {
-          label: 'Retry',
-          onClick: () => handleSnooze(id, durationMs),
-        },
-      });
-    } finally {
-      setLoadingStates((prev) => ({ ...prev, [id]: { ...prev[id], snoozing: false } }));
-    }
+    worryActions.setWorryToResolve(id);
+    worryActions.setResolutionNote('');
   };
 
   const handleDismissClick = (id: string) => {
-    setWorryToDismiss(id);
-  };
-
-  const confirmDismiss = async () => {
-    if (!worryToDismiss) return;
-
-    setLoadingStates((prev) => ({
-      ...prev,
-      [worryToDismiss]: { ...prev[worryToDismiss], dismissing: true },
-    }));
-    try {
-      await dismissWorry(worryToDismiss);
-      toast.success(lang.toasts.success.worryDismissed);
-      setWorryToDismiss(null);
-    } catch (error) {
-      handleError(error, {
-        operation: 'dismissWorry',
-        worryId: worryToDismiss,
-      });
-
-      toast.error(lang.toasts.error.dismissWorry, {
-        action: {
-          label: 'Retry',
-          onClick: confirmDismiss,
-        },
-      });
-    } finally {
-      setLoadingStates((prev) => ({
-        ...prev,
-        [worryToDismiss]: { ...prev[worryToDismiss], dismissing: false },
-      }));
-    }
+    worryActions.setWorryToDismiss(id);
   };
 
   const handleReleaseClick = (content: string) => {
-    setContentToRelease(content);
+    worryActions.setContentToRelease(content);
   };
 
   const confirmRelease = async () => {
-    if (!contentToRelease) return;
+    if (!worryActions.contentToRelease) return;
 
     setIsReleasingWorry(true);
     try {
-      await releaseWorry(contentToRelease);
-
+      await worryActions.handleRelease();
       setIsAddSheetOpen(false);
-      setContentToRelease(null);
-      toast.success(lang.toasts.success.worryReleased, {
-        duration: TOAST_DURATIONS.LONG,
-      });
-    } catch (error) {
-      handleError(error, {
-        operation: 'releaseWorry',
-        contentLength: contentToRelease.length,
-      });
-
-      toast.error(lang.toasts.error.releaseWorry, {
-        action: {
-          label: 'Retry',
-          onClick: confirmRelease,
-        },
-      });
     } finally {
       setIsReleasingWorry(false);
     }
@@ -325,18 +203,23 @@ export const Home: React.FC = () => {
               {lang.home.sections.ready}
             </h2>
             <div className="space-y-3">
-              {unlockedWorries.map((worry) => (
-                <WorryCard
+              {unlockedWorries.map((worry, index) => (
+                <div
                   key={worry.id}
-                  worry={worry}
-                  onResolve={handleResolveClick}
-                  onSnooze={handleSnooze}
-                  onDismiss={handleDismissClick}
-                  onEdit={handleOpenEdit}
-                  isResolving={loadingStates[worry.id]?.resolving}
-                  isSnoozing={loadingStates[worry.id]?.snoozing}
-                  isDismissing={loadingStates[worry.id]?.dismissing}
-                />
+                  className="animate-in fade-in slide-in-from-bottom-4"
+                  style={{ animationDelay: `${index * 50}ms` }}
+                >
+                  <WorryCard
+                    worry={worry}
+                    onResolve={handleResolveClick}
+                    onSnooze={worryActions.handleSnooze}
+                    onDismiss={handleDismissClick}
+                    onEdit={handleOpenEdit}
+                    isResolving={worryActions.loadingStates[worry.id]?.resolving}
+                    isSnoozing={worryActions.loadingStates[worry.id]?.snoozing}
+                    isDismissing={worryActions.loadingStates[worry.id]?.dismissing}
+                  />
+                </div>
               ))}
             </div>
           </section>
@@ -383,8 +266,11 @@ export const Home: React.FC = () => {
       {/* FAB */}
       <button
         type="button"
-        onClick={() => setIsAddSheetOpen(true)}
-        className="fixed bottom-fab-offset right-fab-offset size-fab bg-primary hover:bg-primary/90 text-primary-foreground rounded-full shadow-lg flex items-center justify-center text-2xl transition-transform hover:scale-110 active:scale-95"
+        onClick={() => {
+          buttonTap();
+          setIsAddSheetOpen(true);
+        }}
+        className="fixed bottom-fab-offset right-fab-offset size-fab bg-primary hover:bg-primary/90 text-primary-foreground rounded-full shadow-lg flex items-center justify-center text-2xl transition-all duration-300 hover:scale-110 active:scale-95 active:rotate-90"
         aria-label={lang.aria.addWorry}
       >
         +
@@ -420,101 +306,50 @@ export const Home: React.FC = () => {
       <Onboarding />
 
       {/* Resolve Dialog */}
-      <AlertDialog
-        open={!!worryToResolve}
+      <ConfirmationDialog
+        open={!!worryActions.worryToResolve}
         onOpenChange={(open) => {
           if (!open) {
-            setWorryToResolve(null);
-            setResolutionNote('');
+            worryActions.setWorryToResolve(null);
+            worryActions.setResolutionNote('');
           }
         }}
-      >
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>{lang.resolveWorry.title}</AlertDialogTitle>
-            <AlertDialogDescription>
-              <label htmlFor="resolution-note" className="block text-sm font-medium mb-2 mt-4">
-                {lang.resolveWorry.noteLabel}
-              </label>
-              <textarea
-                id="resolution-note"
-                value={resolutionNote}
-                onChange={(e) => setResolutionNote(e.target.value)}
-                placeholder={lang.resolveWorry.notePlaceholder}
-                rows={3}
-                className="w-full px-3 py-2 border border-input rounded-md bg-background text-foreground placeholder-muted-foreground focus:ring-2 focus:ring-ring focus:border-transparent resize-none"
-              />
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel disabled={loadingStates[worryToResolve || '']?.resolving}>
-              {lang.resolveWorry.cancel}
-            </AlertDialogCancel>
-            <AlertDialogAction
-              onClick={confirmResolve}
-              disabled={loadingStates[worryToResolve || '']?.resolving}
-            >
-              {loadingStates[worryToResolve || '']?.resolving && (
-                <Loader2 className="mr-2 size-icon-sm animate-spin" />
-              )}
-              {lang.resolveWorry.confirm}
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
+        title={lang.resolveWorry.title}
+        description=""
+        confirmText={lang.resolveWorry.confirm}
+        cancelText={lang.resolveWorry.cancel}
+        onConfirm={worryActions.handleResolve}
+        isLoading={worryActions.loadingStates[worryActions.worryToResolve || '']?.resolving}
+        showTextarea
+        textareaValue={worryActions.resolutionNote}
+        onTextareaChange={worryActions.setResolutionNote}
+        textareaLabel={lang.resolveWorry.noteLabel}
+        textareaPlaceholder={lang.resolveWorry.notePlaceholder}
+      />
 
       {/* Dismiss Confirmation Dialog */}
-      <AlertDialog
-        open={!!worryToDismiss}
-        onOpenChange={(open) => !open && setWorryToDismiss(null)}
-      >
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>{lang.history.dismissDialog.title}</AlertDialogTitle>
-            <AlertDialogDescription>
-              {lang.history.dismissDialog.description}
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel disabled={loadingStates[worryToDismiss || '']?.dismissing}>
-              {lang.history.dismissDialog.cancel}
-            </AlertDialogCancel>
-            <AlertDialogAction
-              onClick={confirmDismiss}
-              disabled={loadingStates[worryToDismiss || '']?.dismissing}
-            >
-              {loadingStates[worryToDismiss || '']?.dismissing && (
-                <Loader2 className="mr-2 size-icon-sm animate-spin" />
-              )}
-              {lang.history.dismissDialog.confirm}
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
+      <ConfirmationDialog
+        open={!!worryActions.worryToDismiss}
+        onOpenChange={(open) => !open && worryActions.setWorryToDismiss(null)}
+        title={lang.history.dismissDialog.title}
+        description={lang.history.dismissDialog.description}
+        confirmText={lang.history.dismissDialog.confirm}
+        cancelText={lang.history.dismissDialog.cancel}
+        onConfirm={worryActions.handleDismiss}
+        isLoading={worryActions.loadingStates[worryActions.worryToDismiss || '']?.dismissing}
+      />
 
       {/* Release Confirmation Dialog */}
-      <AlertDialog
-        open={!!contentToRelease}
-        onOpenChange={(open) => !open && setContentToRelease(null)}
-      >
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>{lang.history.releaseDialog.title}</AlertDialogTitle>
-            <AlertDialogDescription>
-              {lang.history.releaseDialog.description}
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel disabled={isReleasingWorry}>
-              {lang.history.releaseDialog.cancel}
-            </AlertDialogCancel>
-            <AlertDialogAction onClick={confirmRelease} disabled={isReleasingWorry}>
-              {isReleasingWorry && <Loader2 className="mr-2 size-icon-sm animate-spin" />}
-              {lang.history.releaseDialog.confirm}
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
+      <ConfirmationDialog
+        open={!!worryActions.contentToRelease}
+        onOpenChange={(open) => !open && worryActions.setContentToRelease(null)}
+        title={lang.history.releaseDialog.title}
+        description={lang.history.releaseDialog.description}
+        confirmText={lang.history.releaseDialog.confirm}
+        cancelText={lang.history.releaseDialog.cancel}
+        onConfirm={confirmRelease}
+        isLoading={isReleasingWorry}
+      />
 
       <DebugErrorDialog error={debugError} onClose={clearError} />
     </div>

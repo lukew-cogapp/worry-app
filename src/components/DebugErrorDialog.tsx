@@ -1,4 +1,5 @@
 import type React from 'react';
+import { lang } from '../config/language';
 import { Button } from './ui/button';
 import {
   Dialog,
@@ -23,22 +24,22 @@ export const DebugErrorDialog: React.FC<DebugErrorDialogProps> = ({ error, onClo
     <Dialog open={!!error} onOpenChange={(open) => !open && onClose()}>
       <DialogContent className="max-w-2xl max-h-[80vh] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle className="text-destructive">Debug: Error Occurred</DialogTitle>
-          <DialogDescription>
-            This dialog is for debugging purposes. It will be hidden in production.
-          </DialogDescription>
+          <DialogTitle className="text-destructive">{lang.debugErrorDialog.title}</DialogTitle>
+          <DialogDescription>{lang.debugErrorDialog.description}</DialogDescription>
         </DialogHeader>
 
         <div className="space-y-4">
           <div>
-            <h4 className="font-semibold text-sm mb-2">Error Message:</h4>
+            <h4 className="font-semibold text-sm mb-2">
+              {lang.debugErrorDialog.labels.errorMessage}
+            </h4>
             <p className="text-sm bg-muted p-3 rounded-md font-mono break-words">
               {error?.message}
             </p>
           </div>
 
           <div>
-            <h4 className="font-semibold text-sm mb-2">Details:</h4>
+            <h4 className="font-semibold text-sm mb-2">{lang.debugErrorDialog.labels.details}</h4>
             <pre className="text-xs bg-muted p-3 rounded-md overflow-x-auto whitespace-pre-wrap break-words">
               {error?.details}
             </pre>
@@ -46,7 +47,9 @@ export const DebugErrorDialog: React.FC<DebugErrorDialogProps> = ({ error, onClo
 
           {error?.stack && (
             <div>
-              <h4 className="font-semibold text-sm mb-2">Stack Trace:</h4>
+              <h4 className="font-semibold text-sm mb-2">
+                {lang.debugErrorDialog.labels.stackTrace}
+              </h4>
               <pre className="text-xs bg-muted p-3 rounded-md overflow-x-auto whitespace-pre-wrap break-words">
                 {error.stack}
               </pre>
@@ -55,7 +58,7 @@ export const DebugErrorDialog: React.FC<DebugErrorDialogProps> = ({ error, onClo
         </div>
 
         <DialogFooter>
-          <Button onClick={onClose}>Close</Button>
+          <Button onClick={onClose}>{lang.debugErrorDialog.actions.close}</Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>

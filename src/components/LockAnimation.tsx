@@ -29,14 +29,28 @@ export const LockAnimation: React.FC<LockAnimationProps> = ({ show, onComplete }
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 animate-in fade-in duration-200">
       <div className="flex flex-col items-center gap-4 animate-in zoom-in duration-500">
         <div className="relative">
-          {/* Lock Icon with animation */}
-          <div className="text-8xl animate-bounce">🔒</div>
+          {/* Lock Icon SVG with animation */}
+          <svg
+            className="size-icon-xl text-white animate-bounce"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            aria-hidden="true"
+          >
+            {/* Lock body */}
+            <rect x="5" y="11" width="14" height="10" rx="2" ry="2" />
+            {/* Shackle */}
+            <path d="M12 11V7a4 4 0 0 1 8 0v4" />
+            {/* Keyhole */}
+            <circle cx="12" cy="16" r="1" />
+          </svg>
 
-          {/* Particles effect */}
+          {/* Subtle glow effect */}
           <div className="absolute inset-0 flex items-center justify-center">
-            <div className="absolute w-2 h-2 bg-blue-400 rounded-full animate-ping" />
-            <div className="absolute w-2 h-2 bg-purple-400 rounded-full animate-ping delay-75" />
-            <div className="absolute w-2 h-2 bg-indigo-400 rounded-full animate-ping delay-150" />
+            <div className="absolute w-24 h-24 bg-white/10 rounded-full animate-ping" />
           </div>
         </div>
 

@@ -1,5 +1,5 @@
 import type React from 'react';
-import { Link } from 'react-router-dom';
+import { PageHeader } from '../components/PageHeader';
 import { Label } from '../components/ui/label';
 import { Separator } from '../components/ui/separator';
 import { Switch } from '../components/ui/switch';
@@ -13,42 +13,17 @@ export const Settings: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-background">
-      {/* Header */}
-      <header className="bg-card border-b border-border">
-        <div className="max-w-4xl mx-auto px-4 py-4 flex items-center gap-4">
-          <Link
-            to="/"
-            className="text-muted-foreground hover:text-foreground transition-colors"
-            aria-label={lang.aria.back}
-          >
-            <svg className="size-icon-md" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <title>Back</title>
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M15 19l-7-7 7-7"
-              />
-            </svg>
-          </Link>
-          <div>
-            <h1 className="text-3xl font-bold text-foreground tracking-tight">
-              {lang.settings.title}
-            </h1>
-            <p className="text-sm text-muted-foreground">{lang.settings.subtitle}</p>
-          </div>
-        </div>
-      </header>
+      <PageHeader title={lang.settings.title} subtitle={lang.settings.subtitle} />
 
       {/* Main Content */}
       <main className="max-w-4xl mx-auto px-4 py-6">
         <div className="bg-card rounded-lg border border-border overflow-hidden">
           {/* Default Unlock Time */}
-          <div className="p-6">
+          <div className="p-lg">
             <Label htmlFor="default-unlock-time" className="text-base font-medium">
               {lang.settings.sections.defaultTime.title}
             </Label>
-            <p className="text-sm text-muted-foreground mt-1 mb-3">
+            <p className="text-sm text-muted-foreground mt-1 mb-sm">
               {lang.settings.sections.defaultTime.description}
             </p>
             <input
@@ -64,9 +39,9 @@ export const Settings: React.FC = () => {
           <Separator />
 
           {/* Haptic Feedback */}
-          <div className="p-6">
+          <div className="p-lg">
             <div className="flex items-center justify-between">
-              <div className="space-y-0.5">
+              <div className="space-y-2xs">
                 <Label htmlFor="haptic-feedback" className="text-base font-medium">
                   {lang.settings.sections.hapticFeedback.title}
                 </Label>
@@ -88,7 +63,7 @@ export const Settings: React.FC = () => {
           <Separator />
 
           {/* Encouraging Messages */}
-          <div className="p-6">
+          <div className="p-lg">
             <div className="flex items-center justify-between">
               <div className="space-y-0.5">
                 <Label htmlFor="encouraging-messages" className="text-base font-medium">
@@ -111,7 +86,7 @@ export const Settings: React.FC = () => {
         </div>
 
         {/* About Section */}
-        <div className="mt-8 bg-card rounded-lg border border-border p-6">
+        <div className="mt-8 bg-card rounded-lg border border-border p-lg">
           <h2 className="text-lg font-semibold text-foreground mb-2">
             {lang.settings.about.title}
           </h2>

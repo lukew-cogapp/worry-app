@@ -54,4 +54,16 @@ export const ANIMATION_DURATIONS = {
   ZOOM_IN: 500,
   /** Slide in animation */
   SLIDE_IN: 700,
+  /** Success feedback animation */
+  SUCCESS_FEEDBACK: 1500,
+} as const;
+
+/**
+ * Form validation constraints
+ */
+export const FORM_VALIDATION = {
+  /** Maximum length for worry content */
+  WORRY_CONTENT_MAX_LENGTH: 500,
+  /** Maximum length for worry action */
+  WORRY_ACTION_MAX_LENGTH: 200,
 } as const;

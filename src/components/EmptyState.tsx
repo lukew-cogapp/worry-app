@@ -14,8 +14,8 @@ export const EmptyState: React.FC<EmptyStateProps> = ({
   icon = <Package className="size-icon-xl" />,
 }) => {
   return (
-    <div className="flex flex-col items-center justify-center p-8 text-center">
-      <div className="mb-4 text-muted-foreground">{icon}</div>
+    <div className="flex flex-col items-center justify-center p-8 text-center animate-in fade-in slide-in-from-bottom-4 duration-500">
+      <div className="mb-4 text-muted-foreground animate-pulse">{icon}</div>
       <h2 className="text-xl font-semibold text-foreground mb-2">{title}</h2>
       <p className="text-muted-foreground max-w-md">{message}</p>
     </div>

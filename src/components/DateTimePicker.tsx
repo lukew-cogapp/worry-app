@@ -1,4 +1,4 @@
-import type React from 'react';
+import React from 'react';
 import { lang } from '../config/language';
 import { getNextMonday, getNextWeek, getTomorrow } from '../utils/dates';
 import { Button } from './ui/button';
@@ -9,7 +9,7 @@ interface DateTimePickerProps {
   defaultTime?: string;
 }
 
-export const DateTimePicker: React.FC<DateTimePickerProps> = ({
+const DateTimePickerComponent: React.FC<DateTimePickerProps> = ({
   value,
   onChange,
   defaultTime = '09:00',
@@ -70,3 +70,6 @@ export const DateTimePicker: React.FC<DateTimePickerProps> = ({
     </div>
   );
 };
+
+// Memoize component to prevent unnecessary re-renders in add/edit sheets
+export const DateTimePicker = React.memo(DateTimePickerComponent);

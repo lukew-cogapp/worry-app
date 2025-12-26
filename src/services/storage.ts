@@ -23,7 +23,7 @@ export async function getWorries(): Promise<Worry[]> {
   try {
     return JSON.parse(value);
   } catch (error) {
-    console.error('Failed to parse worries from storage:', error);
+    logger.error('Failed to parse worries from storage:', error);
     return [];
   }
 }
@@ -54,7 +54,7 @@ export async function getPreferences(): Promise<UserPreferences> {
   try {
     return JSON.parse(value);
   } catch (error) {
-    console.error('Failed to parse preferences from storage:', error);
+    logger.error('Failed to parse preferences from storage:', error);
     return defaultPreferences;
   }
 }
@@ -81,7 +81,7 @@ export async function getStats(): Promise<WorryStats> {
   try {
     return JSON.parse(value);
   } catch (error) {
-    console.error('Failed to parse stats from storage:', error);
+    logger.error('Failed to parse stats from storage:', error);
     return defaultStats;
   }
 }
