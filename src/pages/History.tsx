@@ -74,142 +74,143 @@ export const History: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="h-full flex flex-col bg-background overflow-hidden">
       <PageHeader title={lang.history.title} subtitle={lang.history.subtitle} />
-
-      {/* Filters */}
-      <div className="bg-card border-b border-border">
-        <div className="max-w-4xl mx-auto px-md py-sm">
-          <Select value={filter} onValueChange={(value: FilterType) => setFilter(value)}>
-            <SelectTrigger className="w-full sm:w-[200px]">
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">
-                {lang.history.filters.all} ({counts.all})
-              </SelectItem>
-              <SelectItem value="locked">
-                {lang.history.filters.locked} ({counts.locked})
-              </SelectItem>
-              <SelectItem value="unlocked">
-                {lang.history.filters.unlocked} ({counts.unlocked})
-              </SelectItem>
-              <SelectItem value="resolved">
-                {lang.history.filters.resolved} ({counts.resolved})
-              </SelectItem>
-              <SelectItem value="dismissed">
-                {lang.history.filters.dismissed} ({counts.dismissed})
-              </SelectItem>
-              <SelectItem value="released">
-                {lang.history.filters.released} ({counts.released})
-              </SelectItem>
-            </SelectContent>
-          </Select>
-        </div>
-      </div>
-
-      {/* Search */}
-      <div className="bg-card border-b border-border">
-        <div className="max-w-4xl mx-auto px-md py-sm">
-          <div className="relative">
-            <Input
-              type="text"
-              placeholder={lang.history.search.placeholder}
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              aria-label={lang.aria.search}
-              className="pl-10 bg-background min-h-touch-target"
-            />
-            <Search
-              className="absolute left-3 top-1/2 -translate-y-1/2 size-icon text-muted-foreground"
-              aria-hidden="true"
-            />
+      <div className="flex-1 overflow-y-auto">
+        {/* Filters */}
+        <div className="bg-card border-b border-border">
+          <div className="max-w-4xl mx-auto px-md py-sm">
+            <Select value={filter} onValueChange={(value: FilterType) => setFilter(value)}>
+              <SelectTrigger className="w-full sm:w-[200px]">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">
+                  {lang.history.filters.all} ({counts.all})
+                </SelectItem>
+                <SelectItem value="locked">
+                  {lang.history.filters.locked} ({counts.locked})
+                </SelectItem>
+                <SelectItem value="unlocked">
+                  {lang.history.filters.unlocked} ({counts.unlocked})
+                </SelectItem>
+                <SelectItem value="resolved">
+                  {lang.history.filters.resolved} ({counts.resolved})
+                </SelectItem>
+                <SelectItem value="dismissed">
+                  {lang.history.filters.dismissed} ({counts.dismissed})
+                </SelectItem>
+                <SelectItem value="released">
+                  {lang.history.filters.released} ({counts.released})
+                </SelectItem>
+              </SelectContent>
+            </Select>
           </div>
         </div>
-      </div>
 
-      {/* Main Content */}
-      <main className="max-w-4xl mx-auto px-md py-lg">
-        {filteredWorries.length === 0 ? (
-          <EmptyState
-            title={lang.history.empty.title(filter)}
-            message={
-              filter === 'all'
-                ? lang.history.empty.messageAll
-                : lang.history.empty.messageFiltered(filter)
-            }
-          />
-        ) : (
-          <div className="space-y-3">
-            {filteredWorries
-              .slice()
-              .sort((a, b) => {
-                // Active (unlocked) worries first, then sort by createdAt descending
-                const aIsActive = a.status === 'unlocked' ? 1 : 0;
-                const bIsActive = b.status === 'unlocked' ? 1 : 0;
-                if (aIsActive !== bIsActive) return bIsActive - aIsActive;
-                return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
-              })
-              .map((worry) => (
-                <WorryCard
-                  key={worry.id}
-                  worry={worry}
-                  onUnlockNow={
-                    worry.status === 'locked' ? historyActions.handleUnlockNow : undefined
-                  }
-                  onDismiss={
-                    worry.status === 'locked' ? historyActions.handleDismissClick : undefined
-                  }
-                  onEdit={historyActions.handleOpenEdit}
-                  onDelete={
-                    worry.status === 'resolved' || worry.status === 'dismissed'
-                      ? (id) => historyActions.setWorryToDelete(id)
-                      : undefined
-                  }
-                  isUnlocking={historyActions.loadingStates[worry.id]?.unlocking}
-                  isDismissing={historyActions.loadingStates[worry.id]?.dismissing}
-                />
-              ))}
+        {/* Search */}
+        <div className="bg-card border-b border-border">
+          <div className="max-w-4xl mx-auto px-md py-sm">
+            <div className="relative">
+              <Input
+                type="text"
+                placeholder={lang.history.search.placeholder}
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                aria-label={lang.aria.search}
+                className="pl-10 bg-background min-h-touch-target"
+              />
+              <Search
+                className="absolute left-3 top-1/2 -translate-y-1/2 size-icon text-muted-foreground"
+                aria-hidden="true"
+              />
+            </div>
           </div>
-        )}
-      </main>
+        </div>
 
-      {/* Delete Confirmation Dialog */}
-      <ConfirmationDialog
-        open={!!historyActions.worryToDelete}
-        onOpenChange={(open) => !open && historyActions.setWorryToDelete(null)}
-        title={lang.history.deleteDialog.title}
-        description={lang.history.deleteDialog.description}
-        confirmText={lang.history.deleteDialog.confirm}
-        cancelText={lang.history.deleteDialog.cancel}
-        onConfirm={historyActions.handleDelete}
-        isLoading={historyActions.isDeleting}
-        variant="destructive"
-      />
+        {/* Main Content */}
+        <main className="max-w-4xl mx-auto px-md py-lg">
+          {filteredWorries.length === 0 ? (
+            <EmptyState
+              title={lang.history.empty.title(filter)}
+              message={
+                filter === 'all'
+                  ? lang.history.empty.messageAll
+                  : lang.history.empty.messageFiltered(filter)
+              }
+            />
+          ) : (
+            <div className="space-y-3">
+              {filteredWorries
+                .slice()
+                .sort((a, b) => {
+                  // Active (unlocked) worries first, then sort by createdAt descending
+                  const aIsActive = a.status === 'unlocked' ? 1 : 0;
+                  const bIsActive = b.status === 'unlocked' ? 1 : 0;
+                  if (aIsActive !== bIsActive) return bIsActive - aIsActive;
+                  return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
+                })
+                .map((worry) => (
+                  <WorryCard
+                    key={worry.id}
+                    worry={worry}
+                    onUnlockNow={
+                      worry.status === 'locked' ? historyActions.handleUnlockNow : undefined
+                    }
+                    onDismiss={
+                      worry.status === 'locked' ? historyActions.handleDismissClick : undefined
+                    }
+                    onEdit={historyActions.handleOpenEdit}
+                    onDelete={
+                      worry.status === 'resolved' || worry.status === 'dismissed'
+                        ? (id) => historyActions.setWorryToDelete(id)
+                        : undefined
+                    }
+                    isUnlocking={historyActions.loadingStates[worry.id]?.unlocking}
+                    isDismissing={historyActions.loadingStates[worry.id]?.dismissing}
+                  />
+                ))}
+            </div>
+          )}
+        </main>
 
-      {/* Dismiss Confirmation Dialog */}
-      <ConfirmationDialog
-        open={!!historyActions.worryToDismiss}
-        onOpenChange={(open) => !open && historyActions.setWorryToDismiss(null)}
-        title={lang.history.dismissDialog.title}
-        description={lang.history.dismissDialog.description}
-        confirmText={lang.history.dismissDialog.confirm}
-        cancelText={lang.history.dismissDialog.cancel}
-        onConfirm={historyActions.confirmDismiss}
-        isLoading={historyActions.loadingStates[historyActions.worryToDismiss || '']?.dismissing}
-      />
+        {/* Delete Confirmation Dialog */}
+        <ConfirmationDialog
+          open={!!historyActions.worryToDelete}
+          onOpenChange={(open) => !open && historyActions.setWorryToDelete(null)}
+          title={lang.history.deleteDialog.title}
+          description={lang.history.deleteDialog.description}
+          confirmText={lang.history.deleteDialog.confirm}
+          cancelText={lang.history.deleteDialog.cancel}
+          onConfirm={historyActions.handleDelete}
+          isLoading={historyActions.isDeleting}
+          variant="destructive"
+        />
 
-      {/* Edit Worry Sheet */}
-      <EditWorrySheet
-        isOpen={historyActions.isEditSheetOpen}
-        onClose={historyActions.handleCloseEdit}
-        onEdit={historyActions.handleEdit}
-        worry={historyActions.worryToEdit}
-        defaultTime={defaultUnlockTime}
-        isSubmitting={historyActions.isEditingWorry}
-      />
+        {/* Dismiss Confirmation Dialog */}
+        <ConfirmationDialog
+          open={!!historyActions.worryToDismiss}
+          onOpenChange={(open) => !open && historyActions.setWorryToDismiss(null)}
+          title={lang.history.dismissDialog.title}
+          description={lang.history.dismissDialog.description}
+          confirmText={lang.history.dismissDialog.confirm}
+          cancelText={lang.history.dismissDialog.cancel}
+          onConfirm={historyActions.confirmDismiss}
+          isLoading={historyActions.loadingStates[historyActions.worryToDismiss || '']?.dismissing}
+        />
 
-      <DebugErrorDialog error={debugError} onClose={clearError} />
+        {/* Edit Worry Sheet */}
+        <EditWorrySheet
+          isOpen={historyActions.isEditSheetOpen}
+          onClose={historyActions.handleCloseEdit}
+          onEdit={historyActions.handleEdit}
+          worry={historyActions.worryToEdit}
+          defaultTime={defaultUnlockTime}
+          isSubmitting={historyActions.isEditingWorry}
+        />
+
+        <DebugErrorDialog error={debugError} onClose={clearError} />
+      </div>
     </div>
   );
 };

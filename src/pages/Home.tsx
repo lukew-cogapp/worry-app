@@ -136,7 +136,7 @@ export const Home: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="h-full flex flex-col bg-background overflow-hidden">
       {/* Header */}
       <header className="bg-card border-b border-border">
         <div className="max-w-4xl mx-auto px-md py-md flex items-center justify-between">
@@ -164,83 +164,85 @@ export const Home: React.FC = () => {
       </header>
 
       {/* Main Content */}
-      <main className="max-w-4xl mx-auto px-md py-lg pb-24">
-        {(isLoadingWorries || isLoadingPreferences) && (
-          <div className="flex items-center justify-center py-12">
-            <Loader2 className="size-icon-lg animate-spin text-muted-foreground" />
-          </div>
-        )}
-
-        {!isLoadingWorries && !isLoadingPreferences && !hasWorries && (
-          <EmptyState title={lang.home.empty.title} message={lang.home.empty.message} />
-        )}
-
-        {/* Unlocked Worries */}
-        {!isLoadingWorries && !isLoadingPreferences && unlockedWorries.length > 0 && (
-          <section className="mb-8">
-            <h2 className="text-xl font-bold text-foreground mb-4 tracking-tight">
-              {lang.home.sections.ready}
-            </h2>
-            <div className="space-y-3">
-              {unlockedWorries.map((worry, index) => (
-                <div
-                  key={worry.id}
-                  className="animate-in fade-in slide-in-from-bottom-4"
-                  style={{ animationDelay: `${index * 50}ms` }}
-                >
-                  <WorryCard
-                    worry={worry}
-                    onResolve={handleResolveClick}
-                    onSnooze={worryActions.handleSnooze}
-                    onDismiss={handleDismissClick}
-                    onEdit={handleOpenEdit}
-                    isResolving={worryActions.loadingStates[worry.id]?.resolving}
-                    isSnoozing={worryActions.loadingStates[worry.id]?.snoozing}
-                    isDismissing={worryActions.loadingStates[worry.id]?.dismissing}
-                  />
-                </div>
-              ))}
-            </div>
-          </section>
-        )}
-
-        {/* View History Link - show when no unlocked worries and no locked summary */}
-        {!isLoadingWorries &&
-          !isLoadingPreferences &&
-          unlockedWorries.length === 0 &&
-          lockedWorries.length === 0 &&
-          hasWorries && (
-            <div className="text-center mb-6">
-              <Link to="/history" className="text-sm text-primary hover:underline">
-                {lang.home.sections.locked.viewAll}
-              </Link>
+      <main className="flex-1 overflow-y-auto">
+        <div className="max-w-4xl mx-auto px-md py-lg pb-24">
+          {(isLoadingWorries || isLoadingPreferences) && (
+            <div className="flex items-center justify-center py-12">
+              <Loader2 className="size-icon-lg animate-spin text-muted-foreground" />
             </div>
           )}
 
-        {/* Locked Worries Summary */}
-        {!isLoadingWorries && !isLoadingPreferences && lockedWorries.length > 0 && (
-          <section>
-            <div className="bg-secondary/20 rounded-lg p-lg border border-primary/20">
-              <div className="flex items-center gap-sm mb-2">
-                <Lock className="size-icon-lg text-primary" />
-                <div>
-                  <h2 className="text-xl font-bold text-foreground tracking-tight">
-                    {lang.home.sections.locked.title(lockedWorries.length)}
-                  </h2>
-                  <p className="text-sm text-muted-foreground">
-                    {lang.home.sections.locked.subtitle}
-                  </p>
-                </div>
+          {!isLoadingWorries && !isLoadingPreferences && !hasWorries && (
+            <EmptyState title={lang.home.empty.title} message={lang.home.empty.message} />
+          )}
+
+          {/* Unlocked Worries */}
+          {!isLoadingWorries && !isLoadingPreferences && unlockedWorries.length > 0 && (
+            <section className="mb-8">
+              <h2 className="text-xl font-bold text-foreground mb-4 tracking-tight">
+                {lang.home.sections.ready}
+              </h2>
+              <div className="space-y-3">
+                {unlockedWorries.map((worry, index) => (
+                  <div
+                    key={worry.id}
+                    className="animate-in fade-in slide-in-from-bottom-4"
+                    style={{ animationDelay: `${index * 50}ms` }}
+                  >
+                    <WorryCard
+                      worry={worry}
+                      onResolve={handleResolveClick}
+                      onSnooze={worryActions.handleSnooze}
+                      onDismiss={handleDismissClick}
+                      onEdit={handleOpenEdit}
+                      isResolving={worryActions.loadingStates[worry.id]?.resolving}
+                      isSnoozing={worryActions.loadingStates[worry.id]?.snoozing}
+                      isDismissing={worryActions.loadingStates[worry.id]?.dismissing}
+                    />
+                  </div>
+                ))}
               </div>
-              <Link
-                to="/history"
-                className="text-sm text-primary hover:underline inline-block mt-2"
-              >
-                {lang.home.sections.locked.viewAll}
-              </Link>
-            </div>
-          </section>
-        )}
+            </section>
+          )}
+
+          {/* View History Link - show when no unlocked worries and no locked summary */}
+          {!isLoadingWorries &&
+            !isLoadingPreferences &&
+            unlockedWorries.length === 0 &&
+            lockedWorries.length === 0 &&
+            hasWorries && (
+              <div className="text-center mb-6">
+                <Link to="/history" className="text-sm text-primary hover:underline">
+                  {lang.home.sections.locked.viewAll}
+                </Link>
+              </div>
+            )}
+
+          {/* Locked Worries Summary */}
+          {!isLoadingWorries && !isLoadingPreferences && lockedWorries.length > 0 && (
+            <section>
+              <div className="bg-secondary/20 rounded-lg p-lg border border-primary/20">
+                <div className="flex items-center gap-sm mb-2">
+                  <Lock className="size-icon-lg text-primary" />
+                  <div>
+                    <h2 className="text-xl font-bold text-foreground tracking-tight">
+                      {lang.home.sections.locked.title(lockedWorries.length)}
+                    </h2>
+                    <p className="text-sm text-muted-foreground">
+                      {lang.home.sections.locked.subtitle}
+                    </p>
+                  </div>
+                </div>
+                <Link
+                  to="/history"
+                  className="text-sm text-primary hover:underline inline-block mt-2"
+                >
+                  {lang.home.sections.locked.viewAll}
+                </Link>
+              </div>
+            </section>
+          )}
+        </div>
       </main>
 
       {/* FAB */}

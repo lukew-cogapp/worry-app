@@ -71,11 +71,9 @@ export const Insights: React.FC = () => {
   };
 
   return (
-    <div className="flex flex-col min-h-screen bg-background">
+    <div className="h-full flex flex-col bg-background overflow-hidden">
       <PageHeader title={lang.insights.title} subtitle={lang.insights.subtitle} />
-
-      {/* Content */}
-      <main className="flex-1 overflow-auto">
+      <main className="flex-1 overflow-y-auto">
         <div className="max-w-4xl mx-auto px-md py-lg space-y-lg">
           {metrics.total === 0 ? (
             <Card>
