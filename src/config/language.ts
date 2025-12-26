@@ -54,6 +54,9 @@ export const lang = {
       submit: 'Lock Away Worry',
       release: "I Can't Control This — Release It",
     },
+    validation: {
+      contentRequired: "Please describe what's worrying you",
+    },
   },
 
   // Date quick options
@@ -159,6 +162,14 @@ export const lang = {
       description: (total: number, resolved: number) =>
         `${total} worries added, ${resolved} resolved`,
     },
+    weeklyStreak: {
+      title: (count: number) => `${count} ${count === 1 ? 'worry' : 'worries'} resolved this week!`,
+      message: "You're on a roll! Keep up the great work.",
+    },
+    timeUnits: {
+      day: (count: number) => `${count} ${count === 1 ? 'day' : 'days'}`,
+      hour: (count: number) => `${count} ${count === 1 ? 'hour' : 'hours'}`,
+    },
   },
 
   // Settings page
@@ -177,6 +188,21 @@ export const lang = {
       encouragingMessages: {
         title: 'Encouraging Messages',
         description: 'Show supportive text in notifications',
+      },
+    },
+    dangerZone: {
+      title: 'Danger Zone',
+      reset: {
+        title: 'Reset All Data',
+        description: 'Remove all worries and start fresh',
+        button: 'Remove All Content',
+      },
+      resetDialog: {
+        title: 'Reset All Data?',
+        description:
+          'This will permanently delete all your worries and cannot be undone. Your settings will be preserved.',
+        cancel: 'Cancel',
+        confirm: 'Reset Everything',
       },
     },
     about: {
@@ -228,6 +254,7 @@ export const lang = {
       worryReleased: "Worry released. You've let go of what you can't control.",
       worrySelected: (count: number) => `${count} ${count === 1 ? 'worry' : 'worries'} snoozed`,
       snoozed: (duration: string) => `Snoozed for ${duration}`,
+      dataCleared: 'All worries have been removed',
     },
     error: {
       saveWorry: 'Could not save worry. Please try again.',

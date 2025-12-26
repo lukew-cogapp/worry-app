@@ -1,3 +1,4 @@
+import { Search } from 'lucide-react';
 import type React from 'react';
 import { useMemo, useState } from 'react';
 import { ConfirmationDialog } from '../components/ConfirmationDialog';
@@ -118,20 +119,10 @@ export const History: React.FC = () => {
               aria-label={lang.aria.search}
               className="w-full px-4 py-2 pl-10 border border-input rounded-lg bg-background text-foreground placeholder-muted-foreground focus:ring-2 focus:ring-ring focus:border-transparent"
             />
-            <svg
+            <Search
               className="absolute left-3 top-1/2 -translate-y-1/2 size-icon text-muted-foreground"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <title>{lang.aria.search}</title>
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
-              />
-            </svg>
+              aria-hidden="true"
+            />
           </div>
         </div>
       </div>
@@ -151,7 +142,13 @@ export const History: React.FC = () => {
           <div className="space-y-3">
             {filteredWorries
               .slice()
-              .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
+              .sort((a, b) => {
+                // Active (unlocked) worries first, then sort by createdAt descending
+                const aIsActive = a.status === 'unlocked' ? 1 : 0;
+                const bIsActive = b.status === 'unlocked' ? 1 : 0;
+                if (aIsActive !== bIsActive) return bIsActive - aIsActive;
+                return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
+              })
               .map((worry) => (
                 <WorryCard
                   key={worry.id}

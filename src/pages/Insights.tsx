@@ -1,4 +1,4 @@
-import { BarChart3, TrendingDown, XCircle } from 'lucide-react';
+import { BarChart3, Flame, TrendingDown, XCircle } from 'lucide-react';
 import type React from 'react';
 import { useMemo } from 'react';
 import { CircularProgress } from '../components/CircularProgress';
@@ -65,9 +65,9 @@ export const Insights: React.FC = () => {
     const days = Math.round(hours / 24);
 
     if (days >= 1) {
-      return `${days} ${days === 1 ? 'day' : 'days'}`;
+      return lang.insights.timeUnits.day(days);
     }
-    return `${hours} ${hours === 1 ? 'hour' : 'hours'}`;
+    return lang.insights.timeUnits.hour(hours);
   };
 
   return (
@@ -94,14 +94,13 @@ export const Insights: React.FC = () => {
                 <Card className="bg-gradient-to-r from-primary/10 to-purple-500/10 border-primary/20 animate-in fade-in slide-in-from-top-4">
                   <CardHeader className="p-6">
                     <div className="flex items-center gap-4">
-                      <div className="text-5xl">🔥</div>
+                      <Flame className="size-icon-xl text-primary" aria-hidden="true" />
                       <div className="flex-1">
                         <CardTitle className="text-2xl mb-1">
-                          {metrics.thisWeekResolved}{' '}
-                          {metrics.thisWeekResolved === 1 ? 'worry' : 'worries'} resolved this week!
+                          {lang.insights.weeklyStreak.title(metrics.thisWeekResolved)}
                         </CardTitle>
                         <CardDescription className="text-base">
-                          You're on a roll! Keep up the great work.
+                          {lang.insights.weeklyStreak.message}
                         </CardDescription>
                       </div>
                     </div>

@@ -69,7 +69,7 @@ export const WorryFormSheet: React.FC<WorryFormSheetProps> = ({
 
     const trimmedContent = content.trim();
     if (!trimmedContent) {
-      setError("Please describe what's worrying you");
+      setError(lang.addWorry.validation.contentRequired);
       return;
     }
 
@@ -128,10 +128,14 @@ export const WorryFormSheet: React.FC<WorryFormSheetProps> = ({
   return (
     <>
       {/* Backdrop */}
-      <div className="fixed inset-0 bg-black/50 z-40 transition-opacity" />
+      <div
+        className="fixed inset-0 bg-black/50 z-40 transition-opacity"
+        onClick={handleClose}
+        aria-hidden="true"
+      />
 
       {/* Modal */}
-      <div className="fixed inset-x-0 bottom-0 z-50 bg-card rounded-t-2xl shadow-dialog max-h-[90vh] overflow-y-auto animate-slide-up">
+      <div className="fixed inset-x-0 bottom-0 z-50 bg-card rounded-t-2xl shadow-dialog max-h-[90vh] overflow-y-auto overflow-x-hidden animate-slide-up">
         <div className="p-lg">
           <div className="flex items-center justify-between mb-lg">
             <h2 className="text-2xl font-bold text-foreground">{title}</h2>
@@ -212,14 +216,14 @@ export const WorryFormSheet: React.FC<WorryFormSheetProps> = ({
               <DateTimePicker value={unlockAt} onChange={setUnlockAt} defaultTime={defaultTime} />
             )}
 
-            <div className="flex gap-3 pt-md">
+            <div className="flex flex-col gap-3 pt-md">
               {mode === 'add' && onRelease && (
                 <Button
                   type="button"
                   variant="ghost"
                   onClick={handleRelease}
                   disabled={!content.trim() || isLoading}
-                  className="min-h-touch-target"
+                  className="w-full min-h-touch-target"
                 >
                   {isReleasing && <Loader2 className="size-icon-sm mr-2 animate-spin" />}
                   {!isReleasing && <Sparkles className="size-icon-sm mr-2" />}
@@ -227,25 +231,27 @@ export const WorryFormSheet: React.FC<WorryFormSheetProps> = ({
                 </Button>
               )}
 
-              <Button
-                type="button"
-                variant="secondary"
-                onClick={handleClose}
-                disabled={isLoading}
-                className="flex-1 min-h-touch-target"
-              >
-                {lang.addWorry.buttons.cancel}
-              </Button>
+              <div className="flex gap-3">
+                <Button
+                  type="button"
+                  variant="secondary"
+                  onClick={handleClose}
+                  disabled={isLoading}
+                  className="flex-1 min-h-touch-target"
+                >
+                  {lang.addWorry.buttons.cancel}
+                </Button>
 
-              <Button
-                type="submit"
-                disabled={!content.trim() || isLoading}
-                className="flex-1 min-h-touch-target"
-              >
-                {isSubmitting && <Loader2 className="size-icon-sm mr-2 animate-spin" />}
-                {!isSubmitting && <SubmitIcon className="size-icon-sm mr-2" />}
-                {submitText}
-              </Button>
+                <Button
+                  type="submit"
+                  disabled={!content.trim() || isLoading}
+                  className="flex-1 min-h-touch-target"
+                >
+                  {isSubmitting && <Loader2 className="size-icon-sm mr-2 animate-spin" />}
+                  {!isSubmitting && <SubmitIcon className="size-icon-sm mr-2" />}
+                  {submitText}
+                </Button>
+              </div>
             </div>
           </form>
         </div>

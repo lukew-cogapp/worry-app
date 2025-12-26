@@ -27,8 +27,8 @@ export const Onboarding: React.FC = () => {
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4">
-      <div className="bg-card rounded-2xl max-w-md w-full p-6 shadow-2xl animate-in fade-in zoom-in duration-300 border border-border">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
+      <div className="bg-card rounded-2xl max-w-md w-full p-lg shadow-2xl animate-in fade-in zoom-in duration-300 border border-border min-h-[300px]">
         <div className="flex flex-col items-center text-center space-y-4">
           <div className="mb-2">
             <Package className="size-icon-xl text-primary" />

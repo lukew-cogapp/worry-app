@@ -438,6 +438,7 @@ if (import.meta.env.PROD) {
 4. **Type imports** - Use `import type` for type-only imports
 5. **Capacitor APIs** - Must be awaited, may fail on web
 6. **useMemo dependencies** - Include all values used in calculation
+7. **Radix scroll lock on mobile** - Radix-based components (Dialog, AlertDialog, Sheet) use scroll lock that causes layout shift on mobile, pushing content up and losing safe area insets. Use simple fixed positioning with manual `document.body.style.overflow = 'hidden'` instead. See `ConfirmationDialog.tsx` and `SnoozeSheet.tsx` for the correct pattern.
 
 ## Recent Changes
 

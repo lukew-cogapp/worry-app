@@ -192,6 +192,13 @@
     position: relative;
   }
 
+  /* Prevent body shift when dialogs/modals are open */
+  body[data-scroll-locked] {
+    position: fixed;
+    width: 100%;
+    padding-top: env(safe-area-inset-top);
+  }
+
   /* Subtle success glow animation */
   body.success-glow::before {
     content: "";

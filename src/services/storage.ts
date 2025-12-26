@@ -105,4 +105,11 @@ export async function clearAllData(): Promise<void> {
   await Preferences.remove({ key: STORAGE_KEYS.WORRIES });
   await Preferences.remove({ key: STORAGE_KEYS.PREFERENCES });
   await Preferences.remove({ key: STORAGE_KEYS.STATS });
+  await Preferences.remove({ key: STORAGE_KEYS.ONBOARDING });
+}
+
+// Clear onboarding state (to show onboarding again)
+export async function clearOnboarding(): Promise<void> {
+  logger.log('[Storage] Clearing onboarding state');
+  await Preferences.remove({ key: STORAGE_KEYS.ONBOARDING });
 }

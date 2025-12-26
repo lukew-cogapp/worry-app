@@ -26,6 +26,7 @@ interface WorryStore {
   snoozeWorry: (id: string, duration: number) => Promise<void>;
   unlockWorryNow: (id: string) => Promise<void>;
   deleteWorry: (id: string) => Promise<void>;
+  clearAllData: () => Promise<void>;
 
   // Computed
   lockedWorries: () => Worry[];
@@ -208,6 +209,27 @@ export const useWorryStore = create<WorryStore>((set, get) => ({
     const worries = get().worries.filter((w) => w.id !== id);
     set({ worries });
     await storage.saveWorries(worries);
+  },
+
+  clearAllData: async () => {
+    logger.log('[Store] Clearing all data...');
+
+    // Cancel all pending notifications
+    const worries = get().worries;
+    for (const worry of worries) {
+      if (worry.notificationId) {
+        await notifications.cancelNotification(worry.notificationId);
+      }
+    }
+
+    // Clear worries from store and storage
+    set({ worries: [] });
+    await storage.saveWorries([]);
+
+    // Reset onboarding state
+    await storage.clearOnboarding();
+
+    logger.log('[Store] All data cleared');
   },
 
   lockedWorries: () => get().worries.filter((w) => w.status === 'locked'),

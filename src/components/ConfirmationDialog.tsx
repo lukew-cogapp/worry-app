@@ -1,15 +1,9 @@
 import { Loader2 } from 'lucide-react';
 import type React from 'react';
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-} from './ui/alert-dialog';
+import { useCallback, useEffect } from 'react';
+import { lang } from '../config/language';
+import { useEscapeKey } from '../hooks/useEscapeKey';
+import { Button } from './ui/button';
 
 interface ConfirmationDialogProps {
   open: boolean;
@@ -28,6 +22,10 @@ interface ConfirmationDialogProps {
   textareaPlaceholder?: string;
 }
 
+/**
+ * Bottom sheet confirmation dialog that doesn't cause layout shift
+ * Uses simple fixed positioning like WorryFormSheet
+ */
 export const ConfirmationDialog: React.FC<ConfirmationDialogProps> = ({
   open,
   onOpenChange,
@@ -44,48 +42,116 @@ export const ConfirmationDialog: React.FC<ConfirmationDialogProps> = ({
   textareaLabel,
   textareaPlaceholder,
 }) => {
+  const handleClose = useCallback(() => {
+    if (!isLoading) {
+      onOpenChange(false);
+    }
+  }, [isLoading, onOpenChange]);
+
+  // Handle Escape key
+  useEscapeKey(handleClose, open);
+
+  // Prevent body scroll when open
+  useEffect(() => {
+    if (open) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+    }
+    return () => {
+      document.body.style.overflow = '';
+    };
+  }, [open]);
+
+  if (!open) return null;
+
   return (
-    <AlertDialog open={open} onOpenChange={onOpenChange}>
-      <AlertDialogContent>
-        <AlertDialogHeader>
-          <AlertDialogTitle>{title}</AlertDialogTitle>
-          <AlertDialogDescription>
-            {description}
-            {showTextarea && (
-              <>
-                {textareaLabel && (
-                  <label htmlFor="dialog-textarea" className="block text-sm font-medium mb-2 mt-4">
-                    {textareaLabel}
-                  </label>
-                )}
-                <textarea
-                  id="dialog-textarea"
-                  value={textareaValue}
-                  onChange={(e) => onTextareaChange?.(e.target.value)}
-                  placeholder={textareaPlaceholder}
-                  rows={3}
-                  className="w-full px-3 py-2 border border-input rounded-md bg-background text-foreground placeholder-muted-foreground focus:ring-2 focus:ring-ring focus:border-transparent resize-none"
-                />
-              </>
-            )}
-          </AlertDialogDescription>
-        </AlertDialogHeader>
-        <AlertDialogFooter>
-          <AlertDialogCancel disabled={isLoading}>{cancelText}</AlertDialogCancel>
-          <AlertDialogAction
-            onClick={onConfirm}
-            disabled={isLoading}
-            className={
-              variant === 'destructive'
-                ? 'bg-destructive text-destructive-foreground hover:bg-destructive/90'
-                : undefined
-            }
-          >
-            {isLoading && <Loader2 className="mr-2 size-icon-sm animate-spin" />}
-            {confirmText}
-          </AlertDialogAction>
-        </AlertDialogFooter>
-      </AlertDialogContent>
-    </AlertDialog>
+    <>
+      {/* Backdrop */}
+      <div
+        className="fixed inset-0 bg-black/50 z-40 transition-opacity"
+        onClick={handleClose}
+        aria-hidden="true"
+      />
+
+      {/* Bottom Sheet */}
+      <div
+        className="fixed inset-x-0 bottom-0 z-50 bg-card rounded-t-2xl shadow-dialog animate-slide-up"
+        role="alertdialog"
+        aria-modal="true"
+        aria-labelledby="dialog-title"
+        aria-describedby="dialog-description"
+      >
+        <div className="p-lg">
+          {/* Header */}
+          <div className="flex items-center justify-between mb-md">
+            <h2 id="dialog-title" className="text-xl font-bold text-foreground">
+              {title}
+            </h2>
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={handleClose}
+              disabled={isLoading}
+              className="text-muted-foreground hover:text-foreground text-2xl size-button-icon"
+              aria-label={lang.aria.close}
+            >
+              ×
+            </Button>
+          </div>
+
+          {/* Description */}
+          {description && (
+            <p id="dialog-description" className="text-muted-foreground text-sm mb-md">
+              {description}
+            </p>
+          )}
+
+          {/* Optional Textarea */}
+          {showTextarea && (
+            <div className="mb-md">
+              {textareaLabel && (
+                <label
+                  htmlFor="dialog-textarea"
+                  className="block text-sm font-medium text-foreground mb-2"
+                >
+                  {textareaLabel}
+                </label>
+              )}
+              <textarea
+                id="dialog-textarea"
+                value={textareaValue}
+                onChange={(e) => onTextareaChange?.(e.target.value)}
+                placeholder={textareaPlaceholder}
+                rows={3}
+                disabled={isLoading}
+                className="w-full px-3 py-2 border border-input rounded-md bg-background text-foreground placeholder-muted-foreground focus:ring-2 focus:ring-ring focus:border-transparent resize-none disabled:opacity-50"
+              />
+            </div>
+          )}
+
+          {/* Actions */}
+          <div className="flex gap-3">
+            <Button
+              variant="secondary"
+              onClick={handleClose}
+              disabled={isLoading}
+              className="flex-1 min-h-touch-target"
+            >
+              {cancelText}
+            </Button>
+            <Button
+              onClick={onConfirm}
+              disabled={isLoading}
+              variant={variant === 'destructive' ? 'destructive' : 'default'}
+              className="flex-1 min-h-touch-target"
+            >
+              {isLoading && <Loader2 className="mr-2 size-icon-sm animate-spin" />}
+              {confirmText}
+            </Button>
+          </div>
+        </div>
+      </div>
+    </>
   );
 };
