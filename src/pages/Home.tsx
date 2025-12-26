@@ -11,10 +11,10 @@ import { EmptyState } from '../components/EmptyState';
 import { LockAnimation } from '../components/LockAnimation';
 import { Onboarding } from '../components/Onboarding';
 import { WorryCard } from '../components/WorryCard';
-import { TOAST_DURATIONS } from '../config/constants';
-import { formatDuration, lang } from '../config/language';
+import { lang } from '../config/language';
 import { useDebugError } from '../hooks/useDebugError';
 import { useHaptics } from '../hooks/useHaptics';
+import { useWorryActions } from '../hooks/useWorryActions';
 import { usePreferencesStore } from '../store/preferencesStore';
 import { useLockedWorries, useUnlockedWorries, useWorryStore } from '../store/worryStore';
 import type { Worry } from '../types';
@@ -24,15 +24,14 @@ export const Home: React.FC = () => {
   const isLoadingWorries = useWorryStore((s) => s.isLoading);
   const addWorry = useWorryStore((s) => s.addWorry);
   const editWorry = useWorryStore((s) => s.editWorry);
-  const resolveWorry = useWorryStore((s) => s.resolveWorry);
-  const dismissWorry = useWorryStore((s) => s.dismissWorry);
-  const releaseWorry = useWorryStore((s) => s.releaseWorry);
-  const snoozeWorry = useWorryStore((s) => s.snoozeWorry);
   const defaultUnlockTime = usePreferencesStore((s) => s.preferences.defaultUnlockTime);
   const isLoadingPreferences = usePreferencesStore((s) => s.isLoading);
 
-  const { lockWorry, resolveWorry: resolveHaptic, buttonTap } = useHaptics();
+  const { lockWorry, buttonTap } = useHaptics();
   const { debugError, handleError, clearError } = useDebugError();
+
+  // Worry action handlers (resolve, dismiss, snooze, release) with loading states
+  const worryActions = useWorryActions();
 
   const [isAddSheetOpen, setIsAddSheetOpen] = useState(false);
   const [isEditSheetOpen, setIsEditSheetOpen] = useState(false);
@@ -41,32 +40,11 @@ export const Home: React.FC = () => {
   const [isAddingWorry, setIsAddingWorry] = useState(false);
   const [isReleasingWorry, setIsReleasingWorry] = useState(false);
   const [isEditingWorry, setIsEditingWorry] = useState(false);
-  const [worryToDismiss, setWorryToDismiss] = useState<string | null>(null);
-  const [worryToResolve, setWorryToResolve] = useState<string | null>(null);
-  const [resolutionNote, setResolutionNote] = useState('');
-  const [contentToRelease, setContentToRelease] = useState<string | null>(null);
-  const [loadingStates, setLoadingStates] = useState<
-    Record<string, { resolving?: boolean; snoozing?: boolean; dismissing?: boolean }>
-  >({});
-  const [isShowingSuccessGlow, setIsShowingSuccessGlow] = useState(false);
 
   // Optimized selectors with shallow comparison (prevents unnecessary re-renders)
   const unlockedWorries = useUnlockedWorries();
   const lockedWorries = useLockedWorries();
   const hasWorries = worries.length > 0;
-
-  // Show success glow animation with race condition protection
-  const showSuccessGlow = () => {
-    if (isShowingSuccessGlow) return; // Prevent overlapping animations
-
-    setIsShowingSuccessGlow(true);
-    document.body.classList.add('success-glow');
-
-    setTimeout(() => {
-      document.body.classList.remove('success-glow');
-      setIsShowingSuccessGlow(false);
-    }, 1000);
-  };
 
   const handleAddWorry = async (worry: { content: string; action?: string; unlockAt: string }) => {
     setIsAddingWorry(true);
@@ -97,134 +75,25 @@ export const Home: React.FC = () => {
   };
 
   const handleResolveClick = (id: string) => {
-    setWorryToResolve(id);
-    setResolutionNote('');
-  };
-
-  const confirmResolve = async () => {
-    if (!worryToResolve) return;
-
-    setLoadingStates((prev) => ({
-      ...prev,
-      [worryToResolve]: { ...prev[worryToResolve], resolving: true },
-    }));
-    try {
-      await resolveWorry(worryToResolve, resolutionNote.trim() || undefined);
-      await resolveHaptic();
-
-      showSuccessGlow();
-
-      toast.success(lang.toasts.success.worryResolved);
-      setWorryToResolve(null);
-      setResolutionNote('');
-    } catch (error) {
-      handleError(error, {
-        operation: 'resolveWorry',
-        worryId: worryToResolve,
-        hasNote: !!resolutionNote.trim(),
-      });
-
-      toast.error(lang.toasts.error.resolveWorry, {
-        action: {
-          label: 'Retry',
-          onClick: confirmResolve,
-        },
-      });
-    } finally {
-      setLoadingStates((prev) => ({
-        ...prev,
-        [worryToResolve]: { ...prev[worryToResolve], resolving: false },
-      }));
-    }
-  };
-
-  const handleSnooze = async (id: string, durationMs: number) => {
-    setLoadingStates((prev) => ({ ...prev, [id]: { ...prev[id], snoozing: true } }));
-    try {
-      await snoozeWorry(id, durationMs);
-      await lockWorry();
-      toast.success(lang.toasts.success.snoozed(formatDuration(durationMs)));
-    } catch (error) {
-      handleError(error, {
-        operation: 'snoozeWorry',
-        worryId: id,
-        durationMs,
-      });
-
-      toast.error(lang.toasts.error.snoozeWorry, {
-        action: {
-          label: 'Retry',
-          onClick: () => handleSnooze(id, durationMs),
-        },
-      });
-    } finally {
-      setLoadingStates((prev) => ({ ...prev, [id]: { ...prev[id], snoozing: false } }));
-    }
+    worryActions.setWorryToResolve(id);
+    worryActions.setResolutionNote('');
   };
 
   const handleDismissClick = (id: string) => {
-    setWorryToDismiss(id);
-  };
-
-  const confirmDismiss = async () => {
-    if (!worryToDismiss) return;
-
-    setLoadingStates((prev) => ({
-      ...prev,
-      [worryToDismiss]: { ...prev[worryToDismiss], dismissing: true },
-    }));
-    try {
-      await dismissWorry(worryToDismiss);
-      toast.success(lang.toasts.success.worryDismissed);
-      setWorryToDismiss(null);
-    } catch (error) {
-      handleError(error, {
-        operation: 'dismissWorry',
-        worryId: worryToDismiss,
-      });
-
-      toast.error(lang.toasts.error.dismissWorry, {
-        action: {
-          label: 'Retry',
-          onClick: confirmDismiss,
-        },
-      });
-    } finally {
-      setLoadingStates((prev) => ({
-        ...prev,
-        [worryToDismiss]: { ...prev[worryToDismiss], dismissing: false },
-      }));
-    }
+    worryActions.setWorryToDismiss(id);
   };
 
   const handleReleaseClick = (content: string) => {
-    setContentToRelease(content);
+    worryActions.setContentToRelease(content);
   };
 
   const confirmRelease = async () => {
-    if (!contentToRelease) return;
+    if (!worryActions.contentToRelease) return;
 
     setIsReleasingWorry(true);
     try {
-      await releaseWorry(contentToRelease);
-
+      await worryActions.handleRelease();
       setIsAddSheetOpen(false);
-      setContentToRelease(null);
-      toast.success(lang.toasts.success.worryReleased, {
-        duration: TOAST_DURATIONS.LONG,
-      });
-    } catch (error) {
-      handleError(error, {
-        operation: 'releaseWorry',
-        contentLength: contentToRelease.length,
-      });
-
-      toast.error(lang.toasts.error.releaseWorry, {
-        action: {
-          label: 'Retry',
-          onClick: confirmRelease,
-        },
-      });
     } finally {
       setIsReleasingWorry(false);
     }
@@ -343,12 +212,12 @@ export const Home: React.FC = () => {
                   <WorryCard
                     worry={worry}
                     onResolve={handleResolveClick}
-                    onSnooze={handleSnooze}
+                    onSnooze={worryActions.handleSnooze}
                     onDismiss={handleDismissClick}
                     onEdit={handleOpenEdit}
-                    isResolving={loadingStates[worry.id]?.resolving}
-                    isSnoozing={loadingStates[worry.id]?.snoozing}
-                    isDismissing={loadingStates[worry.id]?.dismissing}
+                    isResolving={worryActions.loadingStates[worry.id]?.resolving}
+                    isSnoozing={worryActions.loadingStates[worry.id]?.snoozing}
+                    isDismissing={worryActions.loadingStates[worry.id]?.dismissing}
                   />
                 </div>
               ))}
@@ -438,42 +307,42 @@ export const Home: React.FC = () => {
 
       {/* Resolve Dialog */}
       <ConfirmationDialog
-        open={!!worryToResolve}
+        open={!!worryActions.worryToResolve}
         onOpenChange={(open) => {
           if (!open) {
-            setWorryToResolve(null);
-            setResolutionNote('');
+            worryActions.setWorryToResolve(null);
+            worryActions.setResolutionNote('');
           }
         }}
         title={lang.resolveWorry.title}
         description=""
         confirmText={lang.resolveWorry.confirm}
         cancelText={lang.resolveWorry.cancel}
-        onConfirm={confirmResolve}
-        isLoading={loadingStates[worryToResolve || '']?.resolving}
+        onConfirm={worryActions.handleResolve}
+        isLoading={worryActions.loadingStates[worryActions.worryToResolve || '']?.resolving}
         showTextarea
-        textareaValue={resolutionNote}
-        onTextareaChange={setResolutionNote}
+        textareaValue={worryActions.resolutionNote}
+        onTextareaChange={worryActions.setResolutionNote}
         textareaLabel={lang.resolveWorry.noteLabel}
         textareaPlaceholder={lang.resolveWorry.notePlaceholder}
       />
 
       {/* Dismiss Confirmation Dialog */}
       <ConfirmationDialog
-        open={!!worryToDismiss}
-        onOpenChange={(open) => !open && setWorryToDismiss(null)}
+        open={!!worryActions.worryToDismiss}
+        onOpenChange={(open) => !open && worryActions.setWorryToDismiss(null)}
         title={lang.history.dismissDialog.title}
         description={lang.history.dismissDialog.description}
         confirmText={lang.history.dismissDialog.confirm}
         cancelText={lang.history.dismissDialog.cancel}
-        onConfirm={confirmDismiss}
-        isLoading={loadingStates[worryToDismiss || '']?.dismissing}
+        onConfirm={worryActions.handleDismiss}
+        isLoading={worryActions.loadingStates[worryActions.worryToDismiss || '']?.dismissing}
       />
 
       {/* Release Confirmation Dialog */}
       <ConfirmationDialog
-        open={!!contentToRelease}
-        onOpenChange={(open) => !open && setContentToRelease(null)}
+        open={!!worryActions.contentToRelease}
+        onOpenChange={(open) => !open && worryActions.setContentToRelease(null)}
         title={lang.history.releaseDialog.title}
         description={lang.history.releaseDialog.description}
         confirmText={lang.history.releaseDialog.confirm}
