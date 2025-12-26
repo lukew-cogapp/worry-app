@@ -143,6 +143,13 @@ const WorryCardComponent: React.FC<WorryCardProps> = ({
                   {worry.resolutionNote}
                 </p>
               )}
+              {worry.category && (
+                <div className="mt-xs">
+                  <Badge variant="outline" className="text-xs">
+                    {lang.categories[worry.category]}
+                  </Badge>
+                </div>
+              )}
             </div>
             <div className="flex items-center gap-xs">
               {getStatusBadge()}

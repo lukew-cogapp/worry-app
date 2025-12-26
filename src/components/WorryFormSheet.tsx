@@ -13,7 +13,6 @@ import { Button } from './ui/button';
 import { Checkbox } from './ui/checkbox';
 import { Input } from './ui/input';
 import { Label } from './ui/label';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './ui/select';
 import { Textarea } from './ui/textarea';
 
 type Mode = 'add' | 'edit';
@@ -276,29 +275,25 @@ export const WorryFormSheet: React.FC<WorryFormSheetProps> = ({
         </div>
 
         <div>
-          <label
-            htmlFor="worry-category"
-            className="block text-sm font-medium text-foreground mb-2"
-          >
+          <div className="block text-sm font-medium text-foreground mb-2">
             {lang.addWorry.fields.category.label}{' '}
             <span className="text-muted-foreground">{lang.addWorry.fields.category.optional}</span>
-          </label>
-          <Select
-            value={category}
-            onValueChange={(value) => setCategory(value as WorryCategory)}
-            disabled={isLoading}
-          >
-            <SelectTrigger id="worry-category" className="bg-background">
-              <SelectValue placeholder={lang.addWorry.fields.category.placeholder} />
-            </SelectTrigger>
-            <SelectContent>
-              {WORRY_CATEGORIES.map((cat) => (
-                <SelectItem key={cat} value={cat}>
-                  {lang.categories[cat as WorryCategory]}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
+          </div>
+          <div className="flex flex-wrap gap-2">
+            {WORRY_CATEGORIES.map((cat) => (
+              <Button
+                key={cat}
+                type="button"
+                variant={category === cat ? 'default' : 'outline'}
+                size="sm"
+                onClick={() => setCategory(category === cat ? '' : (cat as WorryCategory))}
+                disabled={isLoading}
+                className="rounded-full px-3 py-1 h-8 text-sm"
+              >
+                {lang.categories[cat as WorryCategory]}
+              </Button>
+            ))}
+          </div>
         </div>
 
         <div>
