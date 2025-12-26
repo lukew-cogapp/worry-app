@@ -2,8 +2,12 @@ import { useState } from 'react';
 import { toast } from 'sonner';
 import { lang } from '../config/language';
 import type { Worry } from '../types';
+import { toastErrorWithRetry } from '../utils/toast';
 import { useDebugError } from './useDebugError';
 import { useHaptics } from './useHaptics';
+import { useLoadingStates } from './useLoadingStates';
+
+type HistoryAction = 'unlocking' | 'dismissing';
 
 /**
  * Custom hook for History page action handlers
@@ -21,6 +25,7 @@ export function useHistoryActions(
 ) {
   const { unlockWorry: unlockHaptic } = useHaptics();
   const { handleError } = useDebugError();
+  const { loadingStates, setLoading, clearLoading } = useLoadingStates<HistoryAction>();
 
   // Dialog states
   const [worryToDelete, setWorryToDelete] = useState<string | null>(null);
@@ -30,13 +35,10 @@ export function useHistoryActions(
 
   // Loading states
   const [isEditingWorry, setIsEditingWorry] = useState(false);
-  const [loadingStates, setLoadingStates] = useState<
-    Record<string, { unlocking?: boolean; dismissing?: boolean }>
-  >({});
   const [isDeleting, setIsDeleting] = useState(false);
 
   const handleUnlockNow = async (id: string) => {
-    setLoadingStates((prev) => ({ ...prev, [id]: { ...prev[id], unlocking: true } }));
+    setLoading(id, 'unlocking');
     try {
       await unlockWorryNow(id);
       await unlockHaptic();
@@ -47,14 +49,9 @@ export function useHistoryActions(
         worryId: id,
       });
 
-      toast.error(lang.toasts.error.unlockWorry, {
-        action: {
-          label: 'Retry',
-          onClick: () => handleUnlockNow(id),
-        },
-      });
+      toastErrorWithRetry(lang.toasts.error.unlockWorry, () => handleUnlockNow(id));
     } finally {
-      setLoadingStates((prev) => ({ ...prev, [id]: { ...prev[id], unlocking: false } }));
+      clearLoading(id, 'unlocking');
     }
   };
 
@@ -65,10 +62,7 @@ export function useHistoryActions(
   const confirmDismiss = async () => {
     if (!worryToDismiss) return;
 
-    setLoadingStates((prev) => ({
-      ...prev,
-      [worryToDismiss]: { ...prev[worryToDismiss], dismissing: true },
-    }));
+    setLoading(worryToDismiss, 'dismissing');
     try {
       await dismissWorry(worryToDismiss);
       toast.success(lang.toasts.success.worryDismissed);
@@ -79,17 +73,9 @@ export function useHistoryActions(
         worryId: worryToDismiss,
       });
 
-      toast.error(lang.toasts.error.dismissWorry, {
-        action: {
-          label: 'Retry',
-          onClick: confirmDismiss,
-        },
-      });
+      toastErrorWithRetry(lang.toasts.error.dismissWorry, confirmDismiss);
     } finally {
-      setLoadingStates((prev) => ({
-        ...prev,
-        [worryToDismiss]: { ...prev[worryToDismiss], dismissing: false },
-      }));
+      clearLoading(worryToDismiss, 'dismissing');
     }
   };
 
@@ -107,12 +93,7 @@ export function useHistoryActions(
         worryId: worryToDelete,
       });
 
-      toast.error(lang.toasts.error.deleteWorry, {
-        action: {
-          label: 'Retry',
-          onClick: handleDelete,
-        },
-      });
+      toastErrorWithRetry(lang.toasts.error.deleteWorry, handleDelete);
     } finally {
       setIsDeleting(false);
     }
@@ -138,12 +119,7 @@ export function useHistoryActions(
         },
       });
 
-      toast.error(lang.toasts.error.updateWorry, {
-        action: {
-          label: 'Retry',
-          onClick: () => handleEdit(id, updates),
-        },
-      });
+      toastErrorWithRetry(lang.toasts.error.updateWorry, () => handleEdit(id, updates));
     } finally {
       setIsEditingWorry(false);
     }

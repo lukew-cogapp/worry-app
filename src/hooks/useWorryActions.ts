@@ -2,8 +2,12 @@ import { useState } from 'react';
 import { toast } from 'sonner';
 import { formatDuration, lang } from '../config/language';
 import { useWorryStore } from '../store/worryStore';
+import { toastErrorWithRetry } from '../utils/toast';
 import { useDebugError } from './useDebugError';
 import { useHaptics } from './useHaptics';
+import { useLoadingStates } from './useLoadingStates';
+
+type WorryAction = 'resolving' | 'snoozing' | 'dismissing';
 
 /**
  * Custom hook for managing worry actions (resolve, dismiss, snooze, release)
@@ -17,10 +21,7 @@ export function useWorryActions() {
 
   const { lockWorry, resolveWorry: resolveHaptic } = useHaptics();
   const { handleError } = useDebugError();
-
-  const [loadingStates, setLoadingStates] = useState<
-    Record<string, { resolving?: boolean; snoozing?: boolean; dismissing?: boolean }>
-  >({});
+  const { loadingStates, setLoading, clearLoading } = useLoadingStates<WorryAction>();
 
   const [worryToResolve, setWorryToResolve] = useState<string | null>(null);
   const [resolutionNote, setResolutionNote] = useState('');
@@ -44,10 +45,7 @@ export function useWorryActions() {
   const handleResolve = async () => {
     if (!worryToResolve) return;
 
-    setLoadingStates((prev) => ({
-      ...prev,
-      [worryToResolve]: { ...prev[worryToResolve], resolving: true },
-    }));
+    setLoading(worryToResolve, 'resolving');
 
     try {
       await resolveWorry(worryToResolve, resolutionNote.trim() || undefined);
@@ -65,22 +63,14 @@ export function useWorryActions() {
         hasNote: !!resolutionNote.trim(),
       });
 
-      toast.error(lang.toasts.error.resolveWorry, {
-        action: {
-          label: 'Retry',
-          onClick: handleResolve,
-        },
-      });
+      toastErrorWithRetry(lang.toasts.error.resolveWorry, handleResolve);
     } finally {
-      setLoadingStates((prev) => ({
-        ...prev,
-        [worryToResolve]: { ...prev[worryToResolve], resolving: false },
-      }));
+      clearLoading(worryToResolve, 'resolving');
     }
   };
 
   const handleSnooze = async (id: string, durationMs: number) => {
-    setLoadingStates((prev) => ({ ...prev, [id]: { ...prev[id], snoozing: true } }));
+    setLoading(id, 'snoozing');
 
     try {
       await snoozeWorry(id, durationMs);
@@ -93,24 +83,16 @@ export function useWorryActions() {
         durationMs,
       });
 
-      toast.error(lang.toasts.error.snoozeWorry, {
-        action: {
-          label: 'Retry',
-          onClick: () => handleSnooze(id, durationMs),
-        },
-      });
+      toastErrorWithRetry(lang.toasts.error.snoozeWorry, () => handleSnooze(id, durationMs));
     } finally {
-      setLoadingStates((prev) => ({ ...prev, [id]: { ...prev[id], snoozing: false } }));
+      clearLoading(id, 'snoozing');
     }
   };
 
   const handleDismiss = async () => {
     if (!worryToDismiss) return;
 
-    setLoadingStates((prev) => ({
-      ...prev,
-      [worryToDismiss]: { ...prev[worryToDismiss], dismissing: true },
-    }));
+    setLoading(worryToDismiss, 'dismissing');
 
     try {
       await dismissWorry(worryToDismiss);
@@ -122,17 +104,9 @@ export function useWorryActions() {
         worryId: worryToDismiss,
       });
 
-      toast.error(lang.toasts.error.dismissWorry, {
-        action: {
-          label: 'Retry',
-          onClick: handleDismiss,
-        },
-      });
+      toastErrorWithRetry(lang.toasts.error.dismissWorry, handleDismiss);
     } finally {
-      setLoadingStates((prev) => ({
-        ...prev,
-        [worryToDismiss]: { ...prev[worryToDismiss], dismissing: false },
-      }));
+      clearLoading(worryToDismiss, 'dismissing');
     }
   };
 
@@ -149,12 +123,7 @@ export function useWorryActions() {
         contentLength: contentToRelease.length,
       });
 
-      toast.error(lang.toasts.error.releaseWorry, {
-        action: {
-          label: 'Retry',
-          onClick: handleRelease,
-        },
-      });
+      toastErrorWithRetry(lang.toasts.error.releaseWorry, handleRelease);
     }
   };
 

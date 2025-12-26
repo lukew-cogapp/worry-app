@@ -1,8 +1,8 @@
 import { BarChart3, TrendingDown, XCircle } from 'lucide-react';
 import type React from 'react';
 import { useMemo } from 'react';
-import { Link } from 'react-router-dom';
 import { CircularProgress } from '../components/CircularProgress';
+import { PageHeader } from '../components/PageHeader';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../components/ui/card';
 import { lang } from '../config/language';
 import { useWorryStore } from '../store/worryStore';
@@ -72,32 +72,7 @@ export const Insights: React.FC = () => {
 
   return (
     <div className="flex flex-col min-h-screen bg-background">
-      {/* Header */}
-      <header className="bg-card border-b border-border">
-        <div className="max-w-4xl mx-auto px-4 py-4 flex items-center gap-4">
-          <Link
-            to="/"
-            className="text-muted-foreground hover:text-foreground transition-colors"
-            aria-label={lang.aria.back}
-          >
-            <svg className="size-icon-md" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <title>Back</title>
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M15 19l-7-7 7-7"
-              />
-            </svg>
-          </Link>
-          <div>
-            <h1 className="text-3xl font-bold text-foreground tracking-tight">
-              {lang.insights.title}
-            </h1>
-            <p className="text-sm text-muted-foreground">{lang.insights.subtitle}</p>
-          </div>
-        </div>
-      </header>
+      <PageHeader title={lang.insights.title} subtitle={lang.insights.subtitle} />
 
       {/* Content */}
       <main className="flex-1 overflow-auto">

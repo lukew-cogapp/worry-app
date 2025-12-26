@@ -1,5 +1,5 @@
 import type React from 'react';
-import { Link } from 'react-router-dom';
+import { PageHeader } from '../components/PageHeader';
 import { Label } from '../components/ui/label';
 import { Separator } from '../components/ui/separator';
 import { Switch } from '../components/ui/switch';
@@ -13,32 +13,7 @@ export const Settings: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-background">
-      {/* Header */}
-      <header className="bg-card border-b border-border">
-        <div className="max-w-4xl mx-auto px-4 py-4 flex items-center gap-4">
-          <Link
-            to="/"
-            className="text-muted-foreground hover:text-foreground transition-colors"
-            aria-label={lang.aria.back}
-          >
-            <svg className="size-icon-md" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <title>Back</title>
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M15 19l-7-7 7-7"
-              />
-            </svg>
-          </Link>
-          <div>
-            <h1 className="text-3xl font-bold text-foreground tracking-tight">
-              {lang.settings.title}
-            </h1>
-            <p className="text-sm text-muted-foreground">{lang.settings.subtitle}</p>
-          </div>
-        </div>
-      </header>
+      <PageHeader title={lang.settings.title} subtitle={lang.settings.subtitle} />
 
       {/* Main Content */}
       <main className="max-w-4xl mx-auto px-4 py-6">

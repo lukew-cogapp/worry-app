@@ -1,10 +1,10 @@
 import type React from 'react';
 import { useMemo, useState } from 'react';
-import { Link } from 'react-router-dom';
 import { ConfirmationDialog } from '../components/ConfirmationDialog';
 import { DebugErrorDialog } from '../components/DebugErrorDialog';
 import { EditWorrySheet } from '../components/EditWorrySheet';
 import { EmptyState } from '../components/EmptyState';
+import { PageHeader } from '../components/PageHeader';
 import {
   Select,
   SelectContent,
@@ -73,32 +73,7 @@ export const History: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-background">
-      {/* Header */}
-      <header className="bg-card border-b border-border">
-        <div className="max-w-4xl mx-auto px-4 py-4 flex items-center gap-4">
-          <Link
-            to="/"
-            className="text-muted-foreground hover:text-foreground transition-colors"
-            aria-label={lang.aria.back}
-          >
-            <svg className="size-icon-md" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <title>Back</title>
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M15 19l-7-7 7-7"
-              />
-            </svg>
-          </Link>
-          <div>
-            <h1 className="text-3xl font-bold text-foreground tracking-tight">
-              {lang.history.title}
-            </h1>
-            <p className="text-sm text-muted-foreground">{lang.history.subtitle}</p>
-          </div>
-        </div>
-      </header>
+      <PageHeader title={lang.history.title} subtitle={lang.history.subtitle} />
 
       {/* Filters */}
       <div className="bg-card border-b border-border">
