@@ -39,9 +39,11 @@ function App() {
 
       // Capacitor-specific features - may fail on web, which is fine
       try {
-        // Enable privacy screen to protect sensitive content
+        // Enable privacy screen in production only
         // Blurs app in task switcher and prevents screenshots
-        await PrivacyScreen.enable();
+        if (import.meta.env.PROD) {
+          await PrivacyScreen.enable();
+        }
 
         // Set system bars to dark style (light content on dark background)
         // Provides cohesive dark mode experience
