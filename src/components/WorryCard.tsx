@@ -3,6 +3,7 @@ import {
   Edit3,
   Loader2,
   Lock,
+  MessageCircle,
   Package,
   Sparkles,
   Trash2,
@@ -143,11 +144,19 @@ const WorryCardComponent: React.FC<WorryCardProps> = ({
                   {worry.resolutionNote}
                 </p>
               )}
-              {worry.category && (
-                <div className="mt-xs">
-                  <Badge variant="outline" className="text-xs">
-                    {lang.categories[worry.category]}
-                  </Badge>
+              {(worry.category || worry.talkedToSomeone) && (
+                <div className="mt-xs flex flex-wrap gap-2">
+                  {worry.category && (
+                    <Badge variant="outline" className="text-xs">
+                      {lang.categories[worry.category]}
+                    </Badge>
+                  )}
+                  {worry.talkedToSomeone && (
+                    <Badge variant="outline" className="text-xs">
+                      <MessageCircle className="size-icon-xs mr-1" />
+                      {lang.addWorry.fields.talkedToSomeone.badge}
+                    </Badge>
+                  )}
                 </div>
               )}
             </div>

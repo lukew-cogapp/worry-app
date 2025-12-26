@@ -61,6 +61,7 @@ export const lang = {
       },
       talkedToSomeone: {
         label: 'Have you talked to someone about this?',
+        badge: 'Discussed',
       },
     },
     buttons: {
