@@ -1,7 +1,6 @@
 import type React from 'react';
 import { useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { toast } from 'sonner';
 import { ConfirmationDialog } from '../components/ConfirmationDialog';
 import { DebugErrorDialog } from '../components/DebugErrorDialog';
 import { EditWorrySheet } from '../components/EditWorrySheet';
@@ -16,10 +15,9 @@ import {
 import { WorryCard } from '../components/WorryCard';
 import { lang } from '../config/language';
 import { useDebugError } from '../hooks/useDebugError';
-import { useHaptics } from '../hooks/useHaptics';
+import { useHistoryActions } from '../hooks/useHistoryActions';
 import { usePreferencesStore } from '../store/preferencesStore';
 import { useWorryStore } from '../store/worryStore';
-import type { Worry } from '../types';
 
 type FilterType = 'all' | 'locked' | 'unlocked' | 'resolved' | 'dismissed' | 'released';
 
@@ -31,20 +29,20 @@ export const History: React.FC = () => {
   const deleteWorry = useWorryStore((s) => s.deleteWorry);
   const defaultUnlockTime = usePreferencesStore((s) => s.preferences.defaultUnlockTime);
 
-  const { unlockWorry: unlockHaptic } = useHaptics();
-  const { debugError, handleError, clearError } = useDebugError();
+  const { debugError, clearError } = useDebugError();
 
+  // UI state for filtering and search
   const [filter, setFilter] = useState<FilterType>('all');
   const [searchQuery, setSearchQuery] = useState('');
-  const [worryToDelete, setWorryToDelete] = useState<string | null>(null);
-  const [worryToDismiss, setWorryToDismiss] = useState<string | null>(null);
-  const [isEditSheetOpen, setIsEditSheetOpen] = useState(false);
-  const [worryToEdit, setWorryToEdit] = useState<Worry | null>(null);
-  const [isEditingWorry, setIsEditingWorry] = useState(false);
-  const [loadingStates, setLoadingStates] = useState<
-    Record<string, { unlocking?: boolean; dismissing?: boolean }>
-  >({});
-  const [isDeleting, setIsDeleting] = useState(false);
+
+  // History action handlers (unlock, dismiss, delete, edit) with loading states
+  const historyActions = useHistoryActions(
+    unlockWorryNow,
+    dismissWorry,
+    deleteWorry,
+    editWorry,
+    worries
+  );
 
   const filteredWorries = useMemo(
     () =>
@@ -63,128 +61,6 @@ export const History: React.FC = () => {
         ),
     [worries, filter, searchQuery]
   );
-
-  const handleUnlockNow = async (id: string) => {
-    setLoadingStates((prev) => ({ ...prev, [id]: { ...prev[id], unlocking: true } }));
-    try {
-      await unlockWorryNow(id);
-      await unlockHaptic();
-      toast.success(lang.toasts.success.worryUnlocked);
-    } catch (error) {
-      handleError(error, {
-        operation: 'unlockWorryNow',
-        worryId: id,
-      });
-
-      toast.error(lang.toasts.error.unlockWorry, {
-        action: {
-          label: 'Retry',
-          onClick: () => handleUnlockNow(id),
-        },
-      });
-    } finally {
-      setLoadingStates((prev) => ({ ...prev, [id]: { ...prev[id], unlocking: false } }));
-    }
-  };
-
-  const handleDismissClick = (id: string) => {
-    setWorryToDismiss(id);
-  };
-
-  const confirmDismiss = async () => {
-    if (!worryToDismiss) return;
-
-    setLoadingStates((prev) => ({
-      ...prev,
-      [worryToDismiss]: { ...prev[worryToDismiss], dismissing: true },
-    }));
-    try {
-      await dismissWorry(worryToDismiss);
-      toast.success(lang.toasts.success.worryDismissed);
-      setWorryToDismiss(null);
-    } catch (error) {
-      handleError(error, {
-        operation: 'dismissWorry',
-        worryId: worryToDismiss,
-      });
-
-      toast.error(lang.toasts.error.dismissWorry, {
-        action: {
-          label: 'Retry',
-          onClick: confirmDismiss,
-        },
-      });
-    } finally {
-      setLoadingStates((prev) => ({
-        ...prev,
-        [worryToDismiss]: { ...prev[worryToDismiss], dismissing: false },
-      }));
-    }
-  };
-
-  const handleDelete = async () => {
-    if (!worryToDelete) return;
-
-    setIsDeleting(true);
-    try {
-      await deleteWorry(worryToDelete);
-      toast.success(lang.toasts.success.worryDeleted);
-      setWorryToDelete(null);
-    } catch (error) {
-      handleError(error, {
-        operation: 'deleteWorry',
-        worryId: worryToDelete,
-      });
-
-      toast.error(lang.toasts.error.deleteWorry, {
-        action: {
-          label: 'Retry',
-          onClick: handleDelete,
-        },
-      });
-    } finally {
-      setIsDeleting(false);
-    }
-  };
-
-  const handleEdit = async (
-    id: string,
-    updates: { content?: string; action?: string; unlockAt?: string }
-  ) => {
-    setIsEditingWorry(true);
-    try {
-      await editWorry(id, updates);
-      toast.success(lang.toasts.success.worryUpdated);
-      setIsEditSheetOpen(false);
-    } catch (error) {
-      handleError(error, {
-        operation: 'editWorry',
-        worryId: id,
-        updates: {
-          hasContent: !!updates.content,
-          hasAction: !!updates.action,
-          hasUnlockAt: !!updates.unlockAt,
-        },
-      });
-
-      toast.error(lang.toasts.error.updateWorry, {
-        action: {
-          label: 'Retry',
-          onClick: () => handleEdit(id, updates),
-        },
-      });
-    } finally {
-      setIsEditingWorry(false);
-    }
-  };
-
-  const handleOpenEdit = (id: string) => {
-    const worry = worries.find((w) => w.id === id);
-    if (worry) {
-      setWorryToEdit(worry);
-      setIsEditSheetOpen(true);
-    }
-  };
 
   const counts = {
     all: worries.length,
@@ -305,16 +181,20 @@ export const History: React.FC = () => {
                 <WorryCard
                   key={worry.id}
                   worry={worry}
-                  onUnlockNow={worry.status === 'locked' ? handleUnlockNow : undefined}
-                  onDismiss={worry.status === 'locked' ? handleDismissClick : undefined}
-                  onEdit={handleOpenEdit}
+                  onUnlockNow={
+                    worry.status === 'locked' ? historyActions.handleUnlockNow : undefined
+                  }
+                  onDismiss={
+                    worry.status === 'locked' ? historyActions.handleDismissClick : undefined
+                  }
+                  onEdit={historyActions.handleOpenEdit}
                   onDelete={
                     worry.status === 'resolved' || worry.status === 'dismissed'
-                      ? (id) => setWorryToDelete(id)
+                      ? (id) => historyActions.setWorryToDelete(id)
                       : undefined
                   }
-                  isUnlocking={loadingStates[worry.id]?.unlocking}
-                  isDismissing={loadingStates[worry.id]?.dismissing}
+                  isUnlocking={historyActions.loadingStates[worry.id]?.unlocking}
+                  isDismissing={historyActions.loadingStates[worry.id]?.dismissing}
                 />
               ))}
           </div>
@@ -323,40 +203,37 @@ export const History: React.FC = () => {
 
       {/* Delete Confirmation Dialog */}
       <ConfirmationDialog
-        open={!!worryToDelete}
-        onOpenChange={(open) => !open && setWorryToDelete(null)}
+        open={!!historyActions.worryToDelete}
+        onOpenChange={(open) => !open && historyActions.setWorryToDelete(null)}
         title={lang.history.deleteDialog.title}
         description={lang.history.deleteDialog.description}
         confirmText={lang.history.deleteDialog.confirm}
         cancelText={lang.history.deleteDialog.cancel}
-        onConfirm={handleDelete}
-        isLoading={isDeleting}
+        onConfirm={historyActions.handleDelete}
+        isLoading={historyActions.isDeleting}
         variant="destructive"
       />
 
       {/* Dismiss Confirmation Dialog */}
       <ConfirmationDialog
-        open={!!worryToDismiss}
-        onOpenChange={(open) => !open && setWorryToDismiss(null)}
+        open={!!historyActions.worryToDismiss}
+        onOpenChange={(open) => !open && historyActions.setWorryToDismiss(null)}
         title={lang.history.dismissDialog.title}
         description={lang.history.dismissDialog.description}
         confirmText={lang.history.dismissDialog.confirm}
         cancelText={lang.history.dismissDialog.cancel}
-        onConfirm={confirmDismiss}
-        isLoading={loadingStates[worryToDismiss || '']?.dismissing}
+        onConfirm={historyActions.confirmDismiss}
+        isLoading={historyActions.loadingStates[historyActions.worryToDismiss || '']?.dismissing}
       />
 
       {/* Edit Worry Sheet */}
       <EditWorrySheet
-        isOpen={isEditSheetOpen}
-        onClose={() => {
-          setIsEditSheetOpen(false);
-          setWorryToEdit(null);
-        }}
-        onEdit={handleEdit}
-        worry={worryToEdit}
+        isOpen={historyActions.isEditSheetOpen}
+        onClose={historyActions.handleCloseEdit}
+        onEdit={historyActions.handleEdit}
+        worry={historyActions.worryToEdit}
         defaultTime={defaultUnlockTime}
-        isSubmitting={isEditingWorry}
+        isSubmitting={historyActions.isEditingWorry}
       />
 
       <DebugErrorDialog error={debugError} onClose={clearError} />
