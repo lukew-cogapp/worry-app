@@ -142,7 +142,7 @@ export const Home: React.FC = () => {
         <div className="max-w-4xl mx-auto px-md py-md flex items-center justify-between">
           <div>
             <h1 className="text-3xl font-bold text-foreground tracking-tight">{lang.app.name}</h1>
-            <p className="text-sm text-muted-foreground">{lang.app.tagline}</p>
+            <p className="text-sm text-muted-foreground leading-relaxed">{lang.app.tagline}</p>
           </div>
           <div className="flex items-center gap-md">
             <Link

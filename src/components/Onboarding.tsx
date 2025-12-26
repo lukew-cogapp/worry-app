@@ -51,7 +51,9 @@ export const Onboarding: React.FC = () => {
             {lang.onboarding.title}
           </h2>
 
-          <p className="text-muted-foreground italic text-sm">{lang.onboarding.quote}</p>
+          <p className="text-base text-muted-foreground italic leading-relaxed">
+            {lang.onboarding.quote}
+          </p>
 
           <div className="space-y-sm text-left w-full">
             <div className="flex gap-sm">
@@ -62,7 +64,7 @@ export const Onboarding: React.FC = () => {
                 <h3 className="font-semibold text-foreground">
                   {lang.onboarding.features.lock.title}
                 </h3>
-                <p className="text-sm text-muted-foreground">
+                <p className="text-sm text-muted-foreground leading-relaxed">
                   {lang.onboarding.features.lock.description}
                 </p>
               </div>
@@ -76,7 +78,7 @@ export const Onboarding: React.FC = () => {
                 <h3 className="font-semibold text-foreground">
                   {lang.onboarding.features.remind.title}
                 </h3>
-                <p className="text-sm text-muted-foreground">
+                <p className="text-sm text-muted-foreground leading-relaxed">
                   {lang.onboarding.features.remind.description}
                 </p>
               </div>
@@ -90,7 +92,7 @@ export const Onboarding: React.FC = () => {
                 <h3 className="font-semibold text-foreground">
                   {lang.onboarding.features.calm.title}
                 </h3>
-                <p className="text-sm text-muted-foreground">
+                <p className="text-sm text-muted-foreground leading-relaxed">
                   {lang.onboarding.features.calm.description}
                 </p>
               </div>

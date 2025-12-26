@@ -26,7 +26,7 @@ export const PageHeader: React.FC<PageHeaderProps> = ({ title, subtitle, backTo 
         </Link>
         <div>
           <h1 className="text-3xl font-bold text-foreground tracking-tight">{title}</h1>
-          {subtitle && <p className="text-sm text-muted-foreground">{subtitle}</p>}
+          {subtitle && <p className="text-sm text-muted-foreground leading-relaxed">{subtitle}</p>}
         </div>
       </div>
     </header>

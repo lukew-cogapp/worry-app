@@ -133,12 +133,12 @@ const WorryCardComponent: React.FC<WorryCardProps> = ({
             <div className="flex-1 min-w-0">
               <p className="text-foreground font-medium line-clamp-2">{worry.content}</p>
               {worry.action && (
-                <p className="text-sm text-muted-foreground mt-xs">
+                <p className="text-sm text-muted-foreground mt-xs leading-relaxed">
                   <span className="font-medium">{lang.worryCard.labels.action}</span> {worry.action}
                 </p>
               )}
               {worry.resolutionNote && (
-                <p className="text-sm text-muted-foreground mt-xs">
+                <p className="text-sm text-muted-foreground mt-xs leading-relaxed">
                   <span className="font-medium">{lang.worryCard.labels.resolution}</span>{' '}
                   {worry.resolutionNote}
                 </p>
@@ -177,7 +177,7 @@ const WorryCardComponent: React.FC<WorryCardProps> = ({
             </div>
           </div>
 
-          <div className="flex items-center gap-xs text-xs text-muted-foreground">
+          <div className="flex items-center gap-xs text-sm text-muted-foreground leading-relaxed">
             {worry.status === 'locked' && (
               <span>{lang.worryCard.labels.unlocks(getRelativeTime(worry.unlockAt))}</span>
             )}
@@ -202,7 +202,7 @@ const WorryCardComponent: React.FC<WorryCardProps> = ({
                       onUnlockNow(worry.id);
                     }}
                     disabled={isUnlocking || isDismissing}
-                    className="text-xs"
+                    className="text-sm"
                   >
                     {isUnlocking && <Loader2 className="mr-2 size-icon-xs animate-spin" />}
                     {lang.worryCard.buttons.unlockNow}
@@ -217,7 +217,7 @@ const WorryCardComponent: React.FC<WorryCardProps> = ({
                       onDismiss(worry.id);
                     }}
                     disabled={isUnlocking || isDismissing}
-                    className="text-xs"
+                    className="text-sm"
                   >
                     {isDismissing && <Loader2 className="mr-2 size-icon-xs animate-spin" />}
                     {lang.worryCard.buttons.dismiss}
@@ -240,7 +240,7 @@ const WorryCardComponent: React.FC<WorryCardProps> = ({
                       onResolve(worry.id);
                     }}
                     disabled={isResolving || isSnoozing || isDismissing}
-                    className="text-xs"
+                    className="text-sm"
                   >
                     {isResolving && <Loader2 className="mr-2 size-icon-xs animate-spin" />}
                     {lang.worryCard.buttons.markDone}
@@ -255,7 +255,7 @@ const WorryCardComponent: React.FC<WorryCardProps> = ({
                       setShowSnoozeSheet(true);
                     }}
                     disabled={isResolving || isSnoozing || isDismissing}
-                    className="text-xs min-h-touch-target"
+                    className="text-sm min-h-touch-target"
                   >
                     {isSnoozing && <Loader2 className="mr-2 size-icon-xs animate-spin" />}
                     {lang.worryCard.buttons.snooze}
@@ -270,7 +270,7 @@ const WorryCardComponent: React.FC<WorryCardProps> = ({
                       onDismiss(worry.id);
                     }}
                     disabled={isResolving || isSnoozing || isDismissing}
-                    className="text-xs"
+                    className="text-sm"
                   >
                     {isDismissing && <Loader2 className="mr-2 size-icon-xs animate-spin" />}
                     {lang.worryCard.buttons.dismiss}

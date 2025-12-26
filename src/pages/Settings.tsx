@@ -47,7 +47,7 @@ export const Settings: React.FC = () => {
               <Label htmlFor="default-unlock-time" className="text-base font-medium">
                 {lang.settings.sections.defaultTime.title}
               </Label>
-              <p className="text-sm text-muted-foreground mt-1 mb-sm">
+              <p className="text-sm text-muted-foreground mt-1 mb-sm leading-relaxed">
                 {lang.settings.sections.defaultTime.description}
               </p>
               <Input
@@ -69,7 +69,7 @@ export const Settings: React.FC = () => {
                   <Label htmlFor="haptic-feedback" className="text-base font-medium">
                     {lang.settings.sections.hapticFeedback.title}
                   </Label>
-                  <p className="text-sm text-muted-foreground">
+                  <p className="text-sm text-muted-foreground leading-relaxed">
                     {lang.settings.sections.hapticFeedback.description}
                   </p>
                 </div>
@@ -93,7 +93,7 @@ export const Settings: React.FC = () => {
                   <Label htmlFor="encouraging-messages" className="text-base font-medium">
                     {lang.settings.sections.encouragingMessages.title}
                   </Label>
-                  <p className="text-sm text-muted-foreground">
+                  <p className="text-sm text-muted-foreground leading-relaxed">
                     {lang.settings.sections.encouragingMessages.description}
                   </p>
                 </div>
@@ -120,7 +120,7 @@ export const Settings: React.FC = () => {
                   <Label className="text-base font-medium">
                     {lang.settings.dangerZone.reset.title}
                   </Label>
-                  <p className="text-sm text-muted-foreground">
+                  <p className="text-sm text-muted-foreground leading-relaxed">
                     {lang.settings.dangerZone.reset.description}
                   </p>
                 </div>
@@ -141,10 +141,12 @@ export const Settings: React.FC = () => {
             <h2 className="text-lg font-semibold text-foreground mb-2">
               {lang.settings.about.title}
             </h2>
-            <p className="text-sm text-muted-foreground mb-1">
+            <p className="text-sm text-muted-foreground mb-1 leading-relaxed">
               {lang.settings.about.version('0.1.5')}
             </p>
-            <p className="text-sm text-muted-foreground italic">{lang.onboarding.quote}</p>
+            <p className="text-sm text-muted-foreground italic leading-relaxed">
+              {lang.onboarding.quote}
+            </p>
           </div>
         </main>
       </div>

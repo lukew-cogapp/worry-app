@@ -1,10 +1,11 @@
 import { Edit3, Loader2, Lock, Sparkles } from 'lucide-react';
 import type React from 'react';
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { FORM_VALIDATION } from '../config/constants';
 import { lang } from '../config/language';
 import { useEscapeKey } from '../hooks/useEscapeKey';
 import type { Worry } from '../types';
+import { getTomorrow } from '../utils/dates';
 import { DateTimePicker } from './DateTimePicker';
 import { Button } from './ui/button';
 import { Input } from './ui/input';
@@ -48,8 +49,12 @@ export const WorryFormSheet: React.FC<WorryFormSheetProps> = ({
   const modalRef = useRef<HTMLDivElement | null>(null);
   const [content, setContent] = useState('');
   const [action, setAction] = useState('');
-  const [unlockAt, setUnlockAt] = useState('');
-  const [error, setError] = useState('');
+  const [contentError, setContentError] = useState('');
+  const [unlockError, setUnlockError] = useState('');
+
+  // Default unlock time is tomorrow at the user's preferred time
+  const defaultUnlockAt = useMemo(() => getTomorrow(defaultTime).toISOString(), [defaultTime]);
+  const [unlockAt, setUnlockAt] = useState(defaultUnlockAt);
 
   // Initialize form with worry data when editing
   useEffect(() => {
@@ -63,18 +68,29 @@ export const WorryFormSheet: React.FC<WorryFormSheetProps> = ({
   const resetForm = useCallback(() => {
     setContent('');
     setAction('');
-    setUnlockAt('');
-    setError('');
-  }, []);
+    setUnlockAt(defaultUnlockAt);
+    setContentError('');
+    setUnlockError('');
+  }, [defaultUnlockAt]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
     const trimmedContent = content.trim();
+    let hasError = false;
+
     if (!trimmedContent) {
-      setError(lang.addWorry.validation.contentRequired);
-      return;
+      setContentError(lang.addWorry.validation.contentRequired);
+      hasError = true;
     }
+
+    // Validate unlock time is set in add mode
+    if (mode === 'add' && !unlockAt) {
+      setUnlockError(lang.validation.unlockTimeRequired);
+      hasError = true;
+    }
+
+    if (hasError) return;
 
     if (mode === 'add' && onAdd) {
       onAdd({
@@ -113,12 +129,19 @@ export const WorryFormSheet: React.FC<WorryFormSheetProps> = ({
   // Handle Escape key
   useEscapeKey(handleClose, isOpen);
 
-  // Clear error when user starts typing
+  // Clear content error when user starts typing
   useEffect(() => {
     if (content) {
-      setError('');
+      setContentError('');
     }
   }, [content]);
+
+  // Clear unlock error when user selects a time
+  useEffect(() => {
+    if (unlockAt) {
+      setUnlockError('');
+    }
+  }, [unlockAt]);
 
   // Prevent body scroll when open
   useEffect(() => {
@@ -228,15 +251,21 @@ export const WorryFormSheet: React.FC<WorryFormSheetProps> = ({
                 rows={3}
                 maxLength={FORM_VALIDATION.WORRY_CONTENT_MAX_LENGTH}
                 disabled={isLoading}
-                aria-invalid={!!error}
-                aria-describedby={error ? 'worry-content-error' : undefined}
+                aria-invalid={!!contentError}
+                aria-describedby={contentError ? 'worry-content-error' : undefined}
                 className="bg-background resize-none disabled:cursor-not-allowed"
               />
               <div className="flex items-center justify-between mt-1">
-                <p id="worry-content-error" className="text-xs text-destructive" role="alert">
-                  {error}
-                </p>
-                <p className="text-xs text-muted-foreground">
+                {contentError && (
+                  <p
+                    id="worry-content-error"
+                    className="text-sm text-destructive font-medium"
+                    role="alert"
+                  >
+                    {contentError}
+                  </p>
+                )}
+                <p className="text-xs text-muted-foreground ml-auto">
                   {content.length}/{FORM_VALIDATION.WORRY_CONTENT_MAX_LENGTH}
                 </p>
               </div>
@@ -273,7 +302,14 @@ export const WorryFormSheet: React.FC<WorryFormSheetProps> = ({
             </div>
 
             {showDatePicker && (
-              <DateTimePicker value={unlockAt} onChange={setUnlockAt} defaultTime={defaultTime} />
+              <div>
+                <DateTimePicker value={unlockAt} onChange={setUnlockAt} defaultTime={defaultTime} />
+                {unlockError && (
+                  <p className="text-sm text-destructive font-medium mt-2" role="alert">
+                    {unlockError}
+                  </p>
+                )}
+              </div>
             )}
 
             <div className="flex flex-col gap-3 pt-md">

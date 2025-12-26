@@ -325,6 +325,16 @@ export const lang = {
       reload: 'Reload App',
     },
   },
+
+  // Date formatting
+  dates: {
+    invalid: 'Invalid date',
+  },
+
+  // Validation errors
+  validation: {
+    unlockTimeRequired: 'Please select when you can act on this worry',
+  },
 } as const;
 
 // Helper to format duration with better precision

@@ -1,13 +1,29 @@
 // Date utility functions for Worry Box
 
+import { lang } from '../config/language';
+
+/**
+ * Validates if an ISO string produces a valid Date
+ * @param isoString - ISO 8601 date string
+ * @returns True if valid, false otherwise
+ */
+export function isValidDate(isoString: string | undefined | null): boolean {
+  if (!isoString) return false;
+  const date = new Date(isoString);
+  return !Number.isNaN(date.getTime());
+}
+
 /**
  * Formats an ISO date string as a short date with time
  * @param isoString - ISO 8601 date string
- * @returns Formatted string like "Jan 15, 9:30 AM"
+ * @returns Formatted string like "Jan 15, 9:30 AM" or fallback for invalid dates
  * @example
  * formatDateTime("2024-01-15T09:30:00.000Z") // "Jan 15, 9:30 AM"
  */
 export function formatDateTime(isoString: string): string {
+  if (!isValidDate(isoString)) {
+    return lang.dates.invalid;
+  }
   const date = new Date(isoString);
   return new Intl.DateTimeFormat('en-US', {
     month: 'short',
@@ -20,11 +36,14 @@ export function formatDateTime(isoString: string): string {
 /**
  * Formats an ISO date string as a short date (no time)
  * @param isoString - ISO 8601 date string
- * @returns Formatted string like "Jan 15, 2024"
+ * @returns Formatted string like "Jan 15, 2024" or fallback for invalid dates
  * @example
  * formatDate("2024-01-15T09:30:00.000Z") // "Jan 15, 2024"
  */
 export function formatDate(isoString: string): string {
+  if (!isValidDate(isoString)) {
+    return lang.dates.invalid;
+  }
   const date = new Date(isoString);
   return new Intl.DateTimeFormat('en-US', {
     month: 'short',
@@ -36,11 +55,14 @@ export function formatDate(isoString: string): string {
 /**
  * Formats an ISO date string as time only
  * @param isoString - ISO 8601 date string
- * @returns Formatted string like "9:30 AM"
+ * @returns Formatted string like "9:30 AM" or fallback for invalid dates
  * @example
  * formatTime("2024-01-15T09:30:00.000Z") // "9:30 AM"
  */
 export function formatTime(isoString: string): string {
+  if (!isValidDate(isoString)) {
+    return lang.dates.invalid;
+  }
   const date = new Date(isoString);
   return new Intl.DateTimeFormat('en-US', {
     hour: 'numeric',
@@ -56,6 +78,9 @@ export function formatTime(isoString: string): string {
  * getRelativeTime("2024-01-15T10:00:00.000Z") // "in 30 minutes" (if current time is 9:30 AM)
  */
 export function getRelativeTime(isoString: string): string {
+  if (!isValidDate(isoString)) {
+    return lang.dates.invalid;
+  }
   const date = new Date(isoString);
   const now = new Date();
   const diffMs = date.getTime() - now.getTime();
