@@ -60,7 +60,7 @@ function App() {
             const { worryId } = action.notification.extra;
 
             try {
-              if (action.actionId === 'done') {
+              if (action.actionId === 'resolve' || action.actionId === 'done') {
                 await resolveWorry(worryId);
                 toast.success(lang.toasts.success.worryResolved);
               } else if (action.actionId === 'snooze') {

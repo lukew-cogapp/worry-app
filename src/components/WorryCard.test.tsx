@@ -114,7 +114,7 @@ describe('WorryCard', () => {
       ).toBeInTheDocument();
     });
 
-    it('should render mark done button when handler provided', () => {
+    it('should render mark resolved button when handler provided', () => {
       render(<WorryCard worry={unlockedWorry} onResolve={mockOnResolve} />);
       expect(screen.getByText(lang.worryCard.buttons.markDone)).toBeInTheDocument();
     });
@@ -319,7 +319,7 @@ describe('WorryCard', () => {
       unlockedAt: '2025-01-16T10:00:00.000Z',
     };
 
-    it('should call onResolve when mark done button is clicked', async () => {
+    it('should call onResolve when mark resolved button is clicked', async () => {
       const user = userEvent.setup();
       render(<WorryCard worry={unlockedWorry} onResolve={mockOnResolve} />);
 

@@ -142,35 +142,35 @@ export const lang = {
     },
     stats: {
       total: 'Total Worries',
-      completed: 'Closed',
+      completed: 'Completed',
       locked: 'Locked',
       unlocked: 'Unlocked',
     },
     keyInsights: {
       title: 'Key Insights',
       completionRate: {
-        title: 'Worries Closed',
+        title: 'Worries Completed',
         description: (completed: number, total: number) =>
-          `${completed} of ${total} worries closed — no pressure, this is just a snapshot`,
+          `${completed} of ${total} worries completed — no pressure, this is just a snapshot`,
       },
       resolutionRate: {
         title: 'How They Ended',
         description: (resolved: number, dismissed: number) =>
-          `${resolved} closed, ${dismissed} released`,
+          `${resolved} resolved, ${dismissed} released`,
         insight: "Many worries didn't need action — noticing that is progress.",
       },
       avgTimeToResolve: {
-        title: 'Average Time to Close',
-        description: 'Time from unlock to closure',
+        title: 'Average Time to Resolve',
+        description: 'Time from unlock to resolution',
       },
     },
     thisWeek: {
       title: 'This Week',
       description: (total: number, resolved: number) =>
-        `${total} worries added, ${resolved} closed`,
+        `${total} worries added, ${resolved} resolved`,
     },
     weeklyStreak: {
-      title: (count: number) => `${count} ${count === 1 ? 'worry' : 'worries'} closed this week!`,
+      title: (count: number) => `${count} ${count === 1 ? 'worry' : 'worries'} resolved this week!`,
       message: "You're on a roll! Keep up the great work.",
     },
     timeUnits: {
@@ -243,7 +243,7 @@ export const lang = {
     status: {
       locked: 'Locked',
       ready: 'Ready',
-      resolved: 'Closed',
+      resolved: 'Resolved',
       dismissed: 'Released',
       released: 'Released',
     },
@@ -252,12 +252,12 @@ export const lang = {
       resolution: 'Resolution:',
       unlocks: (time: string) => `Unlocks ${time}`,
       unlocked: (time: string) => `Unlocked ${time}`,
-      resolved: (time: string) => `Closed ${time}`,
+      resolved: (time: string) => `Resolved ${time}`,
     },
     buttons: {
       unlockNow: 'Unlock Now',
       release: 'Release',
-      markDone: 'Close Worry',
+      markDone: 'Mark Resolved',
       snooze: 'Snooze',
       snoozeOptions: 'Snooze for...',
     },
@@ -274,7 +274,7 @@ export const lang = {
     success: {
       worryAdded: 'Worry locked away',
       worryUpdated: 'Worry updated',
-      worryResolved: 'Worry closed',
+      worryResolved: 'Worry resolved',
       worryReleased: 'Worry released',
       worryDeleted: 'Worry deleted',
       worryUnlocked: 'Worry unlocked',
@@ -285,7 +285,7 @@ export const lang = {
     error: {
       saveWorry: 'Could not save worry. Please try again.',
       updateWorry: 'Could not update worry. Please try again.',
-      resolveWorry: 'Could not close worry. Please try again.',
+      resolveWorry: 'Could not resolve worry. Please try again.',
       releaseWorry: 'Could not release worry. Please try again.',
       deleteWorry: 'Could not delete worry. Please try again.',
       unlockWorry: 'Could not unlock worry. Please try again.',
@@ -313,11 +313,11 @@ export const lang = {
 
   // Resolve worry dialog
   resolveWorry: {
-    title: 'Close Worry',
+    title: 'Resolve Worry',
     noteLabel: 'How did this turn out?',
     notePlaceholder: 'What happened with this worry? (optional)',
     cancel: 'Cancel',
-    confirm: 'Close Worry',
+    confirm: 'Mark Resolved',
   },
 
   // Animations

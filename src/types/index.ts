@@ -13,7 +13,7 @@ export interface Worry {
   createdAt: string; // ISO 8601
   unlockAt: string; // ISO 8601 - when notification fires
   unlockedAt?: string; // ISO 8601 - when user actually opened it
-  resolvedAt?: string; // ISO 8601 - when marked as done
+  resolvedAt?: string; // ISO 8601 - when resolved
   releasedAt?: string; // ISO 8601 - when released (dismissed as uncontrollable)
   resolutionNote?: string; // What the user did to resolve it
 
