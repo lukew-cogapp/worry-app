@@ -69,15 +69,15 @@ export function useHistoryActions(
     setLoading(worryToDismiss, 'dismissing');
     try {
       await dismissWorry(worryToDismiss);
-      toast.success(lang.toasts.success.worryDismissed);
+      toast.success(lang.toasts.success.worryReleased);
       setWorryToDismiss(null);
     } catch (error) {
       handleError(error, {
-        operation: 'dismissWorry',
+        operation: 'releaseWorry',
         worryId: worryToDismiss,
       });
 
-      toastErrorWithRetry(lang.toasts.error.dismissWorry, confirmDismiss);
+      toastErrorWithRetry(lang.toasts.error.releaseWorry, confirmDismiss);
     } finally {
       clearLoading(worryToDismiss, 'dismissing');
     }

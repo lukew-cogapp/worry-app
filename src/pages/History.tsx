@@ -93,14 +93,14 @@ export const History: React.FC = () => {
           variant="destructive"
         />
 
-        {/* Dismiss Confirmation Dialog */}
+        {/* Release Confirmation Dialog */}
         <ConfirmationDialog
           open={!!historyActions.worryToDismiss}
           onOpenChange={(open) => !open && historyActions.setWorryToDismiss(null)}
-          title={lang.history.dismissDialog.title}
-          description={lang.history.dismissDialog.description}
-          confirmText={lang.history.dismissDialog.confirm}
-          cancelText={lang.history.dismissDialog.cancel}
+          title={lang.history.releaseDialog.title}
+          description={lang.history.releaseDialog.description}
+          confirmText={lang.history.releaseDialog.confirm}
+          cancelText={lang.history.releaseDialog.cancel}
           onConfirm={historyActions.confirmDismiss}
           isLoading={historyActions.loadingStates[historyActions.worryToDismiss || '']?.dismissing}
         />

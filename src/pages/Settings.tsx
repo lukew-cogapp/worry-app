@@ -124,30 +124,6 @@ export const Settings: React.FC = () => {
 
               <Separator />
 
-              {/* Category Field */}
-              <div className="p-lg">
-                <div className="flex items-center justify-between">
-                  <div className="space-y-0.5">
-                    <Label htmlFor="show-category-field" className="text-base font-medium">
-                      {lang.settings.formFields.showCategory.title}
-                    </Label>
-                    <p className="text-sm text-muted-foreground leading-relaxed">
-                      {lang.settings.formFields.showCategory.description}
-                    </p>
-                  </div>
-                  <Switch
-                    id="show-category-field"
-                    checked={preferences.showCategoryField}
-                    onCheckedChange={(checked: boolean) =>
-                      updatePreferences({ showCategoryField: checked })
-                    }
-                    disabled={isSaving}
-                  />
-                </div>
-              </div>
-
-              <Separator />
-
               {/* Best Outcome Field */}
               <div className="p-lg">
                 <div className="flex items-center justify-between">
@@ -164,30 +140,6 @@ export const Settings: React.FC = () => {
                     checked={preferences.showBestOutcomeField}
                     onCheckedChange={(checked: boolean) =>
                       updatePreferences({ showBestOutcomeField: checked })
-                    }
-                    disabled={isSaving}
-                  />
-                </div>
-              </div>
-
-              <Separator />
-
-              {/* Talked to Someone Field */}
-              <div className="p-lg">
-                <div className="flex items-center justify-between">
-                  <div className="space-y-0.5">
-                    <Label htmlFor="show-talked-field" className="text-base font-medium">
-                      {lang.settings.formFields.showTalkedToSomeone.title}
-                    </Label>
-                    <p className="text-sm text-muted-foreground leading-relaxed">
-                      {lang.settings.formFields.showTalkedToSomeone.description}
-                    </p>
-                  </div>
-                  <Switch
-                    id="show-talked-field"
-                    checked={preferences.showTalkedToSomeoneField}
-                    onCheckedChange={(checked: boolean) =>
-                      updatePreferences({ showTalkedToSomeoneField: checked })
                     }
                     disabled={isSaving}
                   />

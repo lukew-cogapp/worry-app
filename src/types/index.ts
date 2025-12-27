@@ -21,10 +21,9 @@ export interface Worry {
   notificationId: number; // Capacitor notification ID
 
   // Categorization and reflection
-  category?: WorryCategory; // Life area category
+  category?: WorryCategory; // Life area category (auto-assigned on create, editable)
   tags?: string[]; // Optional custom tags
   bestOutcome?: string; // What's the best possible outcome?
-  talkedToSomeone?: boolean; // Have you discussed this with someone?
 }
 
 export interface UserPreferences {
@@ -33,9 +32,7 @@ export interface UserPreferences {
   quietHoursEnd?: string; // e.g., "08:00"
   hapticFeedback: boolean;
   encouragingMessages: boolean; // Show supportive text in notifications
-  showCategoryField: boolean; // Show category selector in worry form
   showBestOutcomeField: boolean; // Show best outcome field in worry form
-  showTalkedToSomeoneField: boolean; // Show talked to someone toggle in worry form
 }
 
 export interface WorryStats {

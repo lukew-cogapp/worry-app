@@ -11,9 +11,6 @@ import { getTomorrow } from '../utils/dates';
 import { DateTimePicker } from './DateTimePicker';
 import { SheetShell } from './SheetShell';
 import { Button } from './ui/button';
-import { Input } from './ui/input';
-import { Label } from './ui/label';
-import { Switch } from './ui/switch';
 import { Textarea } from './ui/textarea';
 
 type Mode = 'add' | 'edit';
@@ -25,14 +22,7 @@ interface WorryFormSheetProps {
   defaultTime?: string;
 
   // Add mode props
-  onAdd?: (data: {
-    content: string;
-    action?: string;
-    unlockAt: string;
-    category?: WorryCategory;
-    bestOutcome?: string;
-    talkedToSomeone?: boolean;
-  }) => void;
+  onAdd?: (data: { content: string; unlockAt: string; bestOutcome?: string }) => void;
   onRelease?: (content: string) => void;
   isSubmitting?: boolean;
   isReleasing?: boolean;
@@ -42,11 +32,9 @@ interface WorryFormSheetProps {
     id: string,
     updates: {
       content?: string;
-      action?: string;
       unlockAt?: string;
       category?: WorryCategory;
       bestOutcome?: string;
-      talkedToSomeone?: boolean;
     }
   ) => void;
   worry?: Worry | null;
@@ -71,10 +59,8 @@ export const WorryFormSheet: React.FC<WorryFormSheetProps> = ({
   const preferences = usePreferencesStore((s) => s.preferences);
   const contentInputRef = useRef<HTMLTextAreaElement>(null);
   const [content, setContent] = useState('');
-  const [action, setAction] = useState('');
   const [category, setCategory] = useState<WorryCategory | ''>('');
   const [bestOutcome, setBestOutcome] = useState('');
-  const [talkedToSomeone, setTalkedToSomeone] = useState(false);
   const [contentError, setContentError] = useState('');
   const [unlockError, setUnlockError] = useState('');
 
@@ -86,20 +72,16 @@ export const WorryFormSheet: React.FC<WorryFormSheetProps> = ({
   useEffect(() => {
     if (mode === 'edit' && worry) {
       setContent(worry.content);
-      setAction(worry.action || '');
       setUnlockAt(worry.unlockAt);
       setCategory(worry.category || '');
       setBestOutcome(worry.bestOutcome || '');
-      setTalkedToSomeone(worry.talkedToSomeone || false);
     }
   }, [mode, worry]);
 
   const resetForm = useCallback(() => {
     setContent('');
-    setAction('');
     setCategory('');
     setBestOutcome('');
-    setTalkedToSomeone(false);
     setUnlockAt(defaultUnlockAt);
     setContentError('');
     setUnlockError('');
@@ -127,21 +109,16 @@ export const WorryFormSheet: React.FC<WorryFormSheetProps> = ({
     if (mode === 'add' && onAdd) {
       onAdd({
         content: trimmedContent,
-        action: action.trim() || undefined,
         unlockAt,
-        category: category ? (category as WorryCategory) : undefined,
         bestOutcome: bestOutcome.trim() || undefined,
-        talkedToSomeone: talkedToSomeone || undefined,
       });
       resetForm();
     } else if (mode === 'edit' && onEdit && worry) {
       onEdit(worry.id, {
         content: trimmedContent,
-        action: action.trim() || undefined,
         unlockAt,
         category: category ? (category as WorryCategory) : undefined,
         bestOutcome: bestOutcome.trim() || undefined,
-        talkedToSomeone: talkedToSomeone || undefined,
       });
     }
 
@@ -235,48 +212,19 @@ export const WorryFormSheet: React.FC<WorryFormSheetProps> = ({
             aria-describedby={contentError ? 'worry-content-error' : undefined}
             className="bg-background resize-none disabled:cursor-not-allowed"
           />
-          <div className="flex items-center justify-between mt-1">
-            {contentError && (
-              <p
-                id="worry-content-error"
-                className="text-sm text-destructive font-medium"
-                role="alert"
-              >
-                {contentError}
-              </p>
-            )}
-            <p className="text-caption ml-auto">
-              {content.length}/{FORM_VALIDATION.WORRY_CONTENT_MAX_LENGTH}
+          {contentError && (
+            <p
+              id="worry-content-error"
+              className="text-sm text-destructive font-medium mt-1"
+              role="alert"
+            >
+              {contentError}
             </p>
-          </div>
+          )}
         </div>
 
-        <div>
-          <label htmlFor="worry-action" className="block text-sm font-medium text-foreground mb-2">
-            {lang.addWorry.fields.action.label}{' '}
-            <span className="text-muted-foreground">{lang.addWorry.fields.action.optional}</span>
-          </label>
-          <Input
-            type="text"
-            id="worry-action"
-            value={action}
-            onChange={(e) => setAction(e.target.value)}
-            onKeyDown={(e) => {
-              if (e.key === 'Enter' && content.trim()) {
-                handleSubmit(e);
-              }
-            }}
-            placeholder={lang.addWorry.fields.action.placeholder}
-            maxLength={FORM_VALIDATION.WORRY_ACTION_MAX_LENGTH}
-            disabled={isLoading}
-            className="bg-background"
-          />
-          <p className="text-caption text-right mt-1">
-            {action.length}/{FORM_VALIDATION.WORRY_ACTION_MAX_LENGTH}
-          </p>
-        </div>
-
-        {preferences.showCategoryField && (
+        {/* Category selection - only in edit mode */}
+        {mode === 'edit' && (
           <div>
             <div className="block text-sm font-medium text-foreground mb-2">
               {lang.addWorry.fields.category.label}{' '}
@@ -323,31 +271,11 @@ export const WorryFormSheet: React.FC<WorryFormSheetProps> = ({
               disabled={isLoading}
               className="bg-background resize-none disabled:cursor-not-allowed"
             />
-            <div className="flex items-center justify-between mt-1">
-              <p className="text-xs text-muted-foreground">
-                {lang.addWorry.fields.bestOutcome.hint}
-              </p>
-              <p className="text-caption ml-auto">
-                {bestOutcome.length}/{FORM_VALIDATION.BEST_OUTCOME_MAX_LENGTH}
-              </p>
-            </div>
-          </div>
-        )}
-
-        {preferences.showTalkedToSomeoneField && (
-          <div className="flex items-center space-x-2">
-            <Switch
-              id="worry-talked-to-someone"
-              checked={talkedToSomeone}
-              onCheckedChange={(checked) => setTalkedToSomeone(checked)}
-              disabled={isLoading}
-            />
-            <Label
-              htmlFor="worry-talked-to-someone"
-              className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 cursor-pointer"
-            >
-              {lang.addWorry.fields.talkedToSomeone.label}
-            </Label>
+            <ul className="text-xs text-muted-foreground mt-2 space-y-1 list-disc list-inside">
+              {lang.addWorry.fields.bestOutcome.guidance.map((item) => (
+                <li key={item}>{item}</li>
+              ))}
+            </ul>
           </div>
         )}
 

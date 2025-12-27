@@ -81,7 +81,7 @@ describe('WorryCard', () => {
 
     it('should render dismiss button when handler provided', () => {
       render(<WorryCard worry={baseWorry} onDismiss={mockOnDismiss} />);
-      expect(screen.getByText(lang.worryCard.buttons.dismiss)).toBeInTheDocument();
+      expect(screen.getByText(lang.worryCard.buttons.release)).toBeInTheDocument();
     });
 
     it('should not render unlock now button when handler not provided', () => {
@@ -126,7 +126,7 @@ describe('WorryCard', () => {
 
     it('should render dismiss button when handler provided', () => {
       render(<WorryCard worry={unlockedWorry} onDismiss={mockOnDismiss} />);
-      expect(screen.getByText(lang.worryCard.buttons.dismiss)).toBeInTheDocument();
+      expect(screen.getByText(lang.worryCard.buttons.release)).toBeInTheDocument();
     });
 
     it('should render edit button for unlocked worry when handler provided', () => {
@@ -171,7 +171,7 @@ describe('WorryCard', () => {
       );
       expect(screen.queryByText(lang.worryCard.buttons.markDone)).not.toBeInTheDocument();
       expect(screen.queryByText(lang.worryCard.buttons.snooze)).not.toBeInTheDocument();
-      expect(screen.queryByText(lang.worryCard.buttons.dismiss)).not.toBeInTheDocument();
+      expect(screen.queryByText(lang.worryCard.buttons.release)).not.toBeInTheDocument();
     });
 
     it('should not render edit button for resolved worry', () => {
@@ -202,7 +202,7 @@ describe('WorryCard', () => {
       );
       expect(screen.queryByText(lang.worryCard.buttons.markDone)).not.toBeInTheDocument();
       expect(screen.queryByText(lang.worryCard.buttons.unlockNow)).not.toBeInTheDocument();
-      expect(screen.queryByText(lang.worryCard.buttons.dismiss)).not.toBeInTheDocument();
+      expect(screen.queryByText(lang.worryCard.buttons.release)).not.toBeInTheDocument();
     });
   });
 
@@ -275,7 +275,7 @@ describe('WorryCard', () => {
       const user = userEvent.setup();
       render(<WorryCard worry={baseWorry} onDismiss={mockOnDismiss} />);
 
-      const button = screen.getByText(lang.worryCard.buttons.dismiss);
+      const button = screen.getByText(lang.worryCard.buttons.release);
       await user.click(button);
 
       expect(mockOnDismiss).toHaveBeenCalledWith('test-id-123');
@@ -334,7 +334,7 @@ describe('WorryCard', () => {
       const user = userEvent.setup();
       render(<WorryCard worry={unlockedWorry} onDismiss={mockOnDismiss} />);
 
-      const button = screen.getByText(lang.worryCard.buttons.dismiss);
+      const button = screen.getByText(lang.worryCard.buttons.release);
       await user.click(button);
 
       expect(mockOnDismiss).toHaveBeenCalledWith('test-id-123');
@@ -452,7 +452,7 @@ describe('WorryCard', () => {
 
     it('should disable dismiss button when isDismissing is true', () => {
       render(<WorryCard worry={baseWorry} onDismiss={mockOnDismiss} isDismissing={true} />);
-      const button = screen.getByText(lang.worryCard.buttons.dismiss);
+      const button = screen.getByText(lang.worryCard.buttons.release);
       expect(button).toBeDisabled();
     });
 
@@ -466,7 +466,7 @@ describe('WorryCard', () => {
         />
       );
       expect(screen.getByText(lang.worryCard.buttons.unlockNow)).toBeDisabled();
-      expect(screen.getByText(lang.worryCard.buttons.dismiss)).toBeDisabled();
+      expect(screen.getByText(lang.worryCard.buttons.release)).toBeDisabled();
     });
 
     it('should show loading spinner when isUnlocking is true', () => {
@@ -478,7 +478,7 @@ describe('WorryCard', () => {
 
     it('should show loading spinner when isDismissing is true', () => {
       render(<WorryCard worry={baseWorry} onDismiss={mockOnDismiss} isDismissing={true} />);
-      const button = screen.getByText(lang.worryCard.buttons.dismiss);
+      const button = screen.getByText(lang.worryCard.buttons.release);
       const spinner = button.querySelector('svg.animate-spin');
       expect(spinner).toBeInTheDocument();
     });
@@ -504,7 +504,7 @@ describe('WorryCard', () => {
 
       expect(screen.getByText(lang.worryCard.buttons.markDone)).toBeDisabled();
       expect(screen.getByText(lang.worryCard.buttons.snooze)).toBeDisabled();
-      expect(screen.getByText(lang.worryCard.buttons.dismiss)).toBeDisabled();
+      expect(screen.getByText(lang.worryCard.buttons.release)).toBeDisabled();
     });
 
     it('should disable all buttons when isSnoozing is true', () => {
@@ -520,7 +520,7 @@ describe('WorryCard', () => {
 
       expect(screen.getByText(lang.worryCard.buttons.markDone)).toBeDisabled();
       expect(screen.getByText(lang.worryCard.buttons.snooze)).toBeDisabled();
-      expect(screen.getByText(lang.worryCard.buttons.dismiss)).toBeDisabled();
+      expect(screen.getByText(lang.worryCard.buttons.release)).toBeDisabled();
     });
 
     it('should disable all buttons when isDismissing is true', () => {
@@ -536,7 +536,7 @@ describe('WorryCard', () => {
 
       expect(screen.getByText(lang.worryCard.buttons.markDone)).toBeDisabled();
       expect(screen.getByText(lang.worryCard.buttons.snooze)).toBeDisabled();
-      expect(screen.getByText(lang.worryCard.buttons.dismiss)).toBeDisabled();
+      expect(screen.getByText(lang.worryCard.buttons.release)).toBeDisabled();
     });
 
     it('should show loading spinner when isResolving is true', () => {

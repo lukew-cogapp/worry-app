@@ -6,6 +6,171 @@ import type { Worry, WorryCategory } from '../types';
 import { logger } from '../utils/logger';
 import { generateUUID } from '../utils/uuid';
 
+/**
+ * Auto-categorize worry content based on keyword matching
+ * Uses tokenization to avoid substring false-positives
+ * 'personal' is only used as fallback when no other category matches
+ */
+function autoCategorize(content: string): WorryCategory {
+  // Normalize: lowercase and extract word tokens
+  const normalizedText = content.toLowerCase();
+  const tokens = new Set(normalizedText.match(/\b[a-z]+\b/g) || []);
+
+  // Phrase keywords (multi-word - checked against full text)
+  const categoryPhrases: Partial<Record<WorryCategory, string[]>> = {
+    work: ['performance review', 'pay rise', 'pay raise'],
+    health: ['panic attack', 'mental health'],
+    finance: ['credit card', 'bank account', 'late fee'],
+  };
+
+  // Single-word keywords (checked against token set)
+  const categoryKeywords: Record<Exclude<WorryCategory, 'personal' | 'other'>, string[]> = {
+    work: [
+      'work',
+      'job',
+      'boss',
+      'coworker',
+      'colleague',
+      'meeting',
+      'deadline',
+      'project',
+      'office',
+      'career',
+      'promotion',
+      'interview',
+      'client',
+      'manager',
+      'employee',
+      'salary',
+      'fired',
+      'layoff',
+      'presentation',
+      'email',
+      'slack',
+      'teams',
+      'performance',
+      'review',
+      'workload',
+      'burnout',
+    ],
+    health: [
+      'health',
+      'doctor',
+      'hospital',
+      'sick',
+      'illness',
+      'pain',
+      'symptom',
+      'medicine',
+      'treatment',
+      'diagnosis',
+      'appointment',
+      'surgery',
+      'anxiety',
+      'depression',
+      'therapy',
+      'exercise',
+      'weight',
+      'sleep',
+      'tired',
+      'fatigue',
+      'panic',
+      'insomnia',
+    ],
+    relationships: [
+      'relationship',
+      'partner',
+      'spouse',
+      'husband',
+      'wife',
+      'boyfriend',
+      'girlfriend',
+      'friend',
+      'family',
+      'parent',
+      'child',
+      'kid',
+      'kids',
+      'mother',
+      'father',
+      'mom',
+      'dad',
+      'brother',
+      'sister',
+      'son',
+      'daughter',
+      'dating',
+      'breakup',
+      'divorce',
+      'marriage',
+      'argument',
+      'fight',
+      'roommate',
+      'flatmate',
+      'communication',
+    ],
+    finance: [
+      'money',
+      'finance',
+      'debt',
+      'loan',
+      'mortgage',
+      'rent',
+      'bills',
+      'payment',
+      'credit',
+      'bank',
+      'savings',
+      'invest',
+      'budget',
+      'expense',
+      'taxes',
+      'income',
+      'afford',
+      'overdraft',
+      'interest',
+      'fees',
+      'paid',
+      'payday',
+      'invoice',
+    ],
+  };
+
+  // Score each category
+  const scores: Record<string, number> = {};
+
+  for (const [category, phrases] of Object.entries(categoryPhrases)) {
+    scores[category] = scores[category] || 0;
+    for (const phrase of phrases) {
+      if (normalizedText.includes(phrase)) {
+        scores[category] += 3; // Phrase match = +3 points
+      }
+    }
+  }
+
+  for (const [category, keywords] of Object.entries(categoryKeywords)) {
+    scores[category] = scores[category] || 0;
+    for (const keyword of keywords) {
+      if (tokens.has(keyword)) {
+        scores[category] += 1; // Token match = +1 point
+      }
+    }
+  }
+
+  // Find highest scoring category (excluding personal)
+  let bestCategory: WorryCategory = 'personal';
+  let bestScore = 0;
+
+  for (const [category, score] of Object.entries(scores)) {
+    if (score > bestScore) {
+      bestScore = score;
+      bestCategory = category as WorryCategory;
+    }
+  }
+
+  return bestCategory;
+}
+
 interface WorryStore {
   worries: Worry[];
   isLoading: boolean;
@@ -20,11 +185,9 @@ interface WorryStore {
     id: string,
     updates: {
       content?: string;
-      action?: string;
       unlockAt?: string;
       category?: WorryCategory;
       bestOutcome?: string;
-      talkedToSomeone?: boolean;
     }
   ) => Promise<void>;
   resolveWorry: (id: string, note?: string) => Promise<void>;
@@ -89,8 +252,9 @@ export const useWorryStore = create<WorryStore>((set, get) => ({
         createdAt: new Date().toISOString(),
         status: 'locked',
         notificationId: 0, // Will be set after scheduling
+        category: autoCategorize(worryData.content), // Auto-assign category
       };
-      logger.log('[Store] Worry created with ID:', worry.id);
+      logger.log('[Store] Worry created with ID:', worry.id, 'Category:', worry.category);
 
       logger.log('[Store] Scheduling notification...');
       worry.notificationId = await notifications.scheduleWorryNotification(worry);
@@ -122,12 +286,9 @@ export const useWorryStore = create<WorryStore>((set, get) => ({
     const updatedWorry = {
       ...worry,
       content: updates.content ?? worry.content,
-      action: updates.action ?? worry.action,
       unlockAt: updates.unlockAt ?? worry.unlockAt,
       category: updates.category !== undefined ? updates.category : worry.category,
       bestOutcome: updates.bestOutcome !== undefined ? updates.bestOutcome : worry.bestOutcome,
-      talkedToSomeone:
-        updates.talkedToSomeone !== undefined ? updates.talkedToSomeone : worry.talkedToSomeone,
     };
 
     // Reschedule notification if unlockAt changed

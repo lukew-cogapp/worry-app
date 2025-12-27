@@ -30,7 +30,6 @@ describe('worryStore', () => {
 
       const worryData = {
         content: 'Test worry',
-        action: 'Test action',
         unlockAt: new Date(Date.now() + 86400000).toISOString(), // Tomorrow
       };
 
@@ -38,24 +37,52 @@ describe('worryStore', () => {
 
       expect(worry.id).toBeDefined();
       expect(worry.content).toBe('Test worry');
-      expect(worry.action).toBe('Test action');
       expect(worry.status).toBe('locked');
       expect(worry.notificationId).toBeGreaterThan(0);
       expect(useWorryStore.getState().worries).toHaveLength(1);
     });
 
-    it('should add a worry without action', async () => {
+    it('should auto-categorize based on content keywords', async () => {
       const store = useWorryStore.getState();
 
-      const worryData = {
-        content: 'Test worry without action',
-        unlockAt: new Date(Date.now() + 86400000).toISOString(),
-      };
+      // Work category
+      const workWorry = await store.addWorry({
+        content: 'My boss is giving me too much work',
+        unlockAt: new Date().toISOString(),
+      });
+      expect(workWorry.category).toBe('work');
 
-      const worry = await store.addWorry(worryData);
+      // Health category
+      const healthWorry = await store.addWorry({
+        content: "I'm worried about my doctor appointment",
+        unlockAt: new Date().toISOString(),
+      });
+      expect(healthWorry.category).toBe('health');
 
-      expect(worry.action).toBeUndefined();
-      expect(worry.content).toBe('Test worry without action');
+      // Finance category
+      const financeWorry = await store.addWorry({
+        content: 'I need to pay rent and budget my money',
+        unlockAt: new Date().toISOString(),
+      });
+      expect(financeWorry.category).toBe('finance');
+
+      // Relationships category
+      const relationshipWorry = await store.addWorry({
+        content: "My partner and I aren't getting along",
+        unlockAt: new Date().toISOString(),
+      });
+      expect(relationshipWorry.category).toBe('relationships');
+    });
+
+    it('should default to personal category when no keywords match', async () => {
+      const store = useWorryStore.getState();
+
+      const worry = await store.addWorry({
+        content: 'I just feel weird today',
+        unlockAt: new Date().toISOString(),
+      });
+
+      expect(worry.category).toBe('personal');
     });
 
     it('should generate unique IDs for multiple worries', async () => {
@@ -145,19 +172,18 @@ describe('worryStore', () => {
       expect(updatedWorry?.content).toBe('Updated content');
     });
 
-    it('should update worry action', async () => {
+    it('should update worry category', async () => {
       const store = useWorryStore.getState();
 
       const worry = await store.addWorry({
         content: 'Test worry',
-        action: 'Original action',
         unlockAt: new Date().toISOString(),
       });
 
-      await store.editWorry(worry.id, { action: 'Updated action' });
+      await store.editWorry(worry.id, { category: 'health' });
 
       const updatedWorry = useWorryStore.getState().worries.find((w) => w.id === worry.id);
-      expect(updatedWorry?.action).toBe('Updated action');
+      expect(updatedWorry?.category).toBe('health');
     });
 
     it('should update unlockAt and reschedule notification', async () => {
@@ -189,7 +215,6 @@ describe('worryStore', () => {
 
       const worry = await store.addWorry({
         content: 'Original content',
-        action: 'Original action',
         unlockAt: new Date(Date.now() + 86400000).toISOString(),
       });
 
@@ -197,13 +222,13 @@ describe('worryStore', () => {
 
       await store.editWorry(worry.id, {
         content: 'New content',
-        action: 'New action',
+        category: 'health',
         unlockAt: newDate,
       });
 
       const updatedWorry = useWorryStore.getState().worries.find((w) => w.id === worry.id);
       expect(updatedWorry?.content).toBe('New content');
-      expect(updatedWorry?.action).toBe('New action');
+      expect(updatedWorry?.category).toBe('health');
       expect(updatedWorry?.unlockAt).toBe(newDate);
     });
 

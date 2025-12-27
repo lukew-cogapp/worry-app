@@ -20,7 +20,7 @@ import { useHaptics } from '../hooks/useHaptics';
 import { useWorryActions } from '../hooks/useWorryActions';
 import { usePreferencesStore } from '../store/preferencesStore';
 import { useLockedWorries, useUnlockedWorries, useWorryStore } from '../store/worryStore';
-import type { Worry } from '../types';
+import type { Worry, WorryCategory } from '../types';
 
 export const Home: React.FC = () => {
   const worries = useWorryStore((s) => s.worries);
@@ -49,7 +49,11 @@ export const Home: React.FC = () => {
   const lockedWorries = useLockedWorries();
   const hasWorries = worries.length > 0;
 
-  const handleAddWorry = async (worry: { content: string; action?: string; unlockAt: string }) => {
+  const handleAddWorry = async (worry: {
+    content: string;
+    unlockAt: string;
+    bestOutcome?: string;
+  }) => {
     setIsAddingWorry(true);
     try {
       await addWorry(worry);
@@ -61,7 +65,6 @@ export const Home: React.FC = () => {
         operation: 'addWorry',
         worry: {
           contentLength: worry.content.length,
-          hasAction: !!worry.action,
           unlockAt: worry.unlockAt,
         },
       });
@@ -104,7 +107,7 @@ export const Home: React.FC = () => {
 
   const handleEdit = async (
     id: string,
-    updates: { content?: string; action?: string; unlockAt?: string }
+    updates: { content?: string; unlockAt?: string; category?: WorryCategory; bestOutcome?: string }
   ) => {
     setIsEditingWorry(true);
     try {
@@ -219,8 +222,11 @@ export const Home: React.FC = () => {
           {/* Locked Worries Summary */}
           {!isLoadingWorries && !isLoadingPreferences && lockedWorries.length > 0 && (
             <section>
-              <div className="bg-secondary/20 rounded-lg p-lg border border-primary/20">
-                <div className="flex items-center gap-sm mb-2">
+              <Link
+                to="/history"
+                className="block bg-secondary/20 rounded-lg p-lg border border-primary/20 active:bg-secondary/30 transition-colors"
+              >
+                <div className="flex items-center gap-sm">
                   <Lock className="size-icon-lg text-primary" />
                   <div>
                     <h2 className="text-foreground tracking-tight">
@@ -231,13 +237,7 @@ export const Home: React.FC = () => {
                     </p>
                   </div>
                 </div>
-                <Link
-                  to="/history"
-                  className="text-sm text-primary active:underline inline-block mt-2"
-                >
-                  {lang.home.sections.locked.viewAll}
-                </Link>
-              </div>
+              </Link>
             </section>
           )}
         </PageContainer>
@@ -309,14 +309,14 @@ export const Home: React.FC = () => {
         textareaPlaceholder={lang.resolveWorry.notePlaceholder}
       />
 
-      {/* Dismiss Confirmation Dialog */}
+      {/* Release Confirmation Dialog */}
       <ConfirmationDialog
         open={!!worryActions.worryToDismiss}
         onOpenChange={(open) => !open && worryActions.setWorryToDismiss(null)}
-        title={lang.history.dismissDialog.title}
-        description={lang.history.dismissDialog.description}
-        confirmText={lang.history.dismissDialog.confirm}
-        cancelText={lang.history.dismissDialog.cancel}
+        title={lang.history.releaseDialog.title}
+        description={lang.history.releaseDialog.description}
+        confirmText={lang.history.releaseDialog.confirm}
+        cancelText={lang.history.releaseDialog.cancel}
         onConfirm={worryActions.handleDismiss}
         isLoading={worryActions.loadingStates[worryActions.worryToDismiss || '']?.dismissing}
       />

@@ -3,7 +3,6 @@ import {
   Edit3,
   Loader2,
   Lock,
-  MessageCircle,
   Package,
   Sparkles,
   Trash2,
@@ -144,19 +143,11 @@ const WorryCardComponent: React.FC<WorryCardProps> = ({
                   {worry.resolutionNote}
                 </p>
               )}
-              {(worry.category || worry.talkedToSomeone) && (
-                <div className="mt-xs flex flex-wrap gap-2">
-                  {worry.category && (
-                    <Badge variant="outline" className="text-xs">
-                      {lang.categories[worry.category]}
-                    </Badge>
-                  )}
-                  {worry.talkedToSomeone && (
-                    <Badge variant="outline" className="text-xs">
-                      <MessageCircle className="size-icon-xs mr-1" />
-                      {lang.addWorry.fields.talkedToSomeone.badge}
-                    </Badge>
-                  )}
+              {worry.category && (
+                <div className="mt-xs">
+                  <Badge variant="outline" className="text-xs">
+                    {lang.categories[worry.category]}
+                  </Badge>
                 </div>
               )}
             </div>
@@ -236,7 +227,7 @@ const WorryCardComponent: React.FC<WorryCardProps> = ({
                     className="text-sm"
                   >
                     {isDismissing && <Loader2 className="mr-2 size-icon-xs animate-spin" />}
-                    {lang.worryCard.buttons.dismiss}
+                    {lang.worryCard.buttons.release}
                   </Button>
                 )}
               </div>
@@ -289,7 +280,7 @@ const WorryCardComponent: React.FC<WorryCardProps> = ({
                     className="text-sm"
                   >
                     {isDismissing && <Loader2 className="mr-2 size-icon-xs animate-spin" />}
-                    {lang.worryCard.buttons.dismiss}
+                    {lang.worryCard.buttons.release}
                   </Button>
                 )}
               </div>

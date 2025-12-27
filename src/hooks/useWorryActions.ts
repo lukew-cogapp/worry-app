@@ -96,15 +96,15 @@ export function useWorryActions() {
 
     try {
       await dismissWorry(worryToDismiss);
-      toast.success(lang.toasts.success.worryDismissed);
+      toast.success(lang.toasts.success.worryReleased);
       setWorryToDismiss(null);
     } catch (error) {
       handleError(error, {
-        operation: 'dismissWorry',
+        operation: 'releaseWorry',
         worryId: worryToDismiss,
       });
 
-      toastErrorWithRetry(lang.toasts.error.dismissWorry, handleDismiss);
+      toastErrorWithRetry(lang.toasts.error.releaseWorry, handleDismiss);
     } finally {
       clearLoading(worryToDismiss, 'dismissing');
     }

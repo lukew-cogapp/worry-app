@@ -7,9 +7,7 @@ const defaultPreferences: UserPreferences = {
   defaultUnlockTime: '09:00',
   hapticFeedback: true,
   encouragingMessages: true,
-  showCategoryField: true,
   showBestOutcomeField: true,
-  showTalkedToSomeoneField: true,
 };
 
 const defaultStats: WorryStats = {
@@ -55,7 +53,8 @@ export async function getPreferences(): Promise<UserPreferences> {
   if (!value) return defaultPreferences;
 
   try {
-    return JSON.parse(value);
+    // Merge with defaults to ensure new fields have default values
+    return { ...defaultPreferences, ...JSON.parse(value) };
   } catch (error) {
     logger.error('Failed to parse preferences from storage:', error);
     return defaultPreferences;

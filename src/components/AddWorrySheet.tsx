@@ -5,7 +5,7 @@ import { WorryFormSheet } from './WorryFormSheet';
 interface AddWorrySheetProps {
   isOpen: boolean;
   onClose: () => void;
-  onAdd: (worry: { content: string; action?: string; unlockAt: string }) => void;
+  onAdd: (worry: { content: string; unlockAt: string; bestOutcome?: string }) => void;
   onRelease?: (content: string) => void;
   isSubmitting?: boolean;
   isReleasing?: boolean;

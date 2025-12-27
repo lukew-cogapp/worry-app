@@ -1,11 +1,14 @@
 import type React from 'react';
-import type { Worry } from '../types';
+import type { Worry, WorryCategory } from '../types';
 import { WorryFormSheet } from './WorryFormSheet';
 
 interface EditWorrySheetProps {
   isOpen: boolean;
   onClose: () => void;
-  onEdit: (id: string, updates: { content?: string; action?: string; unlockAt?: string }) => void;
+  onEdit: (
+    id: string,
+    updates: { content?: string; unlockAt?: string; category?: WorryCategory; bestOutcome?: string }
+  ) => void;
   worry: Worry | null;
   defaultTime?: string;
   isSubmitting?: boolean;

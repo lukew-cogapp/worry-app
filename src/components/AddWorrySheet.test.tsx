@@ -11,7 +11,12 @@ vi.mock('../hooks/useEscapeKey', () => ({
 }));
 
 vi.mock('../store/preferencesStore', () => ({
-  usePreferencesStore: vi.fn(() => '09:00'),
+  usePreferencesStore: vi.fn(() => ({
+    preferences: {
+      defaultUnlockTime: '09:00',
+      showBestOutcomeField: true,
+    },
+  })),
 }));
 
 vi.mock('../utils/dates', () => ({
@@ -46,14 +51,9 @@ describe('AddWorrySheet', () => {
       expect(screen.getByText(lang.addWorry.title)).toBeInTheDocument();
     });
 
-    it('should render all form fields', () => {
+    it('should render content field', () => {
       render(<AddWorrySheet {...defaultProps} />);
-
       expect(screen.getByLabelText(lang.addWorry.fields.content.label)).toBeInTheDocument();
-      expect(
-        screen.getByText(lang.addWorry.fields.action.label, { exact: false })
-      ).toBeInTheDocument();
-      expect(screen.getByLabelText(lang.addWorry.fields.unlockAt.label)).toBeInTheDocument();
     });
 
     it('should render submit and cancel buttons', () => {
@@ -73,16 +73,6 @@ describe('AddWorrySheet', () => {
       expect(screen.queryByText(lang.addWorry.buttons.release)).not.toBeInTheDocument();
     });
 
-    it('should render character count for content field', () => {
-      render(<AddWorrySheet {...defaultProps} />);
-      expect(screen.getByText(`0/${FORM_VALIDATION.WORRY_CONTENT_MAX_LENGTH}`)).toBeInTheDocument();
-    });
-
-    it('should render character count for action field', () => {
-      render(<AddWorrySheet {...defaultProps} />);
-      expect(screen.getByText(`0/${FORM_VALIDATION.WORRY_ACTION_MAX_LENGTH}`)).toBeInTheDocument();
-    });
-
     it('should render close button in header', () => {
       render(<AddWorrySheet {...defaultProps} />);
       expect(screen.getByLabelText(lang.aria.close)).toBeInTheDocument();
@@ -98,40 +88,6 @@ describe('AddWorrySheet', () => {
       await user.type(contentInput, 'Test worry content');
 
       expect(contentInput).toHaveValue('Test worry content');
-    });
-
-    it('should update action field when user types', async () => {
-      const user = userEvent.setup();
-      render(<AddWorrySheet {...defaultProps} />);
-
-      const actionInput = screen.getByPlaceholderText(
-        lang.addWorry.fields.action.placeholder
-      ) as HTMLInputElement;
-      await user.type(actionInput, 'Test action');
-
-      expect(actionInput).toHaveValue('Test action');
-    });
-
-    it('should update character count as user types in content field', async () => {
-      const user = userEvent.setup();
-      render(<AddWorrySheet {...defaultProps} />);
-
-      const contentInput = screen.getByLabelText(lang.addWorry.fields.content.label);
-      await user.type(contentInput, 'Hello');
-
-      expect(screen.getByText(`5/${FORM_VALIDATION.WORRY_CONTENT_MAX_LENGTH}`)).toBeInTheDocument();
-    });
-
-    it('should update character count as user types in action field', async () => {
-      const user = userEvent.setup();
-      render(<AddWorrySheet {...defaultProps} />);
-
-      const actionInput = screen.getByPlaceholderText(
-        lang.addWorry.fields.action.placeholder
-      ) as HTMLInputElement;
-      await user.type(actionInput, 'Action');
-
-      expect(screen.getByText(`6/${FORM_VALIDATION.WORRY_ACTION_MAX_LENGTH}`)).toBeInTheDocument();
     });
 
     it('should clear error message when user starts typing', async () => {
@@ -224,17 +180,6 @@ describe('AddWorrySheet', () => {
         FORM_VALIDATION.WORRY_CONTENT_MAX_LENGTH.toString()
       );
     });
-
-    it('should enforce max length on action field', () => {
-      render(<AddWorrySheet {...defaultProps} />);
-      const actionInput = screen.getByPlaceholderText(
-        lang.addWorry.fields.action.placeholder
-      ) as HTMLInputElement;
-      expect(actionInput).toHaveAttribute(
-        'maxLength',
-        FORM_VALIDATION.WORRY_ACTION_MAX_LENGTH.toString()
-      );
-    });
   });
 
   describe('Form Submission', () => {
@@ -245,53 +190,23 @@ describe('AddWorrySheet', () => {
       const contentInput = screen.getByLabelText(lang.addWorry.fields.content.label);
       await user.type(contentInput, 'Test worry content');
 
-      const actionInput = screen.getByPlaceholderText(
-        lang.addWorry.fields.action.placeholder
-      ) as HTMLInputElement;
-      await user.type(actionInput, 'Test action');
-
       const submitButton = screen.getByText(lang.addWorry.buttons.submit);
       await user.click(submitButton);
 
       await waitFor(() => {
         expect(mockOnAdd).toHaveBeenCalledWith({
           content: 'Test worry content',
-          action: 'Test action',
           unlockAt: expect.any(String),
         });
       });
     });
 
-    it('should call onAdd without action when action field is empty', async () => {
-      const user = userEvent.setup();
-      render(<AddWorrySheet {...defaultProps} />);
-
-      const contentInput = screen.getByLabelText(lang.addWorry.fields.content.label);
-      await user.type(contentInput, 'Test worry content');
-
-      const submitButton = screen.getByText(lang.addWorry.buttons.submit);
-      await user.click(submitButton);
-
-      await waitFor(() => {
-        expect(mockOnAdd).toHaveBeenCalledWith({
-          content: 'Test worry content',
-          action: undefined,
-          unlockAt: expect.any(String),
-        });
-      });
-    });
-
-    it('should trim whitespace from content and action before submitting', async () => {
+    it('should trim whitespace from content before submitting', async () => {
       const user = userEvent.setup();
       render(<AddWorrySheet {...defaultProps} />);
 
       const contentInput = screen.getByLabelText(lang.addWorry.fields.content.label);
       await user.type(contentInput, '  Test worry  ');
-
-      const actionInput = screen.getByPlaceholderText(
-        lang.addWorry.fields.action.placeholder
-      ) as HTMLInputElement;
-      await user.type(actionInput, '  Test action  ');
 
       const submitButton = screen.getByText(lang.addWorry.buttons.submit);
       await user.click(submitButton);
@@ -299,7 +214,6 @@ describe('AddWorrySheet', () => {
       await waitFor(() => {
         expect(mockOnAdd).toHaveBeenCalledWith({
           content: 'Test worry',
-          action: 'Test action',
           unlockAt: expect.any(String),
         });
       });
@@ -363,35 +277,6 @@ describe('AddWorrySheet', () => {
       await waitFor(() => {
         expect(mockOnAdd).toHaveBeenCalled();
       });
-    });
-
-    it('should submit form with Enter on action field', async () => {
-      const user = userEvent.setup();
-      render(<AddWorrySheet {...defaultProps} />);
-
-      const contentInput = screen.getByLabelText(lang.addWorry.fields.content.label);
-      await user.type(contentInput, 'Test worry');
-
-      const actionInput = screen.getByPlaceholderText(
-        lang.addWorry.fields.action.placeholder
-      ) as HTMLInputElement;
-      await user.type(actionInput, 'Test action{Enter}');
-
-      await waitFor(() => {
-        expect(mockOnAdd).toHaveBeenCalled();
-      });
-    });
-
-    it('should not submit with Enter on action field if content is empty', async () => {
-      const user = userEvent.setup();
-      render(<AddWorrySheet {...defaultProps} />);
-
-      const actionInput = screen.getByPlaceholderText(
-        lang.addWorry.fields.action.placeholder
-      ) as HTMLInputElement;
-      await user.type(actionInput, 'Test action{Enter}');
-
-      expect(mockOnAdd).not.toHaveBeenCalled();
     });
   });
 
@@ -544,14 +429,11 @@ describe('AddWorrySheet', () => {
   });
 
   describe('Loading States', () => {
-    it('should disable all inputs when isSubmitting is true', () => {
+    it('should disable content input when isSubmitting is true', () => {
       render(<AddWorrySheet {...defaultProps} isSubmitting={true} />);
 
       const contentInput = screen.getByLabelText(lang.addWorry.fields.content.label);
-      const actionInput = screen.getByPlaceholderText(lang.addWorry.fields.action.placeholder);
-
       expect(contentInput).toBeDisabled();
-      expect(actionInput).toBeDisabled();
     });
 
     it('should disable all buttons when isSubmitting is true', () => {
@@ -564,14 +446,11 @@ describe('AddWorrySheet', () => {
       expect(cancelButton).toBeDisabled();
     });
 
-    it('should disable all inputs when isReleasing is true', () => {
+    it('should disable content input when isReleasing is true', () => {
       render(<AddWorrySheet {...defaultProps} onRelease={mockOnRelease} isReleasing={true} />);
 
       const contentInput = screen.getByLabelText(lang.addWorry.fields.content.label);
-      const actionInput = screen.getByPlaceholderText(lang.addWorry.fields.action.placeholder);
-
       expect(contentInput).toBeDisabled();
-      expect(actionInput).toBeDisabled();
     });
 
     it('should disable all buttons when isReleasing is true', () => {
@@ -605,11 +484,10 @@ describe('AddWorrySheet', () => {
   });
 
   describe('Accessibility', () => {
-    it('should have proper labels for all form fields', () => {
+    it('should have proper labels for content field', () => {
       render(<AddWorrySheet {...defaultProps} />);
 
       expect(screen.getByLabelText(lang.addWorry.fields.content.label)).toBeInTheDocument();
-      expect(screen.getByLabelText(lang.addWorry.fields.unlockAt.label)).toBeInTheDocument();
     });
 
     it('should mark content field as invalid when error is shown', async () => {
@@ -661,30 +539,6 @@ describe('AddWorrySheet', () => {
       expect(contentInputAfter.value).toBe('Test');
     });
 
-    it('should handle submission with only whitespace in action field', async () => {
-      const user = userEvent.setup();
-      render(<AddWorrySheet {...defaultProps} />);
-
-      const contentInput = screen.getByLabelText(lang.addWorry.fields.content.label);
-      await user.type(contentInput, 'Test worry');
-
-      const actionInput = screen.getByPlaceholderText(
-        lang.addWorry.fields.action.placeholder
-      ) as HTMLInputElement;
-      await user.type(actionInput, '   ');
-
-      const submitButton = screen.getByText(lang.addWorry.buttons.submit);
-      await user.click(submitButton);
-
-      await waitFor(() => {
-        expect(mockOnAdd).toHaveBeenCalledWith({
-          content: 'Test worry',
-          action: undefined,
-          unlockAt: expect.any(String),
-        });
-      });
-    });
-
     it('should handle maximum length content', async () => {
       const user = userEvent.setup();
       render(<AddWorrySheet {...defaultProps} />);
@@ -693,28 +547,8 @@ describe('AddWorrySheet', () => {
       const contentInput = screen.getByLabelText(lang.addWorry.fields.content.label);
       await user.type(contentInput, maxContent);
 
-      expect(
-        screen.getByText(
-          `${FORM_VALIDATION.WORRY_CONTENT_MAX_LENGTH}/${FORM_VALIDATION.WORRY_CONTENT_MAX_LENGTH}`
-        )
-      ).toBeInTheDocument();
-    });
-
-    it('should handle maximum length action', async () => {
-      const user = userEvent.setup();
-      render(<AddWorrySheet {...defaultProps} />);
-
-      const maxAction = 'a'.repeat(FORM_VALIDATION.WORRY_ACTION_MAX_LENGTH);
-      const actionInput = screen.getByPlaceholderText(
-        lang.addWorry.fields.action.placeholder
-      ) as HTMLInputElement;
-      await user.type(actionInput, maxAction);
-
-      expect(
-        screen.getByText(
-          `${FORM_VALIDATION.WORRY_ACTION_MAX_LENGTH}/${FORM_VALIDATION.WORRY_ACTION_MAX_LENGTH}`
-        )
-      ).toBeInTheDocument();
+      // Just verify the content was entered (character count was removed)
+      expect(contentInput).toHaveValue(maxContent);
     });
   });
 });
