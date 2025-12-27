@@ -8,77 +8,18 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../co
 import { lang } from '../config/language';
 import { useWorryStore } from '../store/worryStore';
 import type { WorryCategory } from '../types';
+import { calculateWorryMetrics, formatTimeToResolve } from '../utils/metrics';
 
 export const Insights: React.FC = () => {
   const worries = useWorryStore((s) => s.worries);
 
-  // Calculate metrics
-  const metrics = useMemo(() => {
-    const total = worries.length;
-    const resolved = worries.filter((w) => w.status === 'resolved').length;
-    const dismissed = worries.filter((w) => w.status === 'dismissed').length;
-    const locked = worries.filter((w) => w.status === 'locked').length;
-    const unlocked = worries.filter((w) => w.status === 'unlocked').length;
-    const completed = resolved + dismissed;
+  const metrics = useMemo(() => calculateWorryMetrics(worries), [worries]);
 
-    // Calculate resolution rate (what % of completed worries were resolved vs dismissed)
-    const resolutionRate = completed > 0 ? Math.round((resolved / completed) * 100) : 0;
-
-    // Calculate average time to resolution
-    const resolvedWorries = worries.filter(
-      (w) => w.status === 'resolved' && w.resolvedAt && w.unlockedAt
-    );
-    const avgTimeToResolve =
-      resolvedWorries.length > 0
-        ? resolvedWorries.reduce((sum, w) => {
-            if (!w.unlockedAt || !w.resolvedAt) return sum;
-            const unlocked = new Date(w.unlockedAt).getTime();
-            const resolved = new Date(w.resolvedAt).getTime();
-            return sum + (resolved - unlocked);
-          }, 0) / resolvedWorries.length
-        : 0;
-
-    // Calculate completion rate
-    const completionRate = total > 0 ? Math.round((completed / total) * 100) : 0;
-
-    // Get this week's data
-    const oneWeekAgo = new Date();
-    oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
-    const thisWeek = worries.filter((w) => new Date(w.createdAt) >= oneWeekAgo);
-    const thisWeekResolved = thisWeek.filter((w) => w.status === 'resolved').length;
-
-    // Calculate category breakdown
-    const categoryBreakdown: Record<string, number> = {};
-    worries.forEach((w) => {
-      const category = w.category || 'uncategorized';
-      categoryBreakdown[category] = (categoryBreakdown[category] || 0) + 1;
-    });
-
-    return {
-      total,
-      resolved,
-      dismissed,
-      locked,
-      unlocked,
-      completed,
-      resolutionRate,
-      avgTimeToResolve,
-      completionRate,
-      thisWeekCount: thisWeek.length,
-      thisWeekResolved,
-      categoryBreakdown,
-    };
-  }, [worries]);
-
-  const formatTimeToResolve = (ms: number) => {
-    const hours = Math.round(ms / (1000 * 60 * 60));
-    const days = Math.round(hours / 24);
-
-    if (days >= 1) {
-      return lang.insights.timeUnits.day(days);
-    }
-    return lang.insights.timeUnits.hour(hours);
-  };
+  const formattedAvgTime = formatTimeToResolve(
+    metrics.avgTimeToResolve,
+    lang.insights.timeUnits.day,
+    lang.insights.timeUnits.hour
+  );
 
   return (
     <div className="h-full flex flex-col bg-background overflow-hidden">
@@ -218,7 +159,7 @@ export const Insights: React.FC = () => {
                             {lang.insights.keyInsights.avgTimeToResolve.title}
                           </CardTitle>
                           <div className="text-3xl font-bold text-primary mb-2">
-                            {formatTimeToResolve(metrics.avgTimeToResolve)}
+                            {formattedAvgTime}
                           </div>
                           <CardDescription>
                             {lang.insights.keyInsights.avgTimeToResolve.description}

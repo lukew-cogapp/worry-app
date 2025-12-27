@@ -1,13 +1,4 @@
-import {
-  CheckCircle2,
-  Edit3,
-  Loader2,
-  Lock,
-  Package,
-  Sparkles,
-  Trash2,
-  XCircle,
-} from 'lucide-react';
+import { CheckCircle2, Edit3, Loader2, Lock, Package, Sparkles, Trash2 } from 'lucide-react';
 import React, { useState } from 'react';
 import { lang } from '../config/language';
 import type { Worry } from '../types';
@@ -82,26 +73,14 @@ const WorryCardComponent: React.FC<WorryCardProps> = ({
           </Badge>
         );
       case 'dismissed':
-        // Check if it was released (user let go of something they can't control)
-        if (worry.releasedAt) {
-          return (
-            <Badge
-              variant="secondary"
-              className="bg-status-released text-status-released-foreground border-status-released-border"
-            >
-              <Sparkles className="size-icon-xs mr-xs" />
-              {lang.worryCard.status.released}
-            </Badge>
-          );
-        }
-        // Regular dismissal
+        // Treat all dismissed worries as released to keep UI consistent.
         return (
           <Badge
             variant="secondary"
-            className="bg-status-dismissed text-status-dismissed-foreground border-status-dismissed-border"
+            className="bg-status-released text-status-released-foreground border-status-released-border"
           >
-            <XCircle className="size-icon-xs mr-xs" />
-            {lang.worryCard.status.dismissed}
+            <Sparkles className="size-icon-xs mr-xs" />
+            {lang.worryCard.status.released}
           </Badge>
         );
       default:

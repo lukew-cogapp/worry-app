@@ -186,9 +186,9 @@ describe('WorryCard', () => {
       status: 'dismissed',
     };
 
-    it('should display dismissed status badge', () => {
+    it('should display released status badge', () => {
       render(<WorryCard worry={dismissedWorry} />);
-      expect(screen.getByText(lang.worryCard.status.dismissed)).toBeInTheDocument();
+      expect(screen.getByText(lang.worryCard.status.released)).toBeInTheDocument();
     });
 
     it('should not render action buttons for dismissed worry', () => {
@@ -218,10 +218,9 @@ describe('WorryCard', () => {
       expect(screen.getByText(lang.worryCard.status.released)).toBeInTheDocument();
     });
 
-    it('should not display dismissed badge for released worry', () => {
+    it('should display released status badge for released worry', () => {
       render(<WorryCard worry={releasedWorry} />);
-      const dismissedBadge = screen.queryByText(lang.worryCard.status.dismissed);
-      expect(dismissedBadge).not.toBeInTheDocument();
+      expect(screen.getByText(lang.worryCard.status.released)).toBeInTheDocument();
     });
   });
 

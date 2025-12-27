@@ -1,4 +1,4 @@
-import { render, screen, waitFor } from '@testing-library/react';
+import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { FORM_VALIDATION } from '../config/constants';
@@ -97,8 +97,7 @@ describe('AddWorrySheet', () => {
       // Trigger form submission to show error
       const form = screen.getByLabelText(lang.addWorry.fields.content.label).closest('form');
       if (form) {
-        const submitEvent = new Event('submit', { bubbles: true, cancelable: true });
-        form.dispatchEvent(submitEvent);
+        fireEvent.submit(form);
       }
 
       // Error should appear
@@ -122,15 +121,14 @@ describe('AddWorrySheet', () => {
       // Submit the form directly (bypassing button disabled state)
       const form = screen.getByLabelText(lang.addWorry.fields.content.label).closest('form');
       if (form) {
-        // Trigger form submission via Enter key or direct submit
-        const submitEvent = new Event('submit', { bubbles: true, cancelable: true });
-        form.dispatchEvent(submitEvent);
-
-        await waitFor(() => {
-          expect(screen.getByText("Please describe what's worrying you")).toBeInTheDocument();
-        });
-        expect(mockOnAdd).not.toHaveBeenCalled();
+        // Trigger form submission via direct submit
+        fireEvent.submit(form);
       }
+
+      await waitFor(() => {
+        expect(screen.getByText("Please describe what's worrying you")).toBeInTheDocument();
+      });
+      expect(mockOnAdd).not.toHaveBeenCalled();
     });
 
     it('should show error when submitting with only whitespace in content', async () => {
@@ -143,14 +141,13 @@ describe('AddWorrySheet', () => {
       // Form submit should be triggered when user types Enter in textarea with whitespace
       const form = contentInput.closest('form');
       if (form) {
-        const submitEvent = new Event('submit', { bubbles: true, cancelable: true });
-        form.dispatchEvent(submitEvent);
-
-        await waitFor(() => {
-          expect(screen.getByText("Please describe what's worrying you")).toBeInTheDocument();
-        });
-        expect(mockOnAdd).not.toHaveBeenCalled();
+        fireEvent.submit(form);
       }
+
+      await waitFor(() => {
+        expect(screen.getByText("Please describe what's worrying you")).toBeInTheDocument();
+      });
+      expect(mockOnAdd).not.toHaveBeenCalled();
     });
 
     it('should disable submit button when content is empty', () => {
@@ -327,8 +324,7 @@ describe('AddWorrySheet', () => {
       // Trigger form submission to show error
       const form = screen.getByLabelText(lang.addWorry.fields.content.label).closest('form');
       if (form) {
-        const submitEvent = new Event('submit', { bubbles: true, cancelable: true });
-        form.dispatchEvent(submitEvent);
+        fireEvent.submit(form);
       }
 
       // Error should appear
@@ -496,8 +492,7 @@ describe('AddWorrySheet', () => {
       // Trigger form submission to show error
       const form = screen.getByLabelText(lang.addWorry.fields.content.label).closest('form');
       if (form) {
-        const submitEvent = new Event('submit', { bubbles: true, cancelable: true });
-        form.dispatchEvent(submitEvent);
+        fireEvent.submit(form);
       }
 
       await waitFor(() => {

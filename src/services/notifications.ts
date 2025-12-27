@@ -59,8 +59,8 @@ export async function registerNotificationActions(): Promise<void> {
         {
           id: 'WORRY_UNLOCKED',
           actions: [
-            { id: 'done', title: 'Done ✓' },
-            { id: 'snooze', title: 'Snooze 1hr' },
+            { id: 'done', title: 'Close' },
+            { id: 'snooze', title: 'Snooze 1 hour' },
           ],
         },
       ],

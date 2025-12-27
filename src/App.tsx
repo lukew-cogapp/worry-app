@@ -9,6 +9,7 @@ import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import { Toaster, toast } from 'sonner';
 import { DebugErrorDialog } from './components/DebugErrorDialog';
 import { ErrorBoundary } from './components/ErrorBoundary';
+import { formatDuration, lang } from './config/language';
 import { useDebugError } from './hooks/useDebugError';
 import { History } from './pages/History';
 import { Home } from './pages/Home';
@@ -61,10 +62,11 @@ function App() {
             try {
               if (action.actionId === 'done') {
                 await resolveWorry(worryId);
-                toast.success('Worry marked as resolved');
+                toast.success(lang.toasts.success.worryResolved);
               } else if (action.actionId === 'snooze') {
-                await snoozeWorry(worryId, 60 * 60 * 1000); // 1 hour
-                toast.success('Worry snoozed for 1 hour');
+                const durationMs = 60 * 60 * 1000; // 1 hour
+                await snoozeWorry(worryId, durationMs);
+                toast.success(lang.toasts.success.snoozed(formatDuration(durationMs)));
               }
             } catch (error) {
               console.error('Failed to handle notification action:', error);
