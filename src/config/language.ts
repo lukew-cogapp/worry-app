@@ -68,7 +68,7 @@ export const lang = {
     buttons: {
       cancel: 'Cancel',
       submit: 'Lock Away Worry',
-      release: "I Can't Control This — Release It",
+      release: 'Let this go for now',
     },
     validation: {
       contentRequired: "Please describe what's worrying you",
@@ -149,15 +149,15 @@ export const lang = {
     keyInsights: {
       title: 'Key Insights',
       completionRate: {
-        title: 'Completion Rate',
+        title: 'Worries Closed',
         description: (completed: number, total: number) =>
-          `You've completed ${completed} out of ${total} worries`,
+          `${completed} of ${total} worries closed — no pressure, this is just a snapshot`,
       },
       resolutionRate: {
-        title: 'Action Taken',
+        title: 'How They Ended',
         description: (resolved: number, dismissed: number) =>
-          `${resolved} resolved, ${dismissed} dismissed`,
-        insight: 'Most of your worries were dismissed. Consider if they needed action after all.',
+          `${resolved} resolved, ${dismissed} released`,
+        insight: "Many worries didn't need action — noticing that is progress.",
       },
       avgTimeToResolve: {
         title: 'Average Time to Resolve',
@@ -244,7 +244,7 @@ export const lang = {
       locked: 'Locked',
       ready: 'Ready',
       resolved: 'Resolved',
-      dismissed: 'Dismissed',
+      dismissed: 'Let Go',
       released: 'Released',
     },
     labels: {
@@ -257,7 +257,7 @@ export const lang = {
     buttons: {
       unlockNow: 'Unlock Now',
       release: 'Release',
-      markDone: 'Mark Done',
+      markDone: 'Done',
       snooze: 'Snooze',
       snoozeOptions: 'Snooze for...',
     },
@@ -313,11 +313,11 @@ export const lang = {
 
   // Resolve worry dialog
   resolveWorry: {
-    title: 'Mark as Done',
-    noteLabel: 'What did you do?',
-    notePlaceholder: 'How did you handle this worry? (optional)',
+    title: 'Close This Worry',
+    noteLabel: 'How did this turn out?',
+    notePlaceholder: 'What happened with this worry? (optional)',
     cancel: 'Cancel',
-    confirm: 'Mark Done',
+    confirm: 'Close Worry',
   },
 
   // Animations
